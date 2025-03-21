@@ -15,7 +15,7 @@ class ExpenseViewModel {
     init() {}
 
     func addExpense(modelContext: ModelContext, date: Date, amount: Double, memo: String, category: Category?) {
-        let newExpense = Expense(date: date, amount: amount, memo: memo, category: category)
+        let newExpense = Expense(date: date, amount: amount, description: memo, category: category)
         modelContext.insert(newExpense)
     }
 
@@ -36,7 +36,9 @@ class ExpenseViewModel {
     }
 
     func fetchExpenses(modelContext: ModelContext, forCategory category: Category) throws -> [Expense] {
-        let predicate = #Predicate<Expense> { $0.category == category }
+        let predicate = #Predicate<Expense> { expense in
+            expense.category.map { $0 == category } ?? false
+        }
         let fetchDescriptor = FetchDescriptor<Expense>(predicate: predicate, sortBy: [SortDescriptor(\.date, order: .reverse)])
         return try modelContext.fetch(fetchDescriptor)
     }

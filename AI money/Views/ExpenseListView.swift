@@ -12,7 +12,7 @@ struct ExpenseListView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Expense.date, order: .reverse) var expenses: [Expense]
     @State private var isPresentingAddExpenseView = false
-    @StateObject var expenseViewModel = ExpenseViewModel()
+    @State var expenseViewModel = ExpenseViewModel()
 
     var body: some View {
         NavigationView {

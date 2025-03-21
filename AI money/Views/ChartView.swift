@@ -18,7 +18,7 @@ struct CategorySpending: Identifiable {
 struct ChartView: View {
     @Environment(\.modelContext) private var modelContext
     @Query var expenses: [Expense]
-    @StateObject var expenseViewModel = ExpenseViewModel()
+    @State var expenseViewModel = ExpenseViewModel()
 
     var categorySpendings: [CategorySpending] {
         var spendingByCategory: [String: Double] = [:]

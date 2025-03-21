@@ -14,7 +14,7 @@ struct EditExpenseView: View {
     @Bindable var expense: Expense
     @Query var categories: [Category]
     @State private var selectedCategory: Category?
-    @StateObject var expenseViewModel = ExpenseViewModel()
+    @State var expenseViewModel = ExpenseViewModel()
 
     var body: some View {
         NavigationView {

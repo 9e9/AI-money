@@ -16,7 +16,7 @@ final class Expense {
     var memo: String // description 대신 memo 사용
     var category: Category?
 
-    init(date: Date, amount: Double, memo: String, category: Category? = nil) {
+    init(date: Date, amount: Double, description: String, category: Category? = nil) {
         self.date = date
         self.amount = amount
         self.memo = description // description 대신 memo 사용

@@ -17,7 +17,7 @@ struct AddExpenseView: View {
     @State private var categoryName = ""
     @Query var categories: [Category]
     @State private var selectedCategory: Category?
-    @StateObject var expenseViewModel = ExpenseViewModel()
+    @State var expenseViewModel = ExpenseViewModel()
 
     var body: some View {
         NavigationView {

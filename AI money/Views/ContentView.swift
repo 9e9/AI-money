@@ -14,13 +14,10 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @State var expenseViewModel = ExpenseViewModel()
     @State private var isPresentingAddExpenseView = false
-    @State private var isShowingPhotoPicker = false
-    @State private var isPresentingPhotoPicker = false
+    @State private var isShowingPhotoPicker = false // 변수 이름 통일
     @State private var selectedImage: PhotosPickerItem?
-    @State private var selectedPhoto: PhotosPickerItem?
+    @State private var selectedPhoto: PhotosPickerItem? // 중복 변수 제거
     @State private var recognizedText: String = ""
-    
-    
 
     var body: some View {
         NavigationView {
@@ -58,13 +55,8 @@ struct ContentView: View {
                         .cornerRadius(8)
                 }
                 .padding(.bottom)
-                .photosPicker(isPresented: $isPresentingPhotoPicker, selection: $selectedPhoto) {
-                    Text("영수증 스캔")
-                        .font(.title3)
-                        .padding()
-                        .background(Color.orange)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
+                .photosPicker(isPresented: $isShowingPhotoPicker, selection: $selectedPhoto) {
+                    // 필요하다면 필터링 설정 등을 추가할 수 있습니다.
                 }
                 .onChange(of: selectedImage) { newItem in
                     Task {
