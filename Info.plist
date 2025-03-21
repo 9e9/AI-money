@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSCameraUsageDescription</key>
+	<string>영수증을 스캔하여 지출 내역을 자동으로 기록하기 위해 카메라 접근 권한이 필요합니다.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>음성 명령을 통해 간편하게 지출을 기록하기 위해 음성 인식 기능을 사용합니다.</string>
+</dict>
+</plist>
