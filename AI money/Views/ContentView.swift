@@ -12,11 +12,15 @@ import Vision
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    @StateObject var expenseViewModel = ExpenseViewModel()
+    @State var expenseViewModel = ExpenseViewModel()
     @State private var isPresentingAddExpenseView = false
     @State private var isShowingPhotoPicker = false
+    @State private var isPresentingPhotoPicker = false
     @State private var selectedImage: PhotosPickerItem?
+    @State private var selectedPhoto: PhotosPickerItem?
     @State private var recognizedText: String = ""
+    
+    
 
     var body: some View {
         NavigationView {
@@ -54,7 +58,7 @@ struct ContentView: View {
                         .cornerRadius(8)
                 }
                 .padding(.bottom)
-                .photosPicker(isPresented: $isShowingPhotoPicker, selection: $selectedImage) {
+                .photosPicker(isPresented: $isPresentingPhotoPicker, selection: $selectedPhoto) {
                     Text("영수증 스캔")
                         .font(.title3)
                         .padding()
