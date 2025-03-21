@@ -29,7 +29,7 @@ struct ExpenseListView: View {
                     }
                     .swipeActions {
                         Button(role: .destructive) {
-                            expenseViewModel.deleteExpense(modelContext: modelContext, expense: expense) // modelContext 전달
+                            expenseViewModel.deleteExpense(modelContext: modelContext, expense: expense)
                         } label: {
                             Label("삭제", systemImage: "trash")
                         }

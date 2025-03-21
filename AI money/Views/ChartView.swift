@@ -47,7 +47,7 @@ struct ChartView: View {
 
                 Divider()
 
-                Text("다음 달 예상 지출액: \(expenseViewModel.predictNextMonthSpending(modelContext: modelContext), specifier: "%.0f") 원") // modelContext 전달
+                Text("다음 달 예상 지출액: \(expenseViewModel.predictNextMonthSpending(modelContext: modelContext), specifier: "%.0f") 원")
                     .font(.headline)
                     .padding()
             }

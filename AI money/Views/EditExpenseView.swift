@@ -39,7 +39,7 @@ struct EditExpenseView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("저장") {
-                        expenseViewModel.updateExpense(expense: expense, newDate: expense.date, newAmount: expense.amount, newMemo: expense.memo, newCategory: selectedCategory) // description 대신 memo 사용
+                        expenseViewModel.updateExpense(expense: expense, newDate: expense.date, newAmount: expense.amount, newMemo: expense.memo, newCategory: selectedCategory)
                         dismiss()
                     }
                 }

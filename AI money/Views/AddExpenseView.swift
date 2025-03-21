@@ -13,7 +13,7 @@ struct AddExpenseView: View {
     @Environment(\.dismiss) var dismiss
     @State private var date = Date()
     @State private var amount: Double?
-    @State private var memo = "" // description 대신 memo 사용
+    @State private var memo = ""
     @State private var categoryName = ""
     @Query var categories: [Category]
     @State private var selectedCategory: Category?
@@ -25,7 +25,7 @@ struct AddExpenseView: View {
                 DatePicker("날짜", selection: $date, displayedComponents: .date)
                 TextField("금액", value: $amount, format: .number)
                     .keyboardType(.decimalPad)
-                TextField("내용", text: $memo) // description 대신 memo 사용
+                TextField("내용", text: $memo)
                 Picker("카테고리", selection: $selectedCategory) {
                     Text("없음").tag(nil as Category?)
                     ForEach(categories) { category in
@@ -36,7 +36,7 @@ struct AddExpenseView: View {
                 Section {
                     Button("저장") {
                         if let amount = amount {
-                            expenseViewModel.addExpense(modelContext: modelContext, date: date, amount: amount, memo: memo, category: selectedCategory) // modelContext 전달, description 대신 memo 사용
+                            expenseViewModel.addExpense(modelContext: modelContext, date: date, amount: amount, memo: memo, category: selectedCategory)
                             dismiss()
                         }
                     }

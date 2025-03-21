@@ -15,7 +15,7 @@ class ExpenseViewModel {
     init() {}
 
     func addExpense(modelContext: ModelContext, date: Date, amount: Double, memo: String, category: Category?) {
-        let newExpense = Expense(date: date, amount: amount, description: memo, category: category)
+        let newExpense = Expense(date: date, amount: amount, memo: memo, category: category)
         modelContext.insert(newExpense)
     }
 
