@@ -19,7 +19,7 @@ class ExpenseViewModel {
         modelContext.insert(newExpense)
     }
 
-    func updateExpense(expense: Expense, newDate: Date, newAmount: Double, newMemo: String, newCategory: Category?) {
+    func updateExpense(modelContext: ModelContext, expense: Expense, newDate: Date, newAmount: Double, newMemo: String, newCategory: Category?) {
         expense.date = newDate
         expense.amount = newAmount
         expense.memo = newMemo
@@ -36,9 +36,12 @@ class ExpenseViewModel {
     }
 
     func fetchExpenses(modelContext: ModelContext, forCategory category: Category) throws -> [Expense] {
-        let predicate = #Predicate<Expense> { expense in
-            expense.category.map { $0 == category } ?? false
+        // Predicate<Expense>로 필터링 정의
+        let predicate: Predicate<Expense> = { expense in
+            return expense.category == category // Category 타입이 Equatable을 준수한다고 가정
         }
+
+        // FetchDescriptor 생성
         let fetchDescriptor = FetchDescriptor<Expense>(predicate: predicate, sortBy: [SortDescriptor(\.date, order: .reverse)])
         return try modelContext.fetch(fetchDescriptor)
     }
