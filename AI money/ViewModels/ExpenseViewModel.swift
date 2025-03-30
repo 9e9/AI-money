@@ -5,23 +5,28 @@
 //  Created by 조준희 on 3/30/25.
 //
 
-import SwiftData
 import Foundation
 
-@Observable
-class ExpenseViewModel {
-    var modelContext: ModelContext
-
-    init(context: ModelContext) {
-        self.modelContext = context
+class ExpenseViewModel: ObservableObject {
+    @Published var expenses: [Expense] = []
+    
+    init() {
+        loadExpenses()
+    }
+    
+    func loadExpenses() {
+        // Load expenses from storage or sample data
+        expenses = [Expense(date: Date(), category: "식비", amount: 20000.0, note: "점심"),
+                    Expense(date: Date(), category: "교통비", amount: 15000.0, note: "버스 요금")]
+    }
+    
+    func addExpense(_ expense: Expense) {
+        expenses.append(expense)
     }
 
-    func addExpense(title: String, amount: Double, date: Date, category: Category?) {
-        let newExpense = Expense(title: title, amount: amount, date: date, category: category)
-        modelContext.insert(newExpense)
-    }
-
-    func deleteExpense(_ expense: Expense) {
-        modelContext.delete(expense)
+    func removeExpense(_ expense: Expense) {
+        if let index = expenses.firstIndex(where: { $0.id == expense.id }) {
+            expenses.remove(at: index)
+        }
     }
 }

@@ -6,46 +6,48 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct AddExpenseView: View {
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
-
-    @State private var title: String = ""
-    @State private var amount: String = ""
-    @State private var selectedDate = Date()
-
+    @ObservedObject var viewModel: ExpenseViewModel
+    @Environment(\.presentationMode) var presentationMode
+    @State private var date = Date()
+    @State private var category = ""
+    @State private var amount = ""
+    @State private var note = ""
+    
     var body: some View {
-        NavigationStack {
+        NavigationView {
             Form {
-                TextField("지출 항목", text: $title)
+                DatePicker("날짜", selection: $date, displayedComponents: .date)
+                
+                TextField("카테고리", text: $category)
+                
                 TextField("금액", text: $amount)
                     .keyboardType(.decimalPad)
-
-                DatePicker("날짜", selection: $selectedDate, displayedComponents: .date)
-
-                Button("저장") {
-                    if let expenseAmount = Double(amount) {
-                        let newExpense = Expense(title: title, amount: expenseAmount, date: selectedDate)
-                        modelContext.insert(newExpense)
-                        dismiss()
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .center)
-                .padding()
-                .background(Color.green)
-                .foregroundColor(.white)
-                .cornerRadius(10)
+                
+                TextField("메모", text: $note)
             }
             .navigationTitle("지출 추가")
             .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("저장") {
+                        let newExpense = Expense(date: date, category: category, amount: Double(amount) ?? 0.0, note: note)
+                        viewModel.addExpense(newExpense)
+                        presentationMode.wrappedValue.dismiss()
+                    }
+                }
                 ToolbarItem(placement: .cancellationAction) {
                     Button("취소") {
-                        dismiss()
+                        presentationMode.wrappedValue.dismiss()
                     }
                 }
             }
         }
+    }
+}
+
+struct AddExpenseView_Previews: PreviewProvider {
+    static var previews: some View {
+        AddExpenseView(viewModel: ExpenseViewModel())
     }
 }
