@@ -9,24 +9,29 @@ import SwiftUI
 import SwiftData
 
 @main
-struct AI_moneyApp: App {
+struct AI_MoneyApp: App {
+    let aiManager = ExpenseAIManager()
+    let predictor = ExpensePredictor()
+
+    init() {
+        let newTrainingData = aiManager.prepareTrainingData()
+        predictor?.updateTrainingData(with: newTrainingData)
+        predictor?.trainModel()
+    }
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            Expense.self,
+            Category.self
         ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
+        let container = try! ModelContainer(for: schema)
+        return container
     }()
 
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .modelContainer(sharedModelContainer)
         }
-        .modelContainer(sharedModelContainer)
     }
 }
