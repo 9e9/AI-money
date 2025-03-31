@@ -43,17 +43,16 @@ struct ExpenseCalendarView: View {
                             }
                         
                         let totalExpense = viewModel.totalExpense(for: date)
-                        if totalExpense > 0 {
-                            Text("\(totalExpense, specifier: "%.0f") 원")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .lineLimit(1)
-                        }
+                        Text(totalExpense > 0 ? "\(totalExpense, specifier: "%.0f") 원" : " ")
+                            .font(.caption)
+                            .foregroundColor(totalExpense > 0 ? .secondary : .clear)
+                            .lineLimit(1)
+                            .frame(height: 0.5) // Ensure consistent height
                     }
                     .padding(4)
                 }
                 .environment(\.locale, Locale(identifier: "ko_KR"))
-                .frame(maxHeight: 300)
+                .frame(maxHeight: 340)
 
                 ScrollView {
                     VStack {
@@ -148,14 +147,13 @@ struct ExpenseCalendarView: View {
                                 }
                             }
                         }
-                        //Spacer()
                     }
                     .padding(.top, 10)
                     .frame(maxWidth: .infinity)
                 }
                 .background(Color.gray.opacity(0.5))
                 .frame(minWidth: 400, maxHeight: 400)
-                .padding(.top, 20)
+                .padding(.top, 30)
             }
             .navigationTitle("")
             .toolbar {
