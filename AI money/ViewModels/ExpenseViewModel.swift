@@ -29,4 +29,9 @@ class ExpenseViewModel: ObservableObject {
             expenses.remove(at: index)
         }
     }
+    
+    func totalExpense(for date: Date) -> Double {
+        let dailyExpenses = expenses.filter { Calendar.current.isDate($0.date, inSameDayAs: date) }
+        return dailyExpenses.reduce(0) { $0 + $1.amount }
+    }
 }
