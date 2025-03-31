@@ -152,7 +152,7 @@ struct ExpenseCalendarView: View {
                     .frame(maxWidth: .infinity)
                 }
                 .background(Color.gray.opacity(0.5))
-                .frame(minWidth: 400, maxHeight: 400)
+                .frame(minWidth: 400, maxHeight: 350)
                 .padding(.top, 30)
             }
             .navigationTitle("")
