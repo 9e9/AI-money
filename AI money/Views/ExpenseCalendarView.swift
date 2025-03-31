@@ -13,19 +13,18 @@ struct ExpenseCalendarView: View {
     @State private var selectedDate: Date? = nil
     @State private var showingDeleteAlert = false
     @State private var expenseToDelete: Expense? = nil
-    @State private var selectedTab: Int = 0 // 탭 전환을 위한 상태 추가
+    @State private var selectedTab: Int = 0
 
     var body: some View {
         NavigationView {
             VStack {
-                // "지출 내역" 제목을 더 위로 이동하고 상단에 고정
                 HStack {
                     Text("지출 내역")
                         .font(.largeTitle)
                         .padding(.leading)
                     Spacer()
                 }
-                .padding(.top, -45) // 더 위로 이동
+                .padding(.top, -45)
                 .padding(.bottom, 20)
                 
                 CalendarView(interval: DateInterval(start: Calendar.current.date(byAdding: .month, value: -1, to: Date())!, end: Date())) { date in
@@ -54,7 +53,7 @@ struct ExpenseCalendarView: View {
                     .padding(4)
                 }
                 .environment(\.locale, Locale(identifier: "ko_KR"))
-                .frame(maxHeight: 300) // Height adjusted to ensure visibility of amounts
+                .frame(maxHeight: 300)
 
                 ScrollView {
                     VStack {
@@ -154,7 +153,7 @@ struct ExpenseCalendarView: View {
                     .padding(.top, 10)
                     .frame(maxWidth: .infinity)
                 }
-                .background(Color.gray.opacity(0.5)) // 지출 내역 부분의 배경 색상 설정
+                .background(Color.gray.opacity(0.5))
                 .frame(minWidth: 400, maxHeight: 400)
                 .padding(.top, 20)
             }
