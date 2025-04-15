@@ -11,7 +11,8 @@ struct AddExpenseView: View {
     @ObservedObject var viewModel: ExpenseViewModel
     @Environment(\.presentationMode) var presentationMode
     @State private var category = ""
-    @State private var amount = ""
+    @State private var amount = "" // 사용자가 입력한 금액
+    @State private var formattedAmount = "" // 쉼표가 추가된 금액
     var selectedDate: Date // 달력에서 선택한 날짜를 전달받음
 
     var body: some View {
@@ -28,11 +29,12 @@ struct AddExpenseView: View {
 
                 TextField("카테고리", text: $category)
 
-                TextField("금액", text: $amount)
+                TextField("금액", text: $formattedAmount)
                     .keyboardType(.decimalPad) // 숫자 전용 키보드
-                    .onChange(of: amount) { newValue in
-                        // 숫자만 입력되도록 필터링
-                        amount = newValue.filter { $0.isNumber || $0 == "." }
+                    .onChange(of: formattedAmount) { newValue in
+                        // 숫자만 추출하고 쉼표 추가
+                        amount = newValue.filter { $0.isNumber }
+                        formattedAmount = formatWithComma(amount)
                     }
             }
             .navigationTitle("지출 추가")
@@ -60,10 +62,21 @@ struct AddExpenseView: View {
         formatter.dateFormat = "YYYY년 MM월 dd일"
         return formatter.string(from: date)
     }
+
+    // Helper function to format a string with commas
+    private func formatWithComma(_ numberString: String) -> String {
+        guard let number = Double(numberString) else { return numberString }
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 0 // 소수점 제거
+        return formatter.string(from: NSNumber(value: number)) ?? numberString
+    }
 }
+
 /*
 struct AddExpenseView_Previews: PreviewProvider {
     static var previews: some View {
         AddExpenseView(viewModel: ExpenseViewModel(), selectedDate: Date())
     }
-}*/
+}
+*/
