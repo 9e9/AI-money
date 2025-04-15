@@ -58,7 +58,7 @@ struct CalendarView<DateView>: View where DateView: View {
                     content(date)
                         .padding(4)
                         .background(calendar.isDate(date, equalTo: Date(), toGranularity: .day) ? Color.blue.opacity(0.3) : Color.clear)
-                        .clipShape(Circle())
+                        .cornerRadius(6)
                         .frame(maxWidth: .infinity)
                 }
             }

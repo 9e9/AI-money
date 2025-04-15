@@ -54,8 +54,10 @@ struct ExpenseCalendarView: View {
                         Text(totalExpense > 0 ? "\(totalExpense, specifier: "%.0f") 원" : " ")
                             .font(.caption)
                             .foregroundColor(totalExpense > 0 ? .secondary : .clear)
-                            .lineLimit(1)
-                            .frame(height: 0.5) // Ensure consistent height
+                            //.lineLimit(1)
+                            .minimumScaleFactor(0.5)
+                            //.frame(height: 0.5) // Ensure consistent height
+                            .frame(maxWidth: .infinity)
                     }
                     .padding(4)
                 }
