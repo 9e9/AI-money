@@ -47,7 +47,7 @@ struct ExpenseCalendarView: View {
                             }
                         
                         let totalExpense = viewModel.totalExpense(for: date)
-                        Text(totalExpense > 0 ? "\(totalExpense, specifier: "%.0f") 원" : " ")
+                        Text(totalExpense > 0 ? "\(Int(totalExpense)) 원" : " ")
                             .font(.caption)
                             .foregroundColor(totalExpense > 0 ? .secondary : .clear)
                             .lineLimit(1)
@@ -78,7 +78,7 @@ struct ExpenseCalendarView: View {
                                         VStack(alignment: .leading) {
                                             Text(expense.category)
                                                 .font(.headline)
-                                            Text("\(expense.amount, specifier: "%.2f") 원")
+                                            Text("\(Int(expense.amount)) 원")
                                                 .font(.subheadline)
                                         }
                                         Spacer()
