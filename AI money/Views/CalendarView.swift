@@ -30,6 +30,14 @@ struct CalendarView<DateView>: View where DateView: View {
                 }
 
                 Spacer() // 오른쪽에 공간 추가
+
+                // 원형 화살표 버튼
+                Button(action: {
+                    resetToCurrentDate() // 현재 연도와 월로 초기화
+                }) {
+                    Image(systemName: "arrow.clockwise")
+                        .font(.title2) // 화살표 크기 설정
+                }
             }
             .padding(.horizontal)
             .padding(.top, 10)
@@ -79,6 +87,14 @@ struct CalendarView<DateView>: View where DateView: View {
         let formatter = NumberFormatter()
         formatter.numberStyle = .none // 쉼표 제거
         return formatter.string(from: NSNumber(value: year)) ?? "\(year)"
+    }
+
+    // 현재 연도와 월로 초기화하는 함수
+    private func resetToCurrentDate() {
+        let currentDate = Date()
+        let components = calendar.dateComponents([.year, .month], from: currentDate)
+        selectedYear = components.year ?? selectedYear
+        selectedMonth = components.month ?? selectedMonth
     }
 }
 
