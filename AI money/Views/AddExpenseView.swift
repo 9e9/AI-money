@@ -31,9 +31,9 @@ struct AddExpenseView: View {
 
                 TextField("금액", text: $formattedAmount)
                     .keyboardType(.decimalPad) // 숫자 전용 키보드
-                    .onChange(of: formattedAmount) { newValue in
+                    .onChange(of: formattedAmount) { // 새로운 스타일로 수정
                         // 숫자만 추출하고 쉼표 추가
-                        amount = newValue.filter { $0.isNumber }
+                        amount = formattedAmount.filter { $0.isNumber }
                         formattedAmount = formatWithComma(amount)
                     }
             }
