@@ -9,110 +9,62 @@ import SwiftUI
 import Charts
 
 struct ChartView: View {
-    @ObservedObject var viewModel: ExpenseViewModel // ViewModel에서 데이터 가져오기
-    
+    @ObservedObject var viewModel: ExpenseViewModel
+
+    // 카테고리별 총합 계산
+    private var categoryTotals: [String: Double] {
+        viewModel.expenses.reduce(into: [String: Double]()) { result, expense in
+            result[expense.category, default: 0.0] += expense.amount
+        }
+    }
+
     var body: some View {
         VStack {
-            Text("지출 카테고리")
-                .font(.title)
-                .padding()
+            Text("원형 차트")
+                .font(.headline)
 
-            if viewModel.expenses.isEmpty {
-                Text("지출 데이터가 없습니다.")
-                    .foregroundColor(.secondary)
-                    .padding()
-            } else {
-                PieChartView(expenses: groupedExpenses())
-                    .frame(height: 300)
-                    .padding()
-            }
-        }
-    }
-    
-    // 카테고리별로 데이터 그룹화
-    private func groupedExpenses() -> [ExpenseCategory] {
-        let grouped = Dictionary(grouping: viewModel.expenses) { $0.category }
-        return grouped.map { category, expenses in
-            ExpenseCategory(category: category, amount: expenses.reduce(0) { $0 + $1.amount })
-        }
-    }
-}
+            // 원형 그래프 (예: Swift Charts 라이브러리 사용)
+            PieChartView(data: categoryTotals)
 
-struct PieChartView: View {
-    let expenses: [ExpenseCategory]
-    var total: Double {
-        expenses.reduce(0) { $0 + $1.amount }
-    }
-    
-    var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                ForEach(expenses.indices, id: \.self) { index in
-                    PieSliceView(geometry: geometry, index: index, expenses: expenses, total: total)
+            Divider()
+                .padding(.vertical, 10)
+
+            Text("카테고리별 총 지출")
+                .font(.headline)
+
+            // 카테고리별 총 지출 목록
+            List {
+                ForEach(categoryTotals.keys.sorted(), id: \.self) { category in
+                    HStack {
+                        Text(category)
+                            .font(.body)
+                        Spacer()
+                        Text("\(Int(categoryTotals[category]!)) 원") // 소수점 제거
+                            .fontWeight(.bold)
+                    }
                 }
             }
+            .listStyle(PlainListStyle())
         }
+        .padding()
     }
 }
 
-struct PieSliceView: View {
-    let geometry: GeometryProxy
-    let index: Int
-    let expenses: [ExpenseCategory]
-    let total: Double
-    
-    private var startAngle: Double {
-        let previousSlices = expenses[..<index].reduce(0) { $0 + $1.amount }
-        return (previousSlices / total) * 360
-    }
-    
-    private var endAngle: Double {
-        let currentSlices = expenses[...index].reduce(0) { $0 + $1.amount }
-        return (currentSlices / total) * 360
-    }
-    
+// 원형 차트 컴포넌트 (Swift Charts 예제)
+struct PieChartView: View {
+    let data: [String: Double]
+
     var body: some View {
-        let sliceColor: Color = Color(hue: Double(index) / Double(expenses.count), saturation: 0.7, brightness: 0.9)
-        
-        Path { path in
-            path.move(to: CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2))
-            path.addArc(
-                center: CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2),
-                radius: min(geometry.size.width, geometry.size.height) / 2,
-                startAngle: Angle(degrees: startAngle),
-                endAngle: Angle(degrees: endAngle),
-                clockwise: false
-            )
-        }
-        .fill(sliceColor)
-        .overlay(
-            Text(expenses[index].category)
-                .foregroundColor(.white)
-                .font(.caption)
-                .position(
-                    CGPoint(
-                        x: geometry.size.width / 2 + cos(CGFloat((startAngle + endAngle) / 2) * .pi / 180) * geometry.size.width / 4,
-                        y: geometry.size.height / 2 + sin(CGFloat((startAngle + endAngle) / 2) * .pi / 180) * geometry.size.height / 4
-                    )
+        Chart {
+            ForEach(data.keys.sorted(), id: \.self) { category in
+                SectorMark(
+                    angle: .value("Amount", data[category] ?? 0.0),
+                    innerRadius: .ratio(0.5),
+                    outerRadius: .ratio(1.0)
                 )
-        )
-    }
-}
-
-// 데이터 모델
-struct ExpenseCategory {
-    let category: String
-    let amount: Double
-}
-
-struct ChartView_Previews: PreviewProvider {
-    static var previews: some View {
-        // 샘플 데이터 추가
-        let viewModel = ExpenseViewModel()
-        viewModel.addExpense(Expense(date: Date(), category: "식비", amount: 30000, note: "점심 식사"))
-        viewModel.addExpense(Expense(date: Date(), category: "교통비", amount: 20000, note: "지하철"))
-        viewModel.addExpense(Expense(date: Date(), category: "식비", amount: 15000, note: "저녁 식사"))
-        
-        return ChartView(viewModel: viewModel)
+                .foregroundStyle(by: .value("Category", category))
+            }
+        }
+        .frame(height: 200)
     }
 }
