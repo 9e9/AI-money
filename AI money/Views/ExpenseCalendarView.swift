@@ -13,7 +13,10 @@ struct ExpenseCalendarView: View {
     @State private var selectedDate: Date? = nil
     @State private var showingDeleteAlert = false
     @State private var expenseToDelete: Expense? = nil
-    @State private var selectedTab: Int = 0
+
+    // 선택된 연도와 월을 관리하는 상태 변수
+    @State private var selectedYear: Int = Calendar.current.component(.year, from: Date())
+    @State private var selectedMonth: Int = Calendar.current.component(.month, from: Date())
 
     var body: some View {
         NavigationView {
@@ -27,7 +30,12 @@ struct ExpenseCalendarView: View {
                 .padding(.top, -45)
                 .padding(.bottom, 20)
                 
-                CalendarView(interval: DateInterval(start: Calendar.current.date(byAdding: .month, value: -1, to: Date())!, end: Date())) { date in
+                // CalendarView 호출
+                CalendarView(
+                    selectedYear: $selectedYear,
+                    selectedMonth: $selectedMonth,
+                    showHeaders: true
+                ) { date in
                     VStack {
                         Text(String(Calendar.current.component(.day, from: date)))
                             .foregroundColor(Calendar.current.isDate(date, inSameDayAs: selectedDate ?? Date.distantPast) ? .white : .primary)
