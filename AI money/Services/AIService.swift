@@ -14,7 +14,6 @@ class AIService {
     private init() {}
     
     func analyzeSpendingPattern(expenses: [Expense]) -> String {
-        // Implement AI model to analyze spending pattern and make predictions
         return "AI 모델을 기반으로 한 예측"
     }
 }

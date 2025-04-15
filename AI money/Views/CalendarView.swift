@@ -14,36 +14,32 @@ struct CalendarView<DateView>: View where DateView: View {
     let showHeaders: Bool
     let content: (Date) -> DateView
 
-    @State private var showingPicker = false // Picker Sheet 표시 여부 상태
+    @State private var showingPicker = false
 
     var body: some View {
         VStack(spacing: 0) {
-            // 상단 고정된 사용자 정의된 Picker
             HStack {
-                // 사용자 정의 텍스트로 Picker Sheet 표시
                 Button(action: {
-                    showingPicker.toggle() // Picker Sheet 표시 상태 토글
+                    showingPicker.toggle()
                 }) {
-                    Text("\(formatYear(selectedYear))년 \(String(format: "%02d", selectedMonth))월") // 선택된 연도와 월을 표시
+                    Text("\(formatYear(selectedYear))년 \(String(format: "%02d", selectedMonth))월")
                         .font(.title2)
-                        .foregroundColor(.black) // 텍스트 색상을 검정으로 설정
+                        .foregroundColor(.black)
                 }
 
-                Spacer() // 오른쪽에 공간 추가
+                Spacer()
 
-                // 원형 화살표 버튼
                 Button(action: {
-                    resetToCurrentDate() // 현재 연도와 월로 초기화
+                    resetToCurrentDate()
                 }) {
                     Image(systemName: "arrow.clockwise")
-                        .font(.title2) // 화살표 크기 설정
+                        .font(.title2)
                 }
             }
             .padding(.horizontal)
             .padding(.top, 10)
             .background(Color.white)
 
-            // 캘린더 그리드
             LazyVGrid(columns: Array(repeating: GridItem(), count: 7)) {
                 if showHeaders {
                     ForEach(0..<7, id: \.self) { index in
@@ -64,7 +60,7 @@ struct CalendarView<DateView>: View where DateView: View {
             }
             .padding(.top, 10)
         }
-        .sheet(isPresented: $showingPicker) { // Picker를 모달로 표시
+        .sheet(isPresented: $showingPicker) {
             YearMonthPicker(selectedYear: $selectedYear, selectedMonth: $selectedMonth, showingPicker: $showingPicker)
         }
     }
@@ -85,7 +81,7 @@ struct CalendarView<DateView>: View where DateView: View {
     // 쉼표 없는 숫자 포맷터
     private func formatYear(_ year: Int) -> String {
         let formatter = NumberFormatter()
-        formatter.numberStyle = .none // 쉼표 제거
+        formatter.numberStyle = .none
         return formatter.string(from: NSNumber(value: year)) ?? "\(year)"
     }
 
@@ -126,7 +122,7 @@ extension Calendar {
 struct YearMonthPicker: View {
     @Binding var selectedYear: Int
     @Binding var selectedMonth: Int
-    @Binding var showingPicker: Bool // Picker Sheet 표시 상태
+    @Binding var showingPicker: Bool
 
     private let availableYears = Array(2000...2100)
 
@@ -156,7 +152,7 @@ struct YearMonthPicker: View {
             }
             .navigationTitle("연도 및 월 선택")
             .navigationBarItems(trailing: Button("완료") {
-                showingPicker = false // Picker Sheet 닫기
+                showingPicker = false
             })
         }
     }

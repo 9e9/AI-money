@@ -15,7 +15,6 @@ class ExpenseViewModel: ObservableObject {
     }
     
     func loadExpenses() {
-        // Load expenses from storage or sample data
         expenses = [Expense(date: Date(), category: "식비", amount: 20000.0, note: "점심"),
                     Expense(date: Date(), category: "교통비", amount: 15000.0, note: "버스 요금")]
     }

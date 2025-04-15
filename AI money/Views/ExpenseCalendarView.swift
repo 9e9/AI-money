@@ -10,7 +10,7 @@ import SwiftUI
 struct ExpenseCalendarView: View {
     @StateObject private var viewModel = ExpenseViewModel()
     @State private var showingAddExpense = false
-    @State private var selectedDate: Date = Date() // 기본값 설정
+    @State private var selectedDate: Date = Date()
     @State private var showingDeleteAlert = false
     @State private var expenseToDelete: Expense? = nil
 
@@ -30,7 +30,6 @@ struct ExpenseCalendarView: View {
                 .padding(.top, -45)
                 .padding(.bottom, 20)
                 
-                // CalendarView 호출
                 CalendarView(
                     selectedYear: $selectedYear,
                     selectedMonth: $selectedMonth,
@@ -51,7 +50,7 @@ struct ExpenseCalendarView: View {
                             .font(.caption)
                             .foregroundColor(totalExpense > 0 ? .secondary : .clear)
                             .lineLimit(1)
-                            .frame(height: 0.5) // Ensure consistent height
+                            .frame(height: 0.5)
                     }
                     .padding(4)
                 }

@@ -11,14 +11,13 @@ struct AddExpenseView: View {
     @ObservedObject var viewModel: ExpenseViewModel
     @Environment(\.presentationMode) var presentationMode
     @State private var category = ""
-    @State private var amount = "" // 사용자가 입력한 금액
-    @State private var formattedAmount = "" // 쉼표가 추가된 금액
-    var selectedDate: Date // 달력에서 선택한 날짜를 전달받음
+    @State private var amount = ""
+    @State private var formattedAmount = ""
+    var selectedDate: Date
 
     var body: some View {
         NavigationView {
             Form {
-                // 선택한 날짜를 YYYY년 MM월 DD일 형식으로 표시
                 HStack {
                     Text("날짜")
                         .font(.headline)
@@ -30,9 +29,8 @@ struct AddExpenseView: View {
                 TextField("카테고리", text: $category)
 
                 TextField("금액", text: $formattedAmount)
-                    .keyboardType(.decimalPad) // 숫자 전용 키보드
-                    .onChange(of: formattedAmount) { // 새로운 스타일로 수정
-                        // 숫자만 추출하고 쉼표 추가
+                    .keyboardType(.decimalPad)
+                    .onChange(of: formattedAmount) {
                         amount = formattedAmount.filter { $0.isNumber }
                         formattedAmount = formatWithComma(amount)
                     }
@@ -55,7 +53,6 @@ struct AddExpenseView: View {
         }
     }
 
-    // Helper function to format date
     private func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
@@ -63,7 +60,6 @@ struct AddExpenseView: View {
         return formatter.string(from: date)
     }
 
-    // Helper function to format a string with commas
     private func formatWithComma(_ numberString: String) -> String {
         guard let number = Double(numberString) else { return numberString }
         let formatter = NumberFormatter()

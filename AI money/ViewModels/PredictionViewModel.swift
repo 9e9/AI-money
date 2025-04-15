@@ -15,7 +15,6 @@ class PredictionViewModel: ObservableObject {
     }
     
     func loadPrediction() {
-        // Call AIService to get prediction
         prediction = "당신의 소비 패턴은 다음 달에 식비 지출이 더 많을 것으로 예측됩니다."
     }
 }

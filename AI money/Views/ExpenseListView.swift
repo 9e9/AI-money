@@ -10,7 +10,7 @@ import SwiftUI
 struct ExpenseListView: View {
     @StateObject private var viewModel = ExpenseViewModel()
     @State private var showingAddExpense = false
-    @State private var selectedDate: Date = Date() // 기본값 설정
+    @State private var selectedDate: Date = Date()
     
     var body: some View {
         NavigationView {

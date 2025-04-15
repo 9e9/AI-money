@@ -14,7 +14,6 @@ struct PredictionView: View {
         VStack {
             Text("AI 예측")
                 .font(.largeTitle)
-            // Add AI prediction details here
         }
     }
 }
