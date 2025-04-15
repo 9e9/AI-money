@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ExpenseCalendarView: View {
-    @StateObject private var viewModel = ExpenseViewModel()
+    @ObservedObject var viewModel: ExpenseViewModel
     @State private var showingAddExpense = false
     @State private var selectedDate: Date = Date()
     @State private var showingDeleteAlert = false
