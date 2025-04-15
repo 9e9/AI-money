@@ -58,7 +58,7 @@ struct CalendarView<DateView>: View where DateView: View {
             .padding(.top, 10)
         }
         .sheet(isPresented: $showingPicker) { // Picker를 모달로 표시
-            YearMonthPicker(selectedYear: $selectedYear, selectedMonth: $selectedMonth)
+            YearMonthPicker(selectedYear: $selectedYear, selectedMonth: $selectedMonth, showingPicker: $showingPicker)
         }
     }
 
@@ -74,11 +74,12 @@ struct CalendarView<DateView>: View where DateView: View {
         default: return ""
         }
     }
+
     private func formattedDate(_ date: Date) -> String {
-            let formatter = DateFormatter()
-            formatter.dateFormat = "yyyy년 MM월" // 텍스트 형식을 "YYYY년 MM월"로 변경
-            return formatter.string(from: date)
-        }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy년 MM월" // 텍스트 형식을 "YYYY년 MM월"로 변경
+        return formatter.string(from: date)
+    }
 }
 
 extension Calendar {
@@ -109,34 +110,37 @@ extension Calendar {
 struct YearMonthPicker: View {
     @Binding var selectedYear: Int
     @Binding var selectedMonth: Int
+    @Binding var showingPicker: Bool // Picker Sheet 표시 상태
 
     private let availableYears = Array(2000...2100)
 
     var body: some View {
         NavigationView {
-            HStack {
-                Picker("연도 선택", selection: $selectedYear) {
-                    ForEach(availableYears, id: \.self) { year in
-                        Text("\(year)년").tag(year)
+            VStack {
+                HStack {
+                    Picker("연도 선택", selection: $selectedYear) {
+                        ForEach(availableYears, id: \.self) { year in
+                            Text("\(year)년").tag(year)
+                        }
                     }
-                }
-                .pickerStyle(WheelPickerStyle())
-                .padding()
+                    .pickerStyle(WheelPickerStyle())
+                    .frame(maxWidth: .infinity)
 
-                Picker("월 선택", selection: $selectedMonth) {
-                    ForEach(1...12, id: \.self) { month in
-                        Text("\(month)월").tag(month)
+                    Picker("월 선택", selection: $selectedMonth) {
+                        ForEach(1...12, id: \.self) { month in
+                            Text("\(month)월").tag(month)
+                        }
                     }
+                    .pickerStyle(WheelPickerStyle())
+                    .frame(maxWidth: .infinity)
                 }
-                .pickerStyle(WheelPickerStyle())
                 .padding()
 
                 Spacer()
             }
             .navigationTitle("연도 및 월 선택")
             .navigationBarItems(trailing: Button("완료") {
-                // Picker Sheet 닫기
-                UIApplication.shared.windows.first?.rootViewController?.dismiss(animated: true, completion: nil)
+                showingPicker = false // Picker Sheet 닫기
             })
         }
     }
