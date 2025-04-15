@@ -14,7 +14,6 @@ struct CalendarView<DateView>: View where DateView: View {
     let showHeaders: Bool
     let content: (Date) -> DateView
 
-    @State private var selectedDate = Date()
     @State private var showingPicker = false // Picker Sheet 표시 여부 상태
 
     var body: some View {
@@ -25,7 +24,7 @@ struct CalendarView<DateView>: View where DateView: View {
                 Button(action: {
                     showingPicker.toggle() // Picker Sheet 표시 상태 토글
                 }) {
-                    Text(formattedDate(selectedDate)) // 선택된 연도와 월을 표시
+                    Text("\(formatYear(selectedYear))년 \(String(format: "%02d", selectedMonth))월") // 선택된 연도와 월을 표시
                         .font(.title2)
                         .foregroundColor(.black) // 텍스트 색상을 검정으로 설정
                 }
@@ -75,10 +74,11 @@ struct CalendarView<DateView>: View where DateView: View {
         }
     }
 
-    private func formattedDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy년 MM월" // 텍스트 형식을 "YYYY년 MM월"로 변경
-        return formatter.string(from: date)
+    // 쉼표 없는 숫자 포맷터
+    private func formatYear(_ year: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .none // 쉼표 제거
+        return formatter.string(from: NSNumber(value: year)) ?? "\(year)"
     }
 }
 
