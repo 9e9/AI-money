@@ -59,64 +59,58 @@ struct ExpenseCalendarView: View {
 
                 ScrollView {
                     VStack {
-                        if Calendar.current.isDate(selectedDate, inSameDayAs: Date.distantPast) {
-                            Text("날짜를 선택하세요.")
+                        // 선택된 날짜에 해당하는 지출 내역 필터링
+                        let dailyExpenses = viewModel.expenses.filter { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }
+                        if dailyExpenses.isEmpty {
+                            Text("지출 없음")
                                 .font(.headline)
                                 .foregroundColor(.secondary)
                                 .padding()
                         } else {
-                            let dailyExpenses = viewModel.expenses.filter { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }
-                            if dailyExpenses.isEmpty {
-                                Text("지출 없음")
-                                    .font(.headline)
-                                    .foregroundColor(.secondary)
-                                    .padding()
-                            } else {
-                                ForEach(dailyExpenses) { expense in
-                                    HStack {
-                                        VStack(alignment: .leading) {
-                                            Text(expense.category)
-                                                .font(.headline)
-                                            HStack {
-                                                Text("\(Int(expense.amount)) 원") // 금액 표시
+                            ForEach(dailyExpenses) { expense in
+                                HStack {
+                                    VStack(alignment: .leading) {
+                                        Text(expense.category)
+                                            .font(.headline)
+                                        HStack {
+                                            Text("\(Int(expense.amount)) 원") // 금액 표시
+                                                .font(.subheadline)
+                                            
+                                            // 메모가 있을 경우 표시
+                                            if !expense.note.isEmpty {
+                                                Text("- \(expense.note)")
                                                     .font(.subheadline)
-                                                
-                                                // 메모가 있을 경우 표시
-                                                if !expense.note.isEmpty {
-                                                    Text("- \(expense.note)")
-                                                        .font(.subheadline)
-                                                        .foregroundColor(.secondary)
-                                                }
+                                                    .foregroundColor(.secondary)
                                             }
                                         }
-                                        Spacer()
-                                        Button(action: {
-                                            expenseToDelete = expense
-                                            showingDeleteAlert = true
-                                        }) {
-                                            Image(systemName: "trash")
-                                                .foregroundColor(.red)
-                                        }
-                                        .alert(isPresented: $showingDeleteAlert) {
-                                            Alert(
-                                                title: Text("삭제 확인"),
-                                                message: Text("이 지출 내역을 삭제하시겠습니까?"),
-                                                primaryButton: .destructive(Text("삭제")) {
-                                                    if let expenseToDelete = expenseToDelete {
-                                                        viewModel.removeExpense(expenseToDelete)
-                                                    }
-                                                },
-                                                secondaryButton: .cancel()
-                                            )
-                                        }
                                     }
-                                    .padding()
-                                    .background(Color.white)
-                                    .cornerRadius(10)
-                                    .shadow(radius: 5)
-                                    .padding(.horizontal)
-                                    .padding(.vertical, 5)
+                                    Spacer()
+                                    Button(action: {
+                                        expenseToDelete = expense
+                                        showingDeleteAlert = true
+                                    }) {
+                                        Image(systemName: "trash")
+                                            .foregroundColor(.red)
+                                    }
+                                    .alert(isPresented: $showingDeleteAlert) {
+                                        Alert(
+                                            title: Text("삭제 확인"),
+                                            message: Text("이 지출 내역을 삭제하시겠습니까?"),
+                                            primaryButton: .destructive(Text("삭제")) {
+                                                if let expenseToDelete = expenseToDelete {
+                                                    viewModel.removeExpense(expenseToDelete)
+                                                }
+                                            },
+                                            secondaryButton: .cancel(Text("취소"))
+                                        )
+                                    }
                                 }
+                                .padding()
+                                .background(Color.white)
+                                .cornerRadius(10)
+                                .shadow(radius: 5)
+                                .padding(.horizontal)
+                                .padding(.vertical, 5)
                             }
                         }
                     }
