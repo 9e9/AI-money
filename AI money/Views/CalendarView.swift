@@ -141,7 +141,7 @@ struct YearMonthPicker: View {
                     }
                     .pickerStyle(WheelPickerStyle())
                     .frame(maxWidth: .infinity)
-                    .onChange(of: selectedYear) { _ in
+                    .onChange(of: selectedYear) {
                         updateTotalExpense()
                     }
                     
@@ -152,7 +152,7 @@ struct YearMonthPicker: View {
                     }
                     .pickerStyle(WheelPickerStyle())
                     .frame(maxWidth: .infinity)
-                    .onChange(of: selectedMonth) { _ in
+                    .onChange(of: selectedMonth) {
                         updateTotalExpense()
                     }
                 }
@@ -178,18 +178,12 @@ struct YearMonthPicker: View {
     
     private func updateTotalExpense() {
         DispatchQueue.main.async {
-            print("All Expenses Before Filtering: \(viewModel.expenses)")
-            print("Expenses Memory Address: \(Unmanaged.passUnretained(viewModel.expenses as AnyObject).toOpaque())")
-
             let filteredExpenses = viewModel.expenses.filter { expense in
                 let components = Calendar.current.dateComponents([.year, .month], from: expense.date)
                 return components.year == selectedYear && components.month == selectedMonth
             }
 
             totalExpense = filteredExpenses.reduce(0) { $0 + $1.amount }
-
-            print("Filtered Expenses: \(filteredExpenses)")
-            print("Updated Total Expense: \(totalExpense) for \(selectedYear)-\(selectedMonth)")
         }
     }
 }
