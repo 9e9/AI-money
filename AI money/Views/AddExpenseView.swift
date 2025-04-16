@@ -14,6 +14,7 @@ struct AddExpenseView: View {
     @State private var amount = ""
     @State private var formattedAmount = ""
     @State private var note = "" // 메모 상태 추가
+    @State private var showingAlert = false // 금액 미입력 경고 상태 추가
     var selectedDate: Date
 
     // 카테고리 목록
@@ -60,14 +61,19 @@ struct AddExpenseView: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("저장") {
-                        let newExpense = Expense(
-                            date: selectedDate,
-                            category: selectedCategory,
-                            amount: Double(amount) ?? 0.0,
-                            note: note // 메모 저장
-                        )
-                        viewModel.addExpense(newExpense)
-                        presentationMode.wrappedValue.dismiss()
+                        // 금액 입력 유효성 검사
+                        if amount.isEmpty || Double(amount) == nil || Double(amount)! <= 0 {
+                            showingAlert = true
+                        } else {
+                            let newExpense = Expense(
+                                date: selectedDate,
+                                category: selectedCategory,
+                                amount: Double(amount) ?? 0.0,
+                                note: note // 메모 저장
+                            )
+                            viewModel.addExpense(newExpense)
+                            presentationMode.wrappedValue.dismiss()
+                        }
                     }
                 }
                 ToolbarItem(placement: .cancellationAction) {
@@ -75,6 +81,11 @@ struct AddExpenseView: View {
                         presentationMode.wrappedValue.dismiss()
                     }
                 }
+            }
+            .alert("금액을 입력하세요", isPresented: $showingAlert) {
+                Button("확인", role: .cancel) { }
+            } message: {
+                Text("지출 금액을 입력해야 저장할 수 있습니다.")
             }
         }
     }
