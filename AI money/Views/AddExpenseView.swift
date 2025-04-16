@@ -13,11 +13,10 @@ struct AddExpenseView: View {
     @State private var selectedCategory = "기타"
     @State private var amount = ""
     @State private var formattedAmount = ""
-    @State private var note = "" // 메모 상태 추가
-    @State private var showingAlert = false // 금액 미입력 경고 상태 추가
+    @State private var note = ""
+    @State private var showingAlert = false
     var selectedDate: Date
 
-    // 카테고리 목록
     let categories = ["식비", "교통", "쇼핑", "여가", "기타"]
 
     var body: some View {
@@ -27,7 +26,7 @@ struct AddExpenseView: View {
                     Text("날짜")
                     Spacer()
                     Text(formatDate(selectedDate))
-                        .font(.headline) // 폰트 통일
+                        .font(.headline)
                         .foregroundColor(.secondary)
                 }
 
@@ -43,7 +42,7 @@ struct AddExpenseView: View {
                     Spacer()
                     TextField("금액 입력(필수)", text: $formattedAmount)
                         .keyboardType(.decimalPad)
-                        .onChange(of: formattedAmount) { // iOS 17 스타일
+                        .onChange(of: formattedAmount) {
                             amount = formattedAmount.filter { $0.isNumber }
                             formattedAmount = formatWithComma(amount)
                         }
@@ -61,7 +60,6 @@ struct AddExpenseView: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("저장") {
-                        // 금액 입력 유효성 검사
                         if amount.isEmpty || Double(amount) == nil || Double(amount)! <= 0 {
                             showingAlert = true
                         } else {
@@ -69,7 +67,7 @@ struct AddExpenseView: View {
                                 date: selectedDate,
                                 category: selectedCategory,
                                 amount: Double(amount) ?? 0.0,
-                                note: note // 메모 저장
+                                note: note
                             )
                             viewModel.addExpense(newExpense)
                             presentationMode.wrappedValue.dismiss()

@@ -13,8 +13,6 @@ struct ExpenseCalendarView: View {
     @State private var selectedDate: Date = Date()
     @State private var showingDeleteAlert = false
     @State private var expenseToDelete: Expense? = nil
-
-    // 선택된 연도와 월을 관리하는 상태 변수
     @State private var selectedYear: Int = Calendar.current.component(.year, from: Date())
     @State private var selectedMonth: Int = Calendar.current.component(.month, from: Date())
 
@@ -31,7 +29,7 @@ struct ExpenseCalendarView: View {
                 .padding(.bottom, 20)
                 
                 CalendarView(
-                    selectedYear: $selectedYear,
+                    viewModel: viewModel, selectedYear: $selectedYear,
                     selectedMonth: $selectedMonth,
                     showHeaders: true
                 ) { date in
@@ -59,7 +57,6 @@ struct ExpenseCalendarView: View {
 
                 ScrollView {
                     VStack {
-                        // 선택된 날짜에 해당하는 지출 내역 필터링
                         let dailyExpenses = viewModel.expenses.filter { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }
                         if dailyExpenses.isEmpty {
                             Text("지출 없음")
@@ -73,10 +70,8 @@ struct ExpenseCalendarView: View {
                                         Text(expense.category)
                                             .font(.headline)
                                         HStack {
-                                            Text("\(Int(expense.amount)) 원") // 금액 표시
+                                            Text("\(Int(expense.amount)) 원")
                                                 .font(.subheadline)
-                                            
-                                            // 메모가 있을 경우 표시
                                             if !expense.note.isEmpty {
                                                 Text("- \(expense.note)")
                                                     .font(.subheadline)

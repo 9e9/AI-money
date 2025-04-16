@@ -8,15 +8,15 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var viewModel = ExpenseViewModel() // ViewModel 생성
+    @StateObject private var viewModel = ExpenseViewModel.shared
 
     var body: some View {
         TabView {
-            ExpenseCalendarView(viewModel: viewModel) // ViewModel 전달
+            ExpenseCalendarView(viewModel: viewModel)
                 .tabItem {
                     Label("지출 내역", systemImage: "calendar")
                 }
-            ChartView(viewModel: viewModel) // ViewModel 전달
+            ChartView(viewModel: viewModel)
                 .tabItem {
                     Label("차트", systemImage: "chart.bar")
                 }

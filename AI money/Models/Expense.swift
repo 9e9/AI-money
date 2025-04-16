@@ -7,10 +7,18 @@
 
 import Foundation
 
-struct Expense: Identifiable, Codable {
-    var id = UUID()
-    var date: Date
-    var category: String
-    var amount: Double
-    var note: String
+struct Expense: Identifiable, Equatable {
+    let id = UUID()
+    let date: Date
+    let category: String
+    let amount: Double
+    let note: String
+
+    static func == (lhs: Expense, rhs: Expense) -> Bool {
+        return lhs.id == rhs.id &&
+               lhs.date == rhs.date &&
+               lhs.category == rhs.category &&
+               lhs.amount == rhs.amount &&
+               lhs.note == rhs.note
+    }
 }

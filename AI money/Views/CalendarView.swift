@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CalendarView<DateView>: View where DateView: View {
+    @ObservedObject var viewModel: ExpenseViewModel
     @Environment(\.calendar) var calendar
     @Binding var selectedYear: Int
     @Binding var selectedMonth: Int
@@ -15,7 +16,6 @@ struct CalendarView<DateView>: View where DateView: View {
     let content: (Date) -> DateView
 
     @State private var showingPicker = false
-    @StateObject private var viewModel = ExpenseViewModel() // ViewModel 생성
 
     var body: some View {
         VStack(spacing: 0) {
@@ -62,8 +62,9 @@ struct CalendarView<DateView>: View where DateView: View {
             .padding(.top, 10)
         }
         .sheet(isPresented: $showingPicker) {
-            YearMonthPicker(selectedYear: $selectedYear, selectedMonth: $selectedMonth, showingPicker: $showingPicker,
-                viewModel: viewModel)
+            YearMonthPicker(
+                viewModel: viewModel, selectedYear: $selectedYear, selectedMonth: $selectedMonth, showingPicker: $showingPicker
+            )
         }
     }
 
@@ -80,14 +81,12 @@ struct CalendarView<DateView>: View where DateView: View {
         }
     }
 
-    // 쉼표 없는 숫자 포맷터
     private func formatYear(_ year: Int) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .none
         return formatter.string(from: NSNumber(value: year)) ?? "\(year)"
     }
 
-    // 현재 연도와 월로 초기화하는 함수
     private func resetToCurrentDate() {
         let currentDate = Date()
         let components = calendar.dateComponents([.year, .month], from: currentDate)
@@ -122,13 +121,15 @@ extension Calendar {
 }
 
 struct YearMonthPicker: View {
+    @ObservedObject var viewModel: ExpenseViewModel
     @Binding var selectedYear: Int
     @Binding var selectedMonth: Int
     @Binding var showingPicker: Bool
-    @ObservedObject var viewModel: ExpenseViewModel
-
+    
+    @State private var totalExpense: Double = 0
+    
     private let availableYears = Array(2000...2100)
-
+    
     var body: some View {
         NavigationView {
             VStack {
@@ -140,7 +141,10 @@ struct YearMonthPicker: View {
                     }
                     .pickerStyle(WheelPickerStyle())
                     .frame(maxWidth: .infinity)
-
+                    .onChange(of: selectedYear) { _ in
+                        updateTotalExpense()
+                    }
+                    
                     Picker("월 선택", selection: $selectedMonth) {
                         ForEach(1...12, id: \.self) { month in
                             Text("\(month)월").tag(month)
@@ -148,32 +152,44 @@ struct YearMonthPicker: View {
                     }
                     .pickerStyle(WheelPickerStyle())
                     .frame(maxWidth: .infinity)
+                    .onChange(of: selectedMonth) { _ in
+                        updateTotalExpense()
+                    }
                 }
                 .padding()
 
-                // 월별 총 지출 표시
                 VStack {
-                    let totalExpense = totalExpenseForSelectedMonth()
                     Text("총 지출: \(Int(totalExpense)) 원")
                         .font(.title2)
                         .padding(.top, 20)
                 }
-
+                
                 Spacer()
             }
             .navigationTitle("연도 및 월 선택")
             .navigationBarItems(trailing: Button("완료") {
                 showingPicker = false
             })
+            .onAppear {
+                updateTotalExpense()
+            }
         }
     }
+    
+    private func updateTotalExpense() {
+        DispatchQueue.main.async {
+            print("All Expenses Before Filtering: \(viewModel.expenses)")
+            print("Expenses Memory Address: \(Unmanaged.passUnretained(viewModel.expenses as AnyObject).toOpaque())")
 
-    // 선택된 연도와 월의 총 지출 계산
-    private func totalExpenseForSelectedMonth() -> Double {
-        let filteredExpenses = viewModel.expenses.filter { expense in
-            let components = Calendar.current.dateComponents([.year, .month], from: expense.date)
-            return components.year == selectedYear && components.month == selectedMonth
+            let filteredExpenses = viewModel.expenses.filter { expense in
+                let components = Calendar.current.dateComponents([.year, .month], from: expense.date)
+                return components.year == selectedYear && components.month == selectedMonth
+            }
+
+            totalExpense = filteredExpenses.reduce(0) { $0 + $1.amount }
+
+            print("Filtered Expenses: \(filteredExpenses)")
+            print("Updated Total Expense: \(totalExpense) for \(selectedYear)-\(selectedMonth)")
         }
-        return filteredExpenses.reduce(0) { $0 + $1.amount }
     }
 }
