@@ -36,3 +36,9 @@ struct ExpenseListView: View {
         }
     }
 }
+
+struct ExpenseListView_Previews: PreviewProvider {
+    static var previews: some View {
+        ExpenseListView()
+    }
+}

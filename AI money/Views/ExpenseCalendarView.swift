@@ -77,8 +77,17 @@ struct ExpenseCalendarView: View {
                                         VStack(alignment: .leading) {
                                             Text(expense.category)
                                                 .font(.headline)
-                                            Text("\(Int(expense.amount)) 원")
-                                                .font(.subheadline)
+                                            HStack {
+                                                Text("\(Int(expense.amount)) 원") // 금액 표시
+                                                    .font(.subheadline)
+                                                
+                                                // 메모가 있을 경우 표시
+                                                if !expense.note.isEmpty {
+                                                    Text("- \(expense.note)")
+                                                        .font(.subheadline)
+                                                        .foregroundColor(.secondary)
+                                                }
+                                            }
                                         }
                                         Spacer()
                                         Button(action: {
