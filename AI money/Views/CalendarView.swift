@@ -132,7 +132,7 @@ struct YearMonthPicker: View {
                 HStack {
                     Picker("연도 선택", selection: $selectedYear) {
                         ForEach(availableYears, id: \.self) { year in
-                            Text("\(year)년").tag(year)
+                            Text(String(format: "%d년", year)).tag(year)
                         }
                     }
                     .pickerStyle(WheelPickerStyle())
