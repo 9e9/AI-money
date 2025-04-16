@@ -15,6 +15,7 @@ struct CalendarView<DateView>: View where DateView: View {
     let content: (Date) -> DateView
 
     @State private var showingPicker = false
+    @StateObject private var viewModel = ExpenseViewModel() // ViewModel 생성
 
     var body: some View {
         VStack(spacing: 0) {
@@ -61,7 +62,8 @@ struct CalendarView<DateView>: View where DateView: View {
             .padding(.top, 10)
         }
         .sheet(isPresented: $showingPicker) {
-            YearMonthPicker(selectedYear: $selectedYear, selectedMonth: $selectedMonth, showingPicker: $showingPicker)
+            YearMonthPicker(selectedYear: $selectedYear, selectedMonth: $selectedMonth, showingPicker: $showingPicker,
+                viewModel: viewModel)
         }
     }
 
@@ -123,6 +125,7 @@ struct YearMonthPicker: View {
     @Binding var selectedYear: Int
     @Binding var selectedMonth: Int
     @Binding var showingPicker: Bool
+    @ObservedObject var viewModel: ExpenseViewModel
 
     private let availableYears = Array(2000...2100)
 
@@ -148,6 +151,14 @@ struct YearMonthPicker: View {
                 }
                 .padding()
 
+                // 월별 총 지출 표시
+                VStack {
+                    let totalExpense = totalExpenseForSelectedMonth()
+                    Text("총 지출: \(Int(totalExpense)) 원")
+                        .font(.title2)
+                        .padding(.top, 20)
+                }
+
                 Spacer()
             }
             .navigationTitle("연도 및 월 선택")
@@ -155,5 +166,14 @@ struct YearMonthPicker: View {
                 showingPicker = false
             })
         }
+    }
+
+    // 선택된 연도와 월의 총 지출 계산
+    private func totalExpenseForSelectedMonth() -> Double {
+        let filteredExpenses = viewModel.expenses.filter { expense in
+            let components = Calendar.current.dateComponents([.year, .month], from: expense.date)
+            return components.year == selectedYear && components.month == selectedMonth
+        }
+        return filteredExpenses.reduce(0) { $0 + $1.amount }
     }
 }
