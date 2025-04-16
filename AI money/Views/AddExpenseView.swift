@@ -10,12 +10,13 @@ import SwiftUI
 struct AddExpenseView: View {
     @ObservedObject var viewModel: ExpenseViewModel
     @Environment(\.presentationMode) var presentationMode
-    @State private var selectedCategory = "기타" // 기본 선택값
+    @State private var selectedCategory = "기타"
     @State private var amount = ""
     @State private var formattedAmount = ""
+    @State private var note = "" // 메모 상태 추가
     var selectedDate: Date
 
-    // 사전에 정의된 카테고리 목록
+    // 카테고리 목록
     let categories = ["식비", "교통", "쇼핑", "여가", "기타"]
 
     var body: some View {
@@ -23,9 +24,9 @@ struct AddExpenseView: View {
             Form {
                 HStack {
                     Text("날짜")
-                        .font(.headline)
                     Spacer()
                     Text(formatDate(selectedDate))
+                        .font(.headline) // 폰트 통일
                         .foregroundColor(.secondary)
                 }
 
@@ -34,20 +35,37 @@ struct AddExpenseView: View {
                         Text(category)
                     }
                 }
-                .pickerStyle(MenuPickerStyle()) // 드롭다운 스타일
+                .pickerStyle(MenuPickerStyle())
 
-                TextField("금액", text: $formattedAmount)
-                    .keyboardType(.decimalPad)
-                    .onChange(of: formattedAmount) {
-                        amount = formattedAmount.filter { $0.isNumber }
-                        formattedAmount = formatWithComma(amount)
-                    }
+                HStack {
+                    Text("금액")
+                    Spacer()
+                    TextField("금액 입력(필수)", text: $formattedAmount)
+                        .keyboardType(.decimalPad)
+                        .onChange(of: formattedAmount) { // iOS 17 스타일
+                            amount = formattedAmount.filter { $0.isNumber }
+                            formattedAmount = formatWithComma(amount)
+                        }
+                        .multilineTextAlignment(.trailing)
+                }
+
+                HStack {
+                    Text("메모")
+                    Spacer()
+                    TextField("선택 사항", text: $note)
+                        .multilineTextAlignment(.trailing)
+                }
             }
             .navigationTitle("지출 추가")
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("저장") {
-                        let newExpense = Expense(date: selectedDate, category: selectedCategory, amount: Double(amount) ?? 0.0, note: "")
+                        let newExpense = Expense(
+                            date: selectedDate,
+                            category: selectedCategory,
+                            amount: Double(amount) ?? 0.0,
+                            note: note // 메모 저장
+                        )
                         viewModel.addExpense(newExpense)
                         presentationMode.wrappedValue.dismiss()
                     }
