@@ -1,5 +1,5 @@
 //
-//  UserDefaults+Extensions.swift
+//  UserDefaultsExtensions.swift
 //  AI money
 //
 //  Created by 조준희 on 4/18/25.

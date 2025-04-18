@@ -11,7 +11,6 @@ struct CreateNewCategoryView: View {
     @Environment(\.presentationMode) var presentationMode
     @State private var newCategoryName: String = ""
     
-    // UserDefaults를 통해 카테고리를 저장 및 로드
     private var customCategories: [String] {
         get { UserDefaults.standard.customCategories }
         set { UserDefaults.standard.customCategories = newValue }
@@ -42,14 +41,14 @@ struct CreateNewCategoryView: View {
 
     private func saveCategory() {
         let trimmedCategory = newCategoryName.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmedCategory.isEmpty else { return } // 빈 값 방지
-        guard !customCategories.contains(trimmedCategory) else { return } // 중복 방지
+        guard !trimmedCategory.isEmpty else { return }
+        guard !customCategories.contains(trimmedCategory) else { return }
 
         var updatedCategories = customCategories
-        updatedCategories.append(trimmedCategory) // 새 카테고리 추가
+        updatedCategories.append(trimmedCategory)
         UserDefaults.standard.customCategories = updatedCategories
         
-        presentationMode.wrappedValue.dismiss() // 화면 닫기
+        presentationMode.wrappedValue.dismiss()
     }
 }
 
