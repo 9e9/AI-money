@@ -40,7 +40,6 @@ struct CategoryManagementView: View {
                                 }
                                 .buttonStyle(BorderlessButtonStyle())
                             }
-                            .padding(.vertical, 8)
                         }
                     }
                     .listStyle(PlainListStyle())
