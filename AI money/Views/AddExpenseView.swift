@@ -2,16 +2,16 @@
 //  AddExpenseView.swift
 //  AI money
 //
-//  Created by 조준희 on 3/30/25.
-//
 
 import SwiftUI
 
 struct AddExpenseView: View {
     @ObservedObject var viewModel: ExpenseViewModel
     @Environment(\.presentationMode) var presentationMode
-    @State private var showingAlert = false
-    @State private var deletingIndex: Int? = nil
+    @State private var showingAlert = false // 저장 또는 삭제 팝업 플래그
+    @State private var alertMessage = "" // 팝업 메시지
+    @State private var alertTitle = "" // 팝업 타이틀
+    @State private var deletingIndex: Int? = nil // 삭제할 인덱스
     @State private var showCategoryManagement = false
     @State private var allCategories: [String] = []
     @State private var isEditing = false
@@ -52,29 +52,23 @@ struct AddExpenseView: View {
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("저장", action: saveAllExpenses)
+                    Button("저장", action: validateAndSaveExpenses)
                 }
                 ToolbarItem(placement: .cancellationAction) {
                     Button("취소", action: cancelExpense)
                 }
             }
-            .alert(isPresented: $showingAlert) {
-                Alert(
-                    title: Text("삭제 확인"),
-                    message: Text("이 지출 묶음을 삭제하시겠습니까?"),
-                    primaryButton: .destructive(Text("삭제"), action: {
-                        if let index = deletingIndex {
-                            deleteExpenseGroup(at: index)
-                        }
-                    }),
-                    secondaryButton: .cancel(Text("취소"), action: {
-                        deletingIndex = nil
-                    })
-                )
+            .alert(alertTitle, isPresented: $showingAlert) {
+                if deletingIndex != nil {
+                    Button("삭제", role: .destructive, action: confirmDelete)
+                    Button("취소", role: .cancel) { deletingIndex = nil }
+                } else {
+                    Button("확인", role: .cancel) { }
+                }
+            } message: {
+                Text(alertMessage)
             }
-            .sheet(isPresented: $showCategoryManagement, onDismiss: {
-                updateCategories()
-            }) {
+            .sheet(isPresented: $showCategoryManagement, onDismiss: updateCategories) {
                 CategoryManagementView()
             }
             .onAppear {
@@ -91,7 +85,6 @@ struct AddExpenseView: View {
                 Text(Self.formatDate(selectedDate))
                     .foregroundColor(.secondary)
             }
-            .frame(maxHeight: 25)
             Divider()
 
             HStack {
@@ -114,17 +107,23 @@ struct AddExpenseView: View {
                 }
                 .pickerStyle(MenuPickerStyle())
             }
-            .frame(maxHeight: 25)
             Divider()
 
             HStack {
                 Text("금액")
                 Spacer()
                 HStack {
-                    TextField("금액 입력(필수)", text: group.amount)
-                        .keyboardType(.decimalPad)
-                        .onChange(of: group.amount.wrappedValue, perform: { newValue in
-                            group.wrappedValue.formattedAmount = Self.formatWithComma(newValue)
+                    TextField("금액 입력(필수)", text: group.formattedAmount)
+                        .keyboardType(.numberPad)
+                        .onChange(of: group.formattedAmount.wrappedValue, perform: { newValue in
+                            let filteredValue = newValue.replacingOccurrences(of: ",", with: "")
+                            if let number = Int(filteredValue) {
+                                group.wrappedValue.formattedAmount = Self.formatWithComma(String(number))
+                                group.wrappedValue.amount = String(number)
+                            } else {
+                                group.wrappedValue.formattedAmount = ""
+                                group.wrappedValue.amount = ""
+                            }
                         })
                         .multilineTextAlignment(.trailing)
                     if !group.wrappedValue.formattedAmount.isEmpty {
@@ -133,7 +132,6 @@ struct AddExpenseView: View {
                 }
                 .frame(maxWidth: 200)
             }
-            .frame(maxHeight: 25)
             Divider()
 
             HStack {
@@ -142,12 +140,13 @@ struct AddExpenseView: View {
                 TextField("선택 사항", text: group.note)
                     .multilineTextAlignment(.trailing)
             }
-            .frame(maxHeight: 25)
             Divider()
 
             if isEditing && expenseGroups.count > 1 {
                 Button(action: {
                     deletingIndex = index
+                    alertTitle = "삭제 확인"
+                    alertMessage = "이 지출 묶음을 삭제하시겠습니까?"
                     showingAlert = true
                 }) {
                     Image(systemName: "trash")
@@ -158,7 +157,6 @@ struct AddExpenseView: View {
                 }
                 .buttonStyle(BorderlessButtonStyle())
                 .padding(.top, 8)
-                .frame(maxWidth: .infinity, alignment: .center)
             }
         }
         .padding()
@@ -168,15 +166,11 @@ struct AddExpenseView: View {
         .padding(.horizontal)
     }
 
-    private func deleteExpenseGroup(at index: Int) {
-        guard index >= 0 && index < expenseGroups.count else { return }
-        expenseGroups.remove(at: index)
-        deletingIndex = nil
-    }
-
-    private func saveAllExpenses() {
+    private func validateAndSaveExpenses() {
         for group in expenseGroups {
             guard let expenseAmount = Double(group.amount), expenseAmount > 0 else {
+                alertTitle = "금액을 입력하세요"
+                alertMessage = "지출 금액을 입력해야 저장할 수 있습니다."
                 showingAlert = true
                 return
             }
@@ -195,38 +189,38 @@ struct AddExpenseView: View {
         presentationMode.wrappedValue.dismiss()
     }
 
+    private func confirmDelete() {
+        if let index = deletingIndex {
+            expenseGroups.remove(at: index)
+        }
+        deletingIndex = nil
+    }
+
     private func cancelExpense() {
         presentationMode.wrappedValue.dismiss()
     }
 
     private func updateCategories() {
+        // 기본 카테고리 및 사용자 정의 카테고리 로드
         let predefinedCategories = ["식비", "교통", "쇼핑", "여가", "기타"]
         let customCategories = UserDefaults.standard.customCategories
         allCategories = predefinedCategories + customCategories
     }
 
     private static func formatDate(_ date: Date) -> String {
-        dateFormatter.string(from: date)
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "YYYY년 MM월 dd일"
+        return formatter.string(from: date)
     }
 
     private static func formatWithComma(_ numberString: String) -> String {
         guard let number = Double(numberString) else { return numberString }
-        return numberFormatter.string(from: NSNumber(value: number)) ?? numberString
-    }
-
-    private static let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "YYYY년 MM월 dd일"
-        return formatter
-    }()
-
-    private static let numberFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = 0
-        return formatter
-    }()
+        return formatter.string(from: NSNumber(value: number)) ?? numberString
+    }
 }
 
 struct ExpenseGroup {
