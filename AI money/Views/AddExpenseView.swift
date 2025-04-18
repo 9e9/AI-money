@@ -29,6 +29,16 @@ struct AddExpenseView: View {
             }
             .navigationTitle("지출 추가")
             .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        // 수정 버튼 클릭 시 동작 추가 예정
+                        print("수정 버튼 클릭됨")
+                    }) {
+                        Text("수정")
+                            .font(.headline)
+                            .foregroundColor(.blue)
+                    }
+                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("저장", action: saveExpense)
                 }
