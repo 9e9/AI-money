@@ -76,13 +76,15 @@ struct AddExpenseView: View {
 
     private func expenseGroupView(group: Binding<ExpenseGroup>) -> some View {
         // 하나의 지출 묶음을 렌더링
-        VStack(spacing: 16) {
+        VStack {
             HStack {
                 Text("날짜")
                 Spacer()
                 Text(Self.formatDate(selectedDate))
                     .foregroundColor(.secondary)
             }
+            .frame(maxHeight: 25)
+            Divider()
 
             HStack {
                 Text("카테고리")
@@ -103,7 +105,11 @@ struct AddExpenseView: View {
                     }
                 }
                 .pickerStyle(MenuPickerStyle())
+                //.frame(maxHeight: 10)
+                
             }
+            .frame(maxHeight: 25)
+            Divider()
 
             HStack {
                 Text("금액")
@@ -121,6 +127,8 @@ struct AddExpenseView: View {
                 }
                 .frame(maxWidth: 200)
             }
+            .frame(maxHeight: 25)
+            Divider()
 
             HStack {
                 Text("메모")
@@ -128,6 +136,7 @@ struct AddExpenseView: View {
                 TextField("선택 사항", text: group.note)
                     .multilineTextAlignment(.trailing)
             }
+            .frame(maxHeight: 25)
         }
         .padding()
         .background(Color(UIColor.systemGray6))
