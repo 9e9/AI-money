@@ -10,26 +10,24 @@ import SwiftUI
 struct AddExpenseView: View {
     @ObservedObject var viewModel: ExpenseViewModel
     @Environment(\.presentationMode) var presentationMode
-    @State private var showingAlert = false // 삭제 확인 팝업 상태
-    @State private var deletingIndex: Int? = nil // 삭제 대상 인덱스
+    @State private var showingAlert = false
+    @State private var deletingIndex: Int? = nil
     @State private var showCategoryManagement = false
     @State private var allCategories: [String] = []
-    @State private var isEditing = false // 수정 버튼 상태 관리
-    @State private var expenseGroups: [ExpenseGroup] = [ExpenseGroup()] // 여러 지출 묶음 관리
+    @State private var isEditing = false
+    @State private var expenseGroups: [ExpenseGroup] = [ExpenseGroup()]
     var selectedDate: Date
 
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 16) {
-                    // 지출 묶음 리스트
                     ForEach(expenseGroups.indices, id: \.self) { index in
                         expenseGroupView(group: $expenseGroups[index], index: index)
                     }
 
-                    // 새로운 지출 추가 버튼
                     Button(action: {
-                        expenseGroups.append(ExpenseGroup()) // 새로운 묶음 추가
+                        expenseGroups.append(ExpenseGroup())
                     }) {
                         Text("새로운 지출 추가")
                             .font(.headline)
@@ -46,7 +44,7 @@ struct AddExpenseView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
-                        isEditing.toggle() // 수정 상태 변경
+                        isEditing.toggle()
                     }) {
                         Text(isEditing ? "취소" : "수정")
                             .font(.headline)
@@ -70,7 +68,7 @@ struct AddExpenseView: View {
                         }
                     }),
                     secondaryButton: .cancel(Text("취소"), action: {
-                        deletingIndex = nil // 삭제 인덱스 초기화
+                        deletingIndex = nil
                     })
                 )
             }
@@ -86,7 +84,6 @@ struct AddExpenseView: View {
     }
 
     private func expenseGroupView(group: Binding<ExpenseGroup>, index: Int) -> some View {
-        // 하나의 지출 묶음을 렌더링
         VStack {
             HStack {
                 Text("날짜")
@@ -99,7 +96,7 @@ struct AddExpenseView: View {
 
             HStack {
                 Text("카테고리")
-                if isEditing { // 수정 상태일 때만 '관리' 버튼 표시
+                if isEditing {
                     Button(action: {
                         showCategoryManagement = true
                     }) {
@@ -148,11 +145,10 @@ struct AddExpenseView: View {
             .frame(maxHeight: 25)
             Divider()
 
-            // 삭제 버튼 (수정 모드일 때만 표시 + 최소 2개 이상의 묶음일 때만 표시)
             if isEditing && expenseGroups.count > 1 {
                 Button(action: {
-                    deletingIndex = index // 삭제 대상 설정
-                    showingAlert = true // Alert 표시
+                    deletingIndex = index
+                    showingAlert = true
                 }) {
                     Image(systemName: "trash")
                         .resizable()
@@ -162,7 +158,7 @@ struct AddExpenseView: View {
                 }
                 .buttonStyle(BorderlessButtonStyle())
                 .padding(.top, 8)
-                .frame(maxWidth: .infinity, alignment: .center) // 가운데 정렬
+                .frame(maxWidth: .infinity, alignment: .center)
             }
         }
         .padding()
@@ -173,14 +169,12 @@ struct AddExpenseView: View {
     }
 
     private func deleteExpenseGroup(at index: Int) {
-        // 삭제 처리
-        guard index >= 0 && index < expenseGroups.count else { return } // 유효성 확인
-        expenseGroups.remove(at: index) // 배열에서 항목 제거
-        deletingIndex = nil // 삭제 인덱스 초기화
+        guard index >= 0 && index < expenseGroups.count else { return }
+        expenseGroups.remove(at: index)
+        deletingIndex = nil
     }
 
     private func saveAllExpenses() {
-        // 모든 묶음 검증 및 저장
         for group in expenseGroups {
             guard let expenseAmount = Double(group.amount), expenseAmount > 0 else {
                 showingAlert = true
@@ -188,7 +182,6 @@ struct AddExpenseView: View {
             }
         }
 
-        // 유효한 경우 저장
         for group in expenseGroups {
             let newExpense = Expense(
                 date: selectedDate,
