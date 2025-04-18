@@ -46,7 +46,7 @@ struct AddExpenseView: View {
                     Button(action: {
                         isEditing.toggle()
                     }) {
-                        Text(isEditing ? "취소" : "수정")
+                        Text(isEditing ? "닫기" : "수정")
                             .font(.headline)
                             .foregroundColor(isEditing ? .red : .blue)
                     }
