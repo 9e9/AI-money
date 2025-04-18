@@ -16,7 +16,6 @@ struct AddExpenseView: View {
     @State private var allCategories: [String] = []
     @State private var isEditing = false // 수정 버튼 상태 관리
     @State private var expenseGroups: [ExpenseGroup] = [ExpenseGroup()] // 여러 지출 묶음 관리
-    @State private var alertMessage = "" // 경고 메시지
     var selectedDate: Date
 
     var body: some View {
@@ -31,7 +30,6 @@ struct AddExpenseView: View {
                     // 새로운 지출 추가 버튼
                     Button(action: {
                         expenseGroups.append(ExpenseGroup()) // 새로운 묶음 추가
-                        print("새로운 지출 추가됨. 현재 그룹 수: \(expenseGroups.count)")
                     }) {
                         Text("새로운 지출 추가")
                             .font(.headline)
@@ -49,7 +47,6 @@ struct AddExpenseView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
                         isEditing.toggle() // 수정 상태 변경
-                        print("수정 상태 변경됨. isEditing: \(isEditing)")
                     }) {
                         Text(isEditing ? "취소" : "수정")
                             .font(.headline)
@@ -105,7 +102,6 @@ struct AddExpenseView: View {
                 if isEditing { // 수정 상태일 때만 '관리' 버튼 표시
                     Button(action: {
                         showCategoryManagement = true
-                        print("카테고리 관리 버튼 클릭됨.")
                     }) {
                         Text("관리")
                             .foregroundColor(.blue)
@@ -150,23 +146,23 @@ struct AddExpenseView: View {
                     .multilineTextAlignment(.trailing)
             }
             .frame(maxHeight: 25)
+            Divider()
 
-            // 삭제 버튼 (수정 모드일 때만 표시)
-            if isEditing { // 수정 상태에서만 삭제 버튼 표시
-                Divider()
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        deletingIndex = index // 삭제 대상 설정
-                        showingAlert = true // Alert 표시
-                        print("삭제 버튼 클릭됨. 인덱스: \(index)")
-                    }) {
-                        Text("삭제")
-                            .font(.headline)
-                            .foregroundColor(.red)
-                    }
+            // 삭제 버튼 (수정 모드일 때만 표시 + 최소 2개 이상의 묶음일 때만 표시)
+            if isEditing && expenseGroups.count > 1 {
+                Button(action: {
+                    deletingIndex = index // 삭제 대상 설정
+                    showingAlert = true // Alert 표시
+                }) {
+                    Image(systemName: "trash")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 24, height: 24)
+                        .foregroundColor(.red)
                 }
+                .buttonStyle(BorderlessButtonStyle())
                 .padding(.top, 8)
+                .frame(maxWidth: .infinity, alignment: .center) // 가운데 정렬
             }
         }
         .padding()
@@ -178,20 +174,15 @@ struct AddExpenseView: View {
 
     private func deleteExpenseGroup(at index: Int) {
         // 삭제 처리
-        guard index >= 0 && index < expenseGroups.count else {
-            print("Invalid index: \(index)") // 디버깅 로그 추가
-            return
-        }
+        guard index >= 0 && index < expenseGroups.count else { return } // 유효성 확인
         expenseGroups.remove(at: index) // 배열에서 항목 제거
         deletingIndex = nil // 삭제 인덱스 초기화
-        print("Deleted index \(index). Remaining groups: \(expenseGroups)") // 디버깅 로그
     }
 
     private func saveAllExpenses() {
         // 모든 묶음 검증 및 저장
         for group in expenseGroups {
             guard let expenseAmount = Double(group.amount), expenseAmount > 0 else {
-                alertMessage = "모든 지출 묶음의 금액을 입력해주세요."
                 showingAlert = true
                 return
             }
