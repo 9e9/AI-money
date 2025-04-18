@@ -26,7 +26,6 @@ struct AddExpenseView: View {
                     Text("날짜")
                     Spacer()
                     Text(formatDate(selectedDate))
-                        .font(.headline)
                         .foregroundColor(.secondary)
                 }
 
@@ -40,13 +39,20 @@ struct AddExpenseView: View {
                 HStack {
                     Text("금액")
                     Spacer()
-                    TextField("금액 입력(필수)", text: $formattedAmount)
-                        .keyboardType(.decimalPad)
-                        .onChange(of: formattedAmount) {
-                            amount = formattedAmount.filter { $0.isNumber }
-                            formattedAmount = formatWithComma(amount)
+                    HStack {
+                        TextField("금액 입력(필수)", text: $formattedAmount)
+                            .keyboardType(.decimalPad)
+                            .onChange(of: formattedAmount) {
+                                amount = formattedAmount.filter { $0.isNumber }
+                                formattedAmount = formatWithComma(amount)
+                            }
+                            .multilineTextAlignment(.trailing)
+                        if !formattedAmount.isEmpty {
+                            Text("원")
+                                .foregroundColor(.secondary)
                         }
-                        .multilineTextAlignment(.trailing)
+                    }
+                    .frame(maxWidth: 200)
                 }
 
                 HStack {
