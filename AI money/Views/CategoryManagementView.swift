@@ -12,6 +12,7 @@ struct CategoryManagementView: View {
     @ObservedObject var viewModel: ExpenseViewModel = ExpenseViewModel.shared
     @State private var newCategoryName = ""
     @State private var showingAlert = false
+    @State private var alertMessage = ""
     @State private var categoryToDelete: String?
     @State private var selectedCategories: Set<String> = []
     @State private var isEditingMode = false
@@ -21,8 +22,8 @@ struct CategoryManagementView: View {
             VStack {
                 HStack {
                     if isEditingMode {
-                        Button(action: selectAllCategories) {
-                            Text(selectedCategories.count == viewModel.customCategories.count ? "전체 해제" : "전체 선택")
+                        Button(action: handleSelectionAction) {
+                            Text(selectionButtonTitle())
                                 .font(.headline)
                                 .padding(8)
                                 .background(Color.blue.opacity(0.2))
@@ -39,7 +40,10 @@ struct CategoryManagementView: View {
                                     .cornerRadius(8)
                             }
                         } else {
-                            Button(action: deleteSelectedCategories) {
+                            Button(action: {
+                                showingAlert = true
+                                alertMessage = "선택한 카테고리를 삭제하시겠습니까? 관련된 지출 내역도 삭제됩니다."
+                            }) {
                                 Text("삭제")
                                     .font(.headline)
                                     .padding(8)
@@ -71,6 +75,7 @@ struct CategoryManagementView: View {
                     List {
                         ForEach(viewModel.customCategories, id: \.self) { category in
                             HStack {
+
                                 if isEditingMode {
                                     Button(action: {
                                         toggleSelection(for: category)
@@ -90,6 +95,7 @@ struct CategoryManagementView: View {
                                     Button(action: {
                                         categoryToDelete = category
                                         showingAlert = true
+                                        alertMessage = "'\(category)' 카테고리를 삭제하시겠습니까? 관련된 지출 내역도 삭제됩니다."
                                     }) {
                                         Image(systemName: "trash")
                                             .foregroundColor(.red)
@@ -123,25 +129,47 @@ struct CategoryManagementView: View {
                 presentationMode.wrappedValue.dismiss()
             })
             .alert(isPresented: $showingAlert) {
-                Alert(
-                    title: Text("삭제 확인"),
-                    message: Text("정말로 '\(categoryToDelete ?? "")' 카테고리를 삭제하시겠습니까? 관련된 지출 내역도 삭제됩니다."),
-                    primaryButton: .destructive(Text("삭제")) {
-                        if let category = categoryToDelete {
-                            deleteCategory(named: category)
-                        }
-                    },
-                    secondaryButton: .cancel(Text("취소"))
-                )
+                if alertMessage.contains("삭제하시겠습니까") {
+                    return Alert(
+                        title: Text("삭제 확인"),
+                        message: Text(alertMessage),
+                        primaryButton: .destructive(Text("삭제")) {
+                            if let category = categoryToDelete {
+                                deleteCategory(named: category)
+                            } else {
+                                deleteSelectedCategories()
+                            }
+                        },
+                        secondaryButton: .cancel(Text("취소"))
+                    )
+                } else {
+                    return Alert(
+                        title: Text("알림"),
+                        message: Text(alertMessage),
+                        dismissButton: .default(Text("확인"))
+                    )
+                }
             }
         }
     }
 
-    private func selectAllCategories() {
-        if selectedCategories.count == viewModel.customCategories.count {
+    private func selectionButtonTitle() -> String {
+        if selectedCategories.isEmpty {
+            return "전체 선택"
+        } else if selectedCategories.count == viewModel.customCategories.count {
+            return "전체 해제"
+        } else {
+            return "선택 해제"
+        }
+    }
+
+    private func handleSelectionAction() {
+        if selectedCategories.isEmpty {
+            selectedCategories = Set(viewModel.customCategories)
+        } else if selectedCategories.count == viewModel.customCategories.count {
             selectedCategories.removeAll()
         } else {
-            selectedCategories = Set(viewModel.customCategories)
+            selectedCategories.removeAll()
         }
     }
 
@@ -156,6 +184,15 @@ struct CategoryManagementView: View {
     private func addCategory() {
         let trimmedName = newCategoryName.trimmingCharacters(in: .whitespaces)
         guard !trimmedName.isEmpty else { return }
+        let normalizedNewCategory = trimmedName.replacingOccurrences(of: " ", with: "").lowercased()
+        let normalizedCategories = viewModel.customCategories.map { $0.replacingOccurrences(of: " ", with: "").lowercased() }
+        
+        if normalizedCategories.contains(normalizedNewCategory) {
+            showingAlert = true
+            alertMessage = "'\(trimmedName)' 카테고리는 이미 존재합니다."
+            return
+        }
+        
         viewModel.addCustomCategory(trimmedName)
         newCategoryName = ""
     }
