@@ -22,68 +22,18 @@ struct AddExpenseView: View {
     var body: some View {
         NavigationView {
             Form {
-                HStack {
-                    Text("날짜")
-                    Spacer()
-                    Text(formatDate(selectedDate))
-                        .foregroundColor(.secondary)
-                }
-
-                Picker("카테고리", selection: $selectedCategory) {
-                    ForEach(categories, id: \.self) { category in
-                        Text(category)
-                    }
-                }
-                .pickerStyle(MenuPickerStyle())
-
-                HStack {
-                    Text("금액")
-                    Spacer()
-                    HStack {
-                        TextField("금액 입력(필수)", text: $formattedAmount)
-                            .keyboardType(.decimalPad)
-                            .onChange(of: formattedAmount) {
-                                amount = formattedAmount.filter { $0.isNumber }
-                                formattedAmount = formatWithComma(amount)
-                            }
-                            .multilineTextAlignment(.trailing)
-                        if !formattedAmount.isEmpty {
-                            Text("원")
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                    .frame(maxWidth: 200)
-                }
-
-                HStack {
-                    Text("메모")
-                    Spacer()
-                    TextField("선택 사항", text: $note)
-                        .multilineTextAlignment(.trailing)
-                }
+                dateSection
+                categoryPicker
+                amountInput
+                noteInput
             }
             .navigationTitle("지출 추가")
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("저장") {
-                        if amount.isEmpty || Double(amount) == nil || Double(amount)! <= 0 {
-                            showingAlert = true
-                        } else {
-                            let newExpense = Expense(
-                                date: selectedDate,
-                                category: selectedCategory,
-                                amount: Double(amount) ?? 0.0,
-                                note: note
-                            )
-                            viewModel.addExpense(newExpense)
-                            presentationMode.wrappedValue.dismiss()
-                        }
-                    }
+                    Button("저장", action: saveExpense)
                 }
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("취소") {
-                        presentationMode.wrappedValue.dismiss()
-                    }
+                    Button("취소", action: cancelExpense)
                 }
             }
             .alert("금액을 입력하세요", isPresented: $showingAlert) {
@@ -94,18 +44,104 @@ struct AddExpenseView: View {
         }
     }
 
-    private func formatDate(_ date: Date) -> String {
+    // MARK: - View Components
+
+    private var dateSection: some View {
+        HStack {
+            Text("날짜")
+            Spacer()
+            Text(Self.formatDate(selectedDate))
+                .foregroundColor(.secondary)
+        }
+    }
+
+    private var categoryPicker: some View {
+        Picker("카테고리", selection: $selectedCategory) {
+            ForEach(categories, id: \.self) { category in
+                Text(category)
+            }
+        }
+        .pickerStyle(MenuPickerStyle())
+    }
+
+    private var amountInput: some View {
+        HStack {
+            Text("금액")
+            Spacer()
+            HStack {
+                TextField("금액 입력(필수)", text: $formattedAmount)
+                    .keyboardType(.decimalPad)
+                    .onChange(of: formattedAmount, perform: updateAmount)
+                    .multilineTextAlignment(.trailing)
+                if !formattedAmount.isEmpty {
+                    Text("원").foregroundColor(.secondary)
+                }
+            }
+            .frame(maxWidth: 200)
+        }
+    }
+
+    private var noteInput: some View {
+        HStack {
+            Text("메모")
+            Spacer()
+            TextField("선택 사항", text: $note)
+                .multilineTextAlignment(.trailing)
+        }
+    }
+
+    // MARK: - Action Handlers
+
+    private func saveExpense() {
+        guard let expenseAmount = Double(amount), expenseAmount > 0 else {
+            showingAlert = true
+            return
+        }
+
+        let newExpense = Expense(
+            date: selectedDate,
+            category: selectedCategory,
+            amount: expenseAmount,
+            note: note
+        )
+
+        viewModel.addExpense(newExpense)
+        presentationMode.wrappedValue.dismiss()
+    }
+
+    private func cancelExpense() {
+        presentationMode.wrappedValue.dismiss()
+    }
+
+    private func updateAmount(_ newValue: String) {
+        amount = newValue.filter { $0.isNumber }
+        formattedAmount = Self.formatWithComma(amount)
+    }
+
+    // MARK: - Utility Functions
+
+    private static func formatDate(_ date: Date) -> String {
+        dateFormatter.string(from: date)
+    }
+
+    private static func formatWithComma(_ numberString: String) -> String {
+        guard let number = Double(numberString) else { return numberString }
+        return numberFormatter.string(from: NSNumber(value: number)) ?? numberString
+    }
+
+    // MARK: - Formatters
+
+    private static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.dateFormat = "YYYY년 MM월 dd일"
-        return formatter.string(from: date)
-    }
+        return formatter
+    }()
 
-    private func formatWithComma(_ numberString: String) -> String {
-        guard let number = Double(numberString) else { return numberString }
+    private static let numberFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = 0
-        return formatter.string(from: NSNumber(value: number)) ?? numberString
-    }
+        return formatter
+    }()
 }
