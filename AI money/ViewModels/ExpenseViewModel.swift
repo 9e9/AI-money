@@ -31,6 +31,10 @@ class ExpenseViewModel: ObservableObject {
         expenses.removeAll { $0.id == expense.id }
     }
 
+    func removeExpenses(for category: String) {
+        expenses.removeAll { $0.category == category }
+    }
+
     func totalExpense(for date: Date) -> Double {
         expenses
             .filter { Calendar.current.isDate($0.date, inSameDayAs: date) }

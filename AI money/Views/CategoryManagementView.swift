@@ -9,16 +9,16 @@ import SwiftUI
 
 struct CategoryManagementView: View {
     @Environment(\.presentationMode) var presentationMode
+    @ObservedObject var viewModel: ExpenseViewModel = ExpenseViewModel.shared
     @State private var customCategories = UserDefaults.standard.customCategories
     @State private var newCategoryName = ""
     @State private var showingAlert = false
-    @State private var categoryToDelete: String? // 삭제할 카테고리 이름 저장
+    @State private var categoryToDelete: String?
 
     var body: some View {
         NavigationView {
             VStack {
                 if customCategories.isEmpty {
-                    // 카테고리가 없을 때 메시지를 화면 중앙에 배치
                     Spacer()
                     Text("카테고리가 없음")
                         .font(.body)
@@ -33,23 +33,21 @@ struct CategoryManagementView: View {
                                     .foregroundColor(.primary)
                                 Spacer()
                                 Button(action: {
-                                    categoryToDelete = category // 삭제할 카테고리 저장
-                                    showingAlert = true // 확인 알림 표시
+                                    categoryToDelete = category
+                                    showingAlert = true
                                 }) {
                                     Image(systemName: "trash")
                                         .foregroundColor(.red)
                                 }
-                                .buttonStyle(BorderlessButtonStyle()) // 클릭 영역 최소화
+                                .buttonStyle(BorderlessButtonStyle())
                             }
-                            .padding(.vertical, 8) // 셀 간격 설정
+                            .padding(.vertical, 8)
                         }
                     }
                     .listStyle(PlainListStyle())
                 }
-
-                Spacer() // 위쪽 공간 밀어내기
-
-                // 새 카테고리 입력 필드와 추가 버튼
+                Spacer()
+                
                 HStack {
                     TextField("새 카테고리", text: $newCategoryName)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -86,7 +84,6 @@ struct CategoryManagementView: View {
     private func addCategory() {
         let trimmedName = newCategoryName.trimmingCharacters(in: .whitespaces)
         guard !trimmedName.isEmpty, !customCategories.contains(trimmedName) else {
-            // 중복된 이름일 경우 처리 로직 (Alert 등)
             return
         }
         customCategories.append(trimmedName)
@@ -98,6 +95,8 @@ struct CategoryManagementView: View {
         if let index = customCategories.firstIndex(of: category) {
             customCategories.remove(at: index)
             UserDefaults.standard.customCategories = customCategories
+
+            viewModel.removeExpenses(for: category)
         }
     }
 }
