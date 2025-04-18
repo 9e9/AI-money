@@ -17,6 +17,7 @@ struct AddExpenseView: View {
     @State private var showingAlert = false
     @State private var showCategoryManagement = false
     @State private var allCategories: [String] = []
+    @State private var isEditing = false // 수정 버튼 상태 관리
     var selectedDate: Date
 
     var body: some View {
@@ -31,12 +32,11 @@ struct AddExpenseView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
-                        // 수정 버튼 클릭 시 동작 추가 예정
-                        print("수정 버튼 클릭됨")
+                        isEditing.toggle() // 수정 상태 변경
                     }) {
-                        Text("수정")
+                        Text(isEditing ? "취소" : "수정")
                             .font(.headline)
-                            .foregroundColor(.blue)
+                            .foregroundColor(isEditing ? .red : .blue) // 수정 시 빨간색, 기본은 파란색
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
@@ -74,14 +74,16 @@ struct AddExpenseView: View {
     private var categorySection: some View {
         HStack {
             Text("카테고리")
-            Button(action: {
-                showCategoryManagement = true
-            }) {
-                Text("관리")
-                    .foregroundColor(.blue)
-                    .bold()
+            if isEditing { // 수정 상태일 때만 '관리' 버튼 표시
+                Button(action: {
+                    showCategoryManagement = true
+                }) {
+                    Text("관리")
+                        .foregroundColor(.blue)
+                        .bold()
+                }
+                .buttonStyle(BorderlessButtonStyle())
             }
-            .buttonStyle(BorderlessButtonStyle())
             Spacer()
             Picker("", selection: $selectedCategory) {
                 ForEach(allCategories, id: \.self) { category in
