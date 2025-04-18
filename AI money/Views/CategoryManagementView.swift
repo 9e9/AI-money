@@ -13,10 +13,54 @@ struct CategoryManagementView: View {
     @State private var newCategoryName = ""
     @State private var showingAlert = false
     @State private var categoryToDelete: String?
+    @State private var selectedCategories: Set<String> = []
+    @State private var isEditingMode = false
 
     var body: some View {
         NavigationView {
             VStack {
+                HStack {
+                    if isEditingMode {
+                        Button(action: selectAllCategories) {
+                            Text(selectedCategories.count == viewModel.customCategories.count ? "전체 해제" : "전체 선택")
+                                .font(.headline)
+                                .padding(8)
+                                .background(Color.blue.opacity(0.2))
+                                .cornerRadius(8)
+                        }
+                        Spacer()
+
+                        if selectedCategories.isEmpty {
+                            Button(action: { isEditingMode.toggle() }) {
+                                Text("취소")
+                                    .font(.headline)
+                                    .padding(8)
+                                    .background(Color.red.opacity(0.2))
+                                    .cornerRadius(8)
+                            }
+                        } else {
+                            Button(action: deleteSelectedCategories) {
+                                Text("삭제")
+                                    .font(.headline)
+                                    .padding(8)
+                                    .background(Color.red)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(8)
+                            }
+                        }
+                    } else {
+                        Spacer()
+                        Button(action: { isEditingMode.toggle() }) {
+                            Text("수정")
+                                .font(.headline)
+                                .padding(8)
+                                .background(Color.gray.opacity(0.2))
+                                .cornerRadius(8)
+                        }
+                    }
+                }
+                .padding(.horizontal)
+
                 if viewModel.customCategories.isEmpty {
                     Spacer()
                     Text("카테고리가 없음")
@@ -27,18 +71,31 @@ struct CategoryManagementView: View {
                     List {
                         ForEach(viewModel.customCategories, id: \.self) { category in
                             HStack {
+                                if isEditingMode {
+                                    Button(action: {
+                                        toggleSelection(for: category)
+                                    }) {
+                                        Image(systemName: selectedCategories.contains(category) ? "checkmark.square.fill" : "square")
+                                            .foregroundColor(.blue)
+                                    }
+                                    .buttonStyle(BorderlessButtonStyle())
+                                }
+
                                 Text(category)
                                     .font(.body)
                                     .foregroundColor(.primary)
                                 Spacer()
-                                Button(action: {
-                                    categoryToDelete = category
-                                    showingAlert = true
-                                }) {
-                                    Image(systemName: "trash")
-                                        .foregroundColor(.red)
+
+                                if !isEditingMode {
+                                    Button(action: {
+                                        categoryToDelete = category
+                                        showingAlert = true
+                                    }) {
+                                        Image(systemName: "trash")
+                                            .foregroundColor(.red)
+                                    }
+                                    .buttonStyle(BorderlessButtonStyle())
                                 }
-                                .buttonStyle(BorderlessButtonStyle())
                             }
                         }
                     }
@@ -68,7 +125,7 @@ struct CategoryManagementView: View {
             .alert(isPresented: $showingAlert) {
                 Alert(
                     title: Text("삭제 확인"),
-                    message: Text("정말로 '\(categoryToDelete ?? "")'를 삭제하시겠습니까?"),
+                    message: Text("정말로 '\(categoryToDelete ?? "")' 카테고리를 삭제하시겠습니까? 관련된 지출 내역도 삭제됩니다."),
                     primaryButton: .destructive(Text("삭제")) {
                         if let category = categoryToDelete {
                             deleteCategory(named: category)
@@ -77,6 +134,22 @@ struct CategoryManagementView: View {
                     secondaryButton: .cancel(Text("취소"))
                 )
             }
+        }
+    }
+
+    private func selectAllCategories() {
+        if selectedCategories.count == viewModel.customCategories.count {
+            selectedCategories.removeAll()
+        } else {
+            selectedCategories = Set(viewModel.customCategories)
+        }
+    }
+
+    private func toggleSelection(for category: String) {
+        if selectedCategories.contains(category) {
+            selectedCategories.remove(category)
+        } else {
+            selectedCategories.insert(category)
         }
     }
 
@@ -89,5 +162,14 @@ struct CategoryManagementView: View {
 
     private func deleteCategory(named category: String) {
         viewModel.removeCustomCategory(category)
+        selectedCategories.remove(category)
+        
+        viewModel.removeExpenses(for: category)
+    }
+
+    private func deleteSelectedCategories() {
+        for category in selectedCategories {
+            deleteCategory(named: category)
+        }
     }
 }
