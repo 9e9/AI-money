@@ -20,14 +20,18 @@ struct ChartView: View {
         var id: String { self.rawValue }
     }
 
-    private let predefinedCategories = ["식비", "교통", "쇼핑", "여가", "기타"]
+    private var allCategories: [String] {
+        let predefinedCategories = ["식비", "교통", "쇼핑", "여가", "기타"]
+        let customCategories = UserDefaults.standard.customCategories
+        return predefinedCategories + customCategories
+    }
 
     private var sortedCategoryTotals: [(String, Double)] {
         let totals = viewModel.expenses.reduce(into: [String: Double]()) { result, expense in
             result[expense.category, default: 0.0] += expense.amount
         }
 
-        let completeTotals = predefinedCategories.reduce(into: [String: Double]()) { result, category in
+        let completeTotals = allCategories.reduce(into: [String: Double]()) { result, category in
             result[category] = totals[category, default: 0.0]
         }
 
