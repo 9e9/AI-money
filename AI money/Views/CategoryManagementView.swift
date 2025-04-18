@@ -10,7 +10,6 @@ import SwiftUI
 struct CategoryManagementView: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var viewModel: ExpenseViewModel = ExpenseViewModel.shared
-    @State private var customCategories = UserDefaults.standard.customCategories
     @State private var newCategoryName = ""
     @State private var showingAlert = false
     @State private var categoryToDelete: String?
@@ -18,7 +17,7 @@ struct CategoryManagementView: View {
     var body: some View {
         NavigationView {
             VStack {
-                if customCategories.isEmpty {
+                if viewModel.customCategories.isEmpty {
                     Spacer()
                     Text("카테고리가 없음")
                         .font(.body)
@@ -26,7 +25,7 @@ struct CategoryManagementView: View {
                     Spacer()
                 } else {
                     List {
-                        ForEach(customCategories, id: \.self) { category in
+                        ForEach(viewModel.customCategories, id: \.self) { category in
                             HStack {
                                 Text(category)
                                     .font(.body)
@@ -46,8 +45,9 @@ struct CategoryManagementView: View {
                     }
                     .listStyle(PlainListStyle())
                 }
+
                 Spacer()
-                
+
                 HStack {
                     TextField("새 카테고리", text: $newCategoryName)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -83,20 +83,12 @@ struct CategoryManagementView: View {
 
     private func addCategory() {
         let trimmedName = newCategoryName.trimmingCharacters(in: .whitespaces)
-        guard !trimmedName.isEmpty, !customCategories.contains(trimmedName) else {
-            return
-        }
-        customCategories.append(trimmedName)
-        UserDefaults.standard.customCategories = customCategories
+        guard !trimmedName.isEmpty else { return }
+        viewModel.addCustomCategory(trimmedName)
         newCategoryName = ""
     }
 
     private func deleteCategory(named category: String) {
-        if let index = customCategories.firstIndex(of: category) {
-            customCategories.remove(at: index)
-            UserDefaults.standard.customCategories = customCategories
-
-            viewModel.removeExpenses(for: category)
-        }
+        viewModel.removeCustomCategory(category)
     }
 }

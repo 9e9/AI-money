@@ -22,8 +22,7 @@ struct ChartView: View {
 
     private var allCategories: [String] {
         let predefinedCategories = ["식비", "교통", "쇼핑", "여가", "기타"]
-        let customCategories = UserDefaults.standard.customCategories
-        return predefinedCategories + customCategories
+        return predefinedCategories + viewModel.customCategories
     }
 
     private var sortedCategoryTotals: [(String, Double)] {

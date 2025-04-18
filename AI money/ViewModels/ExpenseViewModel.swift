@@ -11,9 +11,11 @@ class ExpenseViewModel: ObservableObject {
     static let shared = ExpenseViewModel()
 
     @Published private(set) var expenses: [Expense] = []
+    @Published var customCategories: [String] = []
 
     private init() {
         loadExpenses()
+        loadCustomCategories()
     }
 
     private func loadExpenses() {
@@ -21,6 +23,10 @@ class ExpenseViewModel: ObservableObject {
             Expense(date: Date(), category: "식비", amount: 20000.0, note: "점심"),
             Expense(date: Date(), category: "교통", amount: 15000.0, note: "버스 요금")
         ]
+    }
+
+    private func loadCustomCategories() {
+        customCategories = UserDefaults.standard.customCategories
     }
 
     func addExpense(_ expense: Expense) {
@@ -33,6 +39,19 @@ class ExpenseViewModel: ObservableObject {
 
     func removeExpenses(for category: String) {
         expenses.removeAll { $0.category == category }
+    }
+
+    func addCustomCategory(_ category: String) {
+        guard !customCategories.contains(category) else { return }
+        customCategories.append(category)
+        UserDefaults.standard.customCategories = customCategories
+    }
+
+    func removeCustomCategory(_ category: String) {
+        if let index = customCategories.firstIndex(of: category) {
+            customCategories.remove(at: index)
+            UserDefaults.standard.customCategories = customCategories
+        }
     }
 
     func totalExpense(for date: Date) -> Double {
