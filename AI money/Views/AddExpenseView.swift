@@ -44,8 +44,6 @@ struct AddExpenseView: View {
         }
     }
 
-    // MARK: - View Components
-
     private var dateSection: some View {
         HStack {
             Text("날짜")
@@ -90,8 +88,6 @@ struct AddExpenseView: View {
         }
     }
 
-    // MARK: - Action Handlers
-
     private func saveExpense() {
         guard let expenseAmount = Double(amount), expenseAmount > 0 else {
             showingAlert = true
@@ -118,8 +114,6 @@ struct AddExpenseView: View {
         formattedAmount = Self.formatWithComma(amount)
     }
 
-    // MARK: - Utility Functions
-
     private static func formatDate(_ date: Date) -> String {
         dateFormatter.string(from: date)
     }
@@ -128,8 +122,6 @@ struct AddExpenseView: View {
         guard let number = Double(numberString) else { return numberString }
         return numberFormatter.string(from: NSNumber(value: number)) ?? numberString
     }
-
-    // MARK: - Formatters
 
     private static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
