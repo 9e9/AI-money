@@ -16,10 +16,7 @@ class ExpenseViewModel: ObservableObject {
         loadExpenses()
     }
 
-    func loadExpenses() {
-        guard expenses.isEmpty else {
-            return
-        }
+    private func loadExpenses() {
         expenses = [
             Expense(date: Date(), category: "식비", amount: 20000.0, note: "점심"),
             Expense(date: Date(), category: "교통", amount: 15000.0, note: "버스 요금")
@@ -27,20 +24,17 @@ class ExpenseViewModel: ObservableObject {
     }
 
     func addExpense(_ expense: Expense) {
-        objectWillChange.send()
         expenses.append(expense)
     }
 
     func removeExpense(_ expense: Expense) {
-        if let index = expenses.firstIndex(where: { $0.id == expense.id }) {
-            objectWillChange.send()
-            expenses.remove(at: index)
-        }
+        expenses.removeAll { $0.id == expense.id }
     }
 
     func totalExpense(for date: Date) -> Double {
-        let dailyExpenses = expenses.filter { Calendar.current.isDate($0.date, inSameDayAs: date) }
-        let total = dailyExpenses.reduce(0) { $0 + $1.amount }
-        return total
+        expenses
+            .filter { Calendar.current.isDate($0.date, inSameDayAs: date) }
+            .map { $0.amount }
+            .reduce(0, +)
     }
 }
