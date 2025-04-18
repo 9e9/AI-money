@@ -10,7 +10,8 @@ import SwiftUI
 struct AddExpenseView: View {
     @ObservedObject var viewModel: ExpenseViewModel
     @Environment(\.presentationMode) var presentationMode
-    @State private var showingAlert = false
+    @State private var showingAlert = false // 삭제 확인 팝업 상태
+    @State private var deletingIndex: Int? = nil // 삭제 대상 인덱스
     @State private var showCategoryManagement = false
     @State private var allCategories: [String] = []
     @State private var isEditing = false // 수정 버튼 상태 관리
@@ -24,12 +25,13 @@ struct AddExpenseView: View {
                 VStack(spacing: 16) {
                     // 지출 묶음 리스트
                     ForEach(expenseGroups.indices, id: \.self) { index in
-                        expenseGroupView(group: $expenseGroups[index])
+                        expenseGroupView(group: $expenseGroups[index], index: index)
                     }
 
                     // 새로운 지출 추가 버튼
                     Button(action: {
                         expenseGroups.append(ExpenseGroup()) // 새로운 묶음 추가
+                        print("새로운 지출 추가됨. 현재 그룹 수: \(expenseGroups.count)")
                     }) {
                         Text("새로운 지출 추가")
                             .font(.headline)
@@ -47,6 +49,7 @@ struct AddExpenseView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
                         isEditing.toggle() // 수정 상태 변경
+                        print("수정 상태 변경됨. isEditing: \(isEditing)")
                     }) {
                         Text(isEditing ? "취소" : "수정")
                             .font(.headline)
@@ -60,8 +63,19 @@ struct AddExpenseView: View {
                     Button("취소", action: cancelExpense)
                 }
             }
-            .alert(alertMessage, isPresented: $showingAlert) {
-                Button("확인", role: .cancel) { }
+            .alert(isPresented: $showingAlert) {
+                Alert(
+                    title: Text("삭제 확인"),
+                    message: Text("이 지출 묶음을 삭제하시겠습니까?"),
+                    primaryButton: .destructive(Text("삭제"), action: {
+                        if let index = deletingIndex {
+                            deleteExpenseGroup(at: index)
+                        }
+                    }),
+                    secondaryButton: .cancel(Text("취소"), action: {
+                        deletingIndex = nil // 삭제 인덱스 초기화
+                    })
+                )
             }
             .sheet(isPresented: $showCategoryManagement, onDismiss: {
                 updateCategories()
@@ -74,7 +88,7 @@ struct AddExpenseView: View {
         }
     }
 
-    private func expenseGroupView(group: Binding<ExpenseGroup>) -> some View {
+    private func expenseGroupView(group: Binding<ExpenseGroup>, index: Int) -> some View {
         // 하나의 지출 묶음을 렌더링
         VStack {
             HStack {
@@ -91,6 +105,7 @@ struct AddExpenseView: View {
                 if isEditing { // 수정 상태일 때만 '관리' 버튼 표시
                     Button(action: {
                         showCategoryManagement = true
+                        print("카테고리 관리 버튼 클릭됨.")
                     }) {
                         Text("관리")
                             .foregroundColor(.blue)
@@ -105,8 +120,6 @@ struct AddExpenseView: View {
                     }
                 }
                 .pickerStyle(MenuPickerStyle())
-                //.frame(maxHeight: 10)
-                
             }
             .frame(maxHeight: 25)
             Divider()
@@ -137,12 +150,41 @@ struct AddExpenseView: View {
                     .multilineTextAlignment(.trailing)
             }
             .frame(maxHeight: 25)
+
+            // 삭제 버튼 (수정 모드일 때만 표시)
+            if isEditing { // 수정 상태에서만 삭제 버튼 표시
+                Divider()
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        deletingIndex = index // 삭제 대상 설정
+                        showingAlert = true // Alert 표시
+                        print("삭제 버튼 클릭됨. 인덱스: \(index)")
+                    }) {
+                        Text("삭제")
+                            .font(.headline)
+                            .foregroundColor(.red)
+                    }
+                }
+                .padding(.top, 8)
+            }
         }
         .padding()
         .background(Color(UIColor.systemGray6))
         .cornerRadius(8)
         .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
         .padding(.horizontal)
+    }
+
+    private func deleteExpenseGroup(at index: Int) {
+        // 삭제 처리
+        guard index >= 0 && index < expenseGroups.count else {
+            print("Invalid index: \(index)") // 디버깅 로그 추가
+            return
+        }
+        expenseGroups.remove(at: index) // 배열에서 항목 제거
+        deletingIndex = nil // 삭제 인덱스 초기화
+        print("Deleted index \(index). Remaining groups: \(expenseGroups)") // 디버깅 로그
     }
 
     private func saveAllExpenses() {
