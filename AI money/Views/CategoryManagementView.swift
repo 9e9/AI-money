@@ -19,104 +19,117 @@ struct CategoryManagementView: View {
 
     var body: some View {
         NavigationView {
-            VStack {
-                if isEditingMode {
-                    HStack {
-                        Button(action: handleSelectionAction) {
-                            Text(selectionButtonTitle())
-                                .font(.headline)
-                                .padding(8)
-                                .background(Color.blue.opacity(0.2))
-                                .cornerRadius(8)
-                        }
-                        Spacer()
-
-                        if !selectedCategories.isEmpty {
-                            Button(action: {
-                                showingAlert = true
-                                alertMessage = "선택한 카테고리를 삭제하시겠습니까? 관련된 지출 내역도 삭제됩니다."
-                            }) {
-                                Text("삭제")
+            ZStack {
+                VStack(spacing: 16) {
+                    if isEditingMode {
+                        HStack {
+                            Button(action: handleSelectionAction) {
+                                Text(selectionButtonTitle())
                                     .font(.headline)
                                     .padding(8)
-                                    .background(Color.red.opacity(0.8))
-                                    .foregroundColor(.white)
+                                    .background(Color.blue.opacity(0.2))
                                     .cornerRadius(8)
                             }
-                        }
-                    }
-                    .padding(.horizontal)
-                }
-                
-                if viewModel.customCategories.isEmpty {
-                    Spacer()
-                    Text("카테고리가 없음")
-                        .font(.body)
-                        .foregroundColor(.secondary)
-                    Spacer()
-                } else {
-                    List {
-                        ForEach(viewModel.customCategories, id: \.self) { category in
-                            HStack {
-                                if isEditingMode {
-                                    Button(action: {
-                                        toggleSelection(for: category)
-                                    }) {
-                                        Image(systemName: selectedCategories.contains(category) ? "checkmark.square.fill" : "square")
-                                            .foregroundColor(.blue)
-                                    }
-                                    .buttonStyle(BorderlessButtonStyle())
-                                }
+                            Spacer()
 
-                                Text(category)
-                                    .font(.body)
-                                    .foregroundColor(.primary)
-                                Spacer()
-
-                                if isEditingMode {
-                                    Button(action: {
-                                        categoryToDelete = category
-                                        showingAlert = true
-                                        alertMessage = "'\(category)' 카테고리를 삭제하시겠습니까? 관련된 지출 내역도 삭제됩니다."
-                                    }) {
-                                        Image(systemName: "trash")
-                                            .foregroundColor(.red)
-                                    }
-                                    .buttonStyle(BorderlessButtonStyle())
+                            if !selectedCategories.isEmpty {
+                                Button(action: {
+                                    showingAlert = true
+                                    alertMessage = "선택한 카테고리를 삭제하시겠습니까? 관련된 지출 내역도 삭제됩니다."
+                                }) {
+                                    Text("삭제")
+                                        .font(.headline)
+                                        .padding(8)
+                                        .background(Color.red)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(8)
                                 }
                             }
                         }
+                        .padding(.horizontal)
                     }
-                    .listStyle(PlainListStyle())
+
+                    if viewModel.customCategories.isEmpty {
+                        Spacer()
+                        Text("카테고리가 없음")
+                            .font(.body)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                    } else {
+                        ScrollView {
+                            VStack(spacing: 16) {
+                                ForEach(viewModel.customCategories, id: \.self) { category in
+                                    HStack {
+                                        if isEditingMode {
+                                            Button(action: {
+                                                toggleSelection(for: category)
+                                            }) {
+                                                Image(systemName: selectedCategories.contains(category) ? "checkmark.square.fill" : "square")
+                                                    .foregroundColor(.blue)
+                                            }
+                                            .buttonStyle(BorderlessButtonStyle())
+                                        }
+
+                                        Text(category)
+                                            .font(.body)
+                                            .foregroundColor(.primary)
+                                        Spacer()
+
+                                        if isEditingMode {
+                                            Button(action: {
+                                                categoryToDelete = category
+                                                showingAlert = true
+                                                alertMessage = "'\(category)' 카테고리를 삭제하시겠습니까? 관련된 지출 내역도 삭제됩니다."
+                                            }) {
+                                                Image(systemName: "trash")
+                                                    .foregroundColor(.red)
+                                            }
+                                            .buttonStyle(BorderlessButtonStyle())
+                                        }
+                                    }
+                                    .padding()
+                                    .background(Color(UIColor.systemGray6))
+                                    .cornerRadius(8)
+                                    .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+                    }
+
+                    Spacer()
                 }
 
-                Spacer()
-
-                HStack {
-                    TextField("새 카테고리", text: $newCategoryName)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .padding(.vertical, 8)
-                    Button(action: addCategory) {
-                        Text("추가")
-                            .padding(8)
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
+                VStack {
+                    Spacer()
+                    HStack {
+                        TextField("새 카테고리", text: $newCategoryName)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .padding(.vertical, 8)
+                        Button(action: addCategory) {
+                            Text("추가")
+                                .padding(8)
+                                .background(Color.blue)
+                                .foregroundColor(.white)
+                                .cornerRadius(8)
+                        }
                     }
+                    .padding()
+                    .background(Color(UIColor.systemGray5)) // 고정된 영역의 배경색
                 }
-                .padding()
             }
             .navigationTitle("카테고리 관리")
             .toolbar {
-                ToolbarItemGroup(placement: .navigationBarLeading) {
+                ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
                         presentationMode.wrappedValue.dismiss()
                     }) {
                         Text("취소")
+                            .font(.headline)
                             .foregroundColor(.blue)
                     }
                 }
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .navigationBarTrailing) {
                     if isEditingMode {
                         Button(action: { isEditingMode.toggle() }) {
                             Text("닫기")
