@@ -20,7 +20,6 @@ struct CategoryManagementView: View {
     var body: some View {
         NavigationView {
             VStack {
-                // 선택 삭제 및 전체 선택/해제 버튼
                 if isEditingMode {
                     HStack {
                         Button(action: handleSelectionAction) {
@@ -48,8 +47,7 @@ struct CategoryManagementView: View {
                     }
                     .padding(.horizontal)
                 }
-
-                // 카테고리 목록
+                
                 if viewModel.customCategories.isEmpty {
                     Spacer()
                     Text("카테고리가 없음")
@@ -60,7 +58,6 @@ struct CategoryManagementView: View {
                     List {
                         ForEach(viewModel.customCategories, id: \.self) { category in
                             HStack {
-                                // 체크박스 표시
                                 if isEditingMode {
                                     Button(action: {
                                         toggleSelection(for: category)
@@ -76,7 +73,6 @@ struct CategoryManagementView: View {
                                     .foregroundColor(.primary)
                                 Spacer()
 
-                                // 개별 삭제 버튼
                                 if isEditingMode {
                                     Button(action: {
                                         categoryToDelete = category
@@ -96,7 +92,6 @@ struct CategoryManagementView: View {
 
                 Spacer()
 
-                // 새 카테고리 추가 영역
                 HStack {
                     TextField("새 카테고리", text: $newCategoryName)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -114,7 +109,6 @@ struct CategoryManagementView: View {
             .navigationTitle("카테고리 관리")
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
-                    // 취소 버튼
                     Button(action: {
                         presentationMode.wrappedValue.dismiss()
                     }) {
@@ -123,7 +117,6 @@ struct CategoryManagementView: View {
                     }
                 }
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    // 수정 버튼
                     if isEditingMode {
                         Button(action: { isEditingMode.toggle() }) {
                             Text("닫기")
@@ -137,7 +130,6 @@ struct CategoryManagementView: View {
                                 .foregroundColor(.blue)
                         }
                     }
-                    // 완료 버튼
                     Button("완료") {
                         presentationMode.wrappedValue.dismiss()
                     }
@@ -168,7 +160,6 @@ struct CategoryManagementView: View {
         }
     }
 
-    // 전체 선택, 전체 해제, 선택 해제 버튼 제목
     private func selectionButtonTitle() -> String {
         if selectedCategories.isEmpty {
             return "전체 선택"
@@ -179,7 +170,6 @@ struct CategoryManagementView: View {
         }
     }
 
-    // 전체 선택/해제 로직
     private func handleSelectionAction() {
         if selectedCategories.isEmpty {
             selectedCategories = Set(viewModel.customCategories)
@@ -190,7 +180,6 @@ struct CategoryManagementView: View {
         }
     }
 
-    // 개별 선택 토글
     private func toggleSelection(for category: String) {
         if selectedCategories.contains(category) {
             selectedCategories.remove(category)
@@ -199,7 +188,6 @@ struct CategoryManagementView: View {
         }
     }
 
-    // 새 카테고리 추가
     private func addCategory() {
         let trimmedName = newCategoryName.trimmingCharacters(in: .whitespaces)
         guard !trimmedName.isEmpty else { return }
@@ -216,14 +204,12 @@ struct CategoryManagementView: View {
         newCategoryName = ""
     }
 
-    // 개별 삭제
     private func deleteCategory(named category: String) {
         viewModel.removeCustomCategory(category)
         selectedCategories.remove(category)
         viewModel.removeExpenses(for: category)
     }
 
-    // 선택 삭제
     private func deleteSelectedCategories() {
         for category in selectedCategories {
             deleteCategory(named: category)
