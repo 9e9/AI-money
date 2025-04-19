@@ -57,7 +57,7 @@ struct CategoryManagementView: View {
                         Spacer()
                     } else {
                         ScrollView {
-                            VStack(spacing: 16) {
+                            VStack(spacing: 0) {
                                 ForEach(viewModel.customCategories, id: \.self) { category in
                                     HStack {
                                         if isEditingMode {
@@ -88,11 +88,14 @@ struct CategoryManagementView: View {
                                         }
                                     }
                                     .padding()
-                                    .background(Color(UIColor.systemGray6))
-                                    .cornerRadius(8)
-                                    .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                                    if category != viewModel.customCategories.last {
+                                        Divider()
+                                    }
                                 }
                             }
+                            .background(Color(UIColor.systemGray6))
+                            .cornerRadius(8)
+                            .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                             .padding(.horizontal)
                         }
                     }
@@ -115,7 +118,7 @@ struct CategoryManagementView: View {
                         }
                     }
                     .padding()
-                    .background(Color(UIColor.systemGray5)) // 고정된 영역의 배경색
+                    .background(Color(UIColor.systemGray5))
                 }
             }
             .navigationTitle("카테고리 관리")
@@ -155,9 +158,9 @@ struct CategoryManagementView: View {
                         message: Text(alertMessage),
                         primaryButton: .destructive(Text("삭제")) {
                             if let category = categoryToDelete {
-                                deleteCategory(named: category) // 개별 삭제
+                                deleteCategory(named: category)
                             } else {
-                                deleteSelectedCategories() // 선택 삭제
+                                deleteSelectedCategories()
                             }
                         },
                         secondaryButton: .cancel(Text("취소"))

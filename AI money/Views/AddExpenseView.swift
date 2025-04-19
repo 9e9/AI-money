@@ -87,6 +87,7 @@ struct AddExpenseView: View {
                 Text(Self.formatDate(selectedDate))
                     .foregroundColor(.secondary)
             }
+            .frame(maxHeight: 23)
             Divider()
 
             HStack {
@@ -109,6 +110,7 @@ struct AddExpenseView: View {
                 }
                 .pickerStyle(MenuPickerStyle())
             }
+            .frame(maxHeight: 23)
             Divider()
 
             HStack {
@@ -132,8 +134,8 @@ struct AddExpenseView: View {
                         Text("원").foregroundColor(.secondary)
                     }
                 }
-                .frame(maxWidth: 200)
             }
+            .frame(maxHeight: 35)
             Divider()
 
             HStack {
@@ -142,8 +144,8 @@ struct AddExpenseView: View {
                 TextField("선택 사항", text: group.note)
                     .multilineTextAlignment(.trailing)
             }
-            Divider()
-
+            .frame(maxHeight: 20)
+            
             if isEditing && expenseGroups.count > 1 {
                 Button(action: {
                     deletingIndex = index
@@ -151,11 +153,15 @@ struct AddExpenseView: View {
                     alertMessage = "이 지출 묶음을 삭제하시겠습니까?"
                     showingAlert = true
                 }) {
-                    Image(systemName: "trash")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 24, height: 24)
-                        .foregroundColor(.red)
+                    VStack {
+                        Divider()
+                        Image(systemName: "trash")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 24, height: 24)
+                            .foregroundColor(.red)
+                    }
+                    .frame(maxHeight: 23)
                 }
                 .buttonStyle(BorderlessButtonStyle())
                 .padding(.top, 8)
