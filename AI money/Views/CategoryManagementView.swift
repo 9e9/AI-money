@@ -119,7 +119,6 @@ struct CategoryManagementView: View {
                         presentationMode.wrappedValue.dismiss()
                     }) {
                         Text("취소")
-                            .font(.headline)
                             .foregroundColor(.blue)
                     }
                 }

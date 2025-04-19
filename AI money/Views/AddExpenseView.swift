@@ -8,10 +8,10 @@ import SwiftUI
 struct AddExpenseView: View {
     @ObservedObject var viewModel: ExpenseViewModel
     @Environment(\.presentationMode) var presentationMode
-    @State private var showingAlert = false // 저장 또는 삭제 팝업 플래그
-    @State private var alertMessage = "" // 팝업 메시지
-    @State private var alertTitle = "" // 팝업 타이틀
-    @State private var deletingIndex: Int? = nil // 삭제할 인덱스
+    @State private var showingAlert = false
+    @State private var alertMessage = ""
+    @State private var alertTitle = ""
+    @State private var deletingIndex: Int? = nil
     @State private var showCategoryManagement = false
     @State private var allCategories: [String] = []
     @State private var isEditing = false
@@ -201,7 +201,6 @@ struct AddExpenseView: View {
     }
 
     private func updateCategories() {
-        // 기본 카테고리 및 사용자 정의 카테고리 로드
         let predefinedCategories = ["식비", "교통", "쇼핑", "여가", "기타"]
         let customCategories = UserDefaults.standard.customCategories
         allCategories = predefinedCategories + customCategories
