@@ -26,10 +26,13 @@ struct AddExpenseView: View {
                 VStack(spacing: 16) {
                     ForEach(expenseGroups.indices, id: \.self) { index in
                         expenseGroupView(group: $expenseGroups[index], index: index)
+                            .transition(.opacity)
                     }
 
                     Button(action: {
-                        expenseGroups.append(ExpenseGroup())
+                        withAnimation {
+                            expenseGroups.append(ExpenseGroup())
+                        }
                     }) {
                         Text("새로운 지출 추가")
                             .font(.headline)
@@ -46,7 +49,7 @@ struct AddExpenseView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
-                        withAnimation { // 애니메이션 추가
+                        withAnimation {
                             isEditing.toggle()
                         }
                     }) {
@@ -95,7 +98,7 @@ struct AddExpenseView: View {
             HStack {
                 Text("카테고리")
                 if isEditing {
-                    withAnimation { // 애니메이션으로 관리 버튼 추가
+                    withAnimation {
                         Button(action: {
                             showCategoryManagement = true
                         }) {
@@ -104,7 +107,7 @@ struct AddExpenseView: View {
                                 .bold()
                         }
                         .buttonStyle(BorderlessButtonStyle())
-                        .transition(.opacity) // 서서히 나타나고 사라지는 효과
+                        .transition(.opacity)
                     }
                 }
                 Spacer()
@@ -203,10 +206,12 @@ struct AddExpenseView: View {
     }
 
     private func confirmDelete() {
-        if let index = deletingIndex {
-            expenseGroups.remove(at: index)
+        withAnimation {
+            if let index = deletingIndex {
+                expenseGroups.remove(at: index)
+            }
+            deletingIndex = nil
         }
-        deletingIndex = nil
     }
 
     private func cancelExpense() {
