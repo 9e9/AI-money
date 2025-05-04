@@ -8,15 +8,48 @@
 import SwiftUI
 
 struct InformationView: View {
+    @Environment(\.presentationMode) var presentationMode
+    
     var body: some View {
-        VStack {
+        VStack(spacing: 20) {
             Spacer()
-            Text("AI money") // 원하는 텍스트를 이곳에 입력하세요.
-                .font(.body) // 텍스트 스타일 설정
-                .multilineTextAlignment(.center) // 가운데 정렬
-                .padding()
+
+            HStack {
+                Text("🤖") //
+                Text("AI money")
+                    .font(.headline)
+            }
+
+            HStack {
+                Text("🛠")
+                Text("버전: 1.0 beta")
+                    .font(.subheadline)
+            }
+            
+            HStack {
+                Text("👨‍💻")
+                Text("개발: 조준희")
+                    .font(.subheadline)
+            }
+
+            HStack {
+                Text("🏫")
+                Text("소속: 상지대학교 컴퓨터공학과 202048049")
+                    .font(.subheadline)
+            }
+            
             Spacer()
         }
+        .multilineTextAlignment(.center)
+        .padding()
         .navigationTitle("앱 정보")
+        
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("완료") {
+                    presentationMode.wrappedValue.dismiss()
+                }
+            }
+        }
     }
 }
