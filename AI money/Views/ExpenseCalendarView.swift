@@ -81,8 +81,10 @@ struct ExpenseCalendarView: View {
                                             title: Text("삭제 확인"),
                                             message: Text("이 지출 내역을 삭제하시겠습니까?"),
                                             primaryButton: .destructive(Text("삭제")) {
-                                                if let expenseToDelete = expenseToDelete {
-                                                    viewModel.removeExpense(expenseToDelete)
+                                                withAnimation {
+                                                    if let expenseToDelete = expenseToDelete {
+                                                        viewModel.removeExpense(expenseToDelete)
+                                                    }
                                                 }
                                             },
                                             secondaryButton: .cancel(Text("취소"))
@@ -95,6 +97,7 @@ struct ExpenseCalendarView: View {
                                 .shadow(radius: 5)
                                 .padding(.horizontal)
                                 .padding(.vertical, 5)
+                                .transition(.opacity)
                             }
                         }
                     }

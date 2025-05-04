@@ -133,18 +133,12 @@ struct CategoryManagementView: View {
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    if isEditingMode {
-                        Button(action: { isEditingMode.toggle() }) {
-                            Text("닫기")
-                                .font(.headline)
-                                .foregroundColor(.red)
-                        }
-                    } else {
-                        Button(action: { isEditingMode.toggle() }) {
-                            Text("수정")
-                                .font(.headline)
-                                .foregroundColor(.blue)
-                        }
+                    Button(action: {
+                        isEditingMode.toggle()
+                    }) {
+                        Text(isEditingMode ? "닫기" : "수정")
+                            .font(.headline)
+                            .foregroundColor(isEditingMode ? .red : .blue)
                     }
                     Button("완료") {
                         presentationMode.wrappedValue.dismiss()

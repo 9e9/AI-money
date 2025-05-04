@@ -46,7 +46,9 @@ struct AddExpenseView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
-                        isEditing.toggle()
+                        withAnimation { // 애니메이션 추가
+                            isEditing.toggle()
+                        }
                     }) {
                         Text(isEditing ? "닫기" : "수정")
                             .font(.headline)
@@ -93,14 +95,17 @@ struct AddExpenseView: View {
             HStack {
                 Text("카테고리")
                 if isEditing {
-                    Button(action: {
-                        showCategoryManagement = true
-                    }) {
-                        Text("관리")
-                            .foregroundColor(.blue)
-                            .bold()
+                    withAnimation { // 애니메이션으로 관리 버튼 추가
+                        Button(action: {
+                            showCategoryManagement = true
+                        }) {
+                            Text("관리")
+                                .foregroundColor(.blue)
+                                .bold()
+                        }
+                        .buttonStyle(BorderlessButtonStyle())
+                        .transition(.opacity) // 서서히 나타나고 사라지는 효과
                     }
-                    .buttonStyle(BorderlessButtonStyle())
                 }
                 Spacer()
                 Picker("", selection: group.category) {
