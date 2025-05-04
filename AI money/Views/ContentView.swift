@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel = ExpenseViewModel.shared
 
     var body: some View {
@@ -24,6 +25,9 @@ struct ContentView: View {
                 .tabItem {
                     Label("예측", systemImage: "brain.head.profile")
                 }
+        }
+        .onAppear {
+            viewModel.setContext(modelContext)
         }
         .preferredColorScheme(.light)
     }

@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import SwiftData
+import SwiftUI
 
 class ExpenseViewModel: ObservableObject {
     static let shared = ExpenseViewModel()
@@ -13,16 +15,37 @@ class ExpenseViewModel: ObservableObject {
     @Published private(set) var expenses: [Expense] = []
     @Published var customCategories: [String] = []
 
-    private init() {
+    private var modelContext: ModelContext?
+
+    init(context: ModelContext? = nil) {
+        self.modelContext = context
         loadExpenses()
         loadCustomCategories()
     }
 
+    func setContext(_ context: ModelContext) {
+        self.modelContext = context
+        loadExpenses()
+    }
+
     private func loadExpenses() {
-        expenses = [
-            Expense(date: Date(), category: "식비", amount: 20000.0, note: "점심"),
-            Expense(date: Date(), category: "교통", amount: 15000.0, note: "버스 요금")
-        ]
+        guard let context = modelContext else { return }
+        let fetchRequest = FetchDescriptor<Expense>()
+        do {
+            expenses = try context.fetch(fetchRequest)
+        } catch {
+            print("지출 데이터를 불러오는 데 실패했습니다: \(error)")
+            expenses = []
+        }
+    }
+
+    private func saveContext() {
+        guard let context = modelContext else { return }
+        do {
+            try context.save()
+        } catch {
+            print("Context 저장 실패: \(error)")
+        }
     }
 
     private func loadCustomCategories() {
@@ -30,15 +53,26 @@ class ExpenseViewModel: ObservableObject {
     }
 
     func addExpense(_ expense: Expense) {
-        expenses.append(expense)
+        guard let context = modelContext else { return }
+        context.insert(expense)
+        saveContext()
+        loadExpenses()
     }
 
     func removeExpense(_ expense: Expense) {
-        expenses.removeAll { $0.id == expense.id }
+        guard let context = modelContext else { return }
+        context.delete(expense)
+        saveContext()
+        loadExpenses()
     }
 
     func removeExpenses(for category: String) {
-        expenses.removeAll { $0.category == category }
+        guard let context = modelContext else { return }
+        for expense in expenses where expense.category == category {
+            context.delete(expense)
+        }
+        saveContext()
+        loadExpenses()
     }
 
     func addCustomCategory(_ category: String) {

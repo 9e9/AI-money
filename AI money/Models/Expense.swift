@@ -6,11 +6,21 @@
 //
 
 import Foundation
+import SwiftData
 
-struct Expense: Identifiable, Equatable {
-    let id: UUID = UUID()
-    let date: Date
-    let category: String
-    let amount: Double
-    let note: String
+@Model
+class Expense {
+    @Attribute(.unique) var id: UUID
+    var date: Date
+    var category: String
+    var amount: Double
+    var note: String
+
+    init(date: Date, category: String, amount: Double, note: String) {
+        self.id = UUID()
+        self.date = date
+        self.category = category
+        self.amount = amount
+        self.note = note
+    }
 }
