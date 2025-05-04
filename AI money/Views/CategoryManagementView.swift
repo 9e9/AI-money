@@ -60,7 +60,7 @@ struct CategoryManagementView: View {
                         Spacer()
                     } else {
                         ScrollView {
-                            VStack(spacing: 0) {
+                            VStack(spacing: 16) {
                                 ForEach(viewModel.customCategories, id: \.self) { category in
                                     HStack {
                                         if isEditingMode {
@@ -77,6 +77,7 @@ struct CategoryManagementView: View {
                                         Text(category)
                                             .font(.body)
                                             .foregroundColor(.primary)
+                                            .transition(.opacity)
                                         Spacer()
 
                                         if isEditingMode {
@@ -93,14 +94,13 @@ struct CategoryManagementView: View {
                                         }
                                     }
                                     .padding()
-                                    if category != viewModel.customCategories.last {
-                                        Divider()
-                                    }
+                                    .background(Color(UIColor.systemGray6))
+                                    .cornerRadius(8)
+                                    .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                                    .padding(.horizontal)
+                                    .transition(.opacity)
                                 }
                             }
-                            .background(Color(UIColor.systemGray6))
-                            .cornerRadius(8)
-                            .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                             .padding(.horizontal)
                         }
                     }
@@ -218,20 +218,26 @@ struct CategoryManagementView: View {
             return
         }
         
-        viewModel.addCustomCategory(trimmedName)
+        withAnimation {
+            viewModel.addCustomCategory(trimmedName)
+        }
         newCategoryName = ""
     }
 
     private func deleteCategory(named category: String) {
-        viewModel.removeCustomCategory(category)
-        selectedCategories.remove(category)
-        viewModel.removeExpenses(for: category)
+        withAnimation {
+            viewModel.removeCustomCategory(category)
+            selectedCategories.remove(category)
+            viewModel.removeExpenses(for: category)
+        }
     }
 
     private func deleteSelectedCategories() {
-        for category in selectedCategories {
-            deleteCategory(named: category)
+        withAnimation {
+            for category in selectedCategories {
+                deleteCategory(named: category)
+            }
+            selectedCategories.removeAll()
         }
-        selectedCategories.removeAll()
     }
 }
