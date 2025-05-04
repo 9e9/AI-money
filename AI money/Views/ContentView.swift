@@ -25,6 +25,7 @@ struct ContentView: View {
                     Label("예측", systemImage: "brain.head.profile")
                 }
         }
+        .preferredColorScheme(.light)
     }
 }
 
