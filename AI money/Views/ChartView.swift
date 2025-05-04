@@ -90,18 +90,25 @@ struct ChartView: View {
                 } label: {
                     Image(systemName: "line.3.horizontal")
                         .font(.title2)
-                        .padding(.horizontal)
                 }
             }
             .padding(.horizontal)
-            
+
             HStack {
                 Button(action: {
                     isShowingYearMonthPicker = true
                 }) {
                     Text("\(formatYear(selectedYear))년 \(selectedMonth)월")
-                        //.font(.headline)
                         .foregroundColor(.black)
+                }
+                
+                Button(action: {
+                    let currentDate = Date()
+                    let calendar = Calendar.current
+                    selectedYear = calendar.component(.year, from: currentDate)
+                    selectedMonth = calendar.component(.month, from: currentDate)
+                }) {
+                    Image(systemName: "arrow.clockwise")
                 }
                 Spacer()
             }
