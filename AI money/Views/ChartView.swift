@@ -51,7 +51,13 @@ struct ChartView: View {
             Text("원형 차트")
                 .font(.headline)
 
-            PieChartView(data: Dictionary(uniqueKeysWithValues: sortedCategoryTotals))
+            if viewModel.expenses.isEmpty {
+                DottedPieChartView()
+                    .frame(height: 200)
+            } else {
+                PieChartView(data: Dictionary(uniqueKeysWithValues: sortedCategoryTotals))
+                    .frame(height: 200)
+            }
 
             Divider()
                 .padding(.vertical, 10)
@@ -94,5 +100,20 @@ struct ChartView: View {
             .listStyle(PlainListStyle())
         }
         .padding()
+    }
+}
+
+// 점선 원형 차트 뷰
+struct DottedPieChartView: View {
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(style: StrokeStyle(lineWidth: 2, dash: [5])) // 점선 스타일
+                .foregroundColor(.gray) // 점선 색상
+                .padding()
+            Text("지출 없음")
+                .font(.headline)
+                .foregroundColor(.gray)
+        }
     }
 }
