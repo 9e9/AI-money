@@ -29,6 +29,7 @@ struct CategoryManagementView: View {
                                     .padding(8)
                                     .background(Color.blue.opacity(0.2))
                                     .cornerRadius(8)
+                                    .transition(.opacity)
                             }
                             Spacer()
 
@@ -43,10 +44,12 @@ struct CategoryManagementView: View {
                                         .background(Color.red)
                                         .foregroundColor(.white)
                                         .cornerRadius(8)
+                                        .transition(.opacity)
                                 }
                             }
                         }
                         .padding(.horizontal)
+                        .animation(.easeInOut, value: isEditingMode)
                     }
 
                     if viewModel.customCategories.isEmpty {
@@ -66,6 +69,7 @@ struct CategoryManagementView: View {
                                             }) {
                                                 Image(systemName: selectedCategories.contains(category) ? "checkmark.square.fill" : "square")
                                                     .foregroundColor(.blue)
+                                                    .transition(.opacity)
                                             }
                                             .buttonStyle(BorderlessButtonStyle())
                                         }
@@ -83,6 +87,7 @@ struct CategoryManagementView: View {
                                             }) {
                                                 Image(systemName: "trash")
                                                     .foregroundColor(.red)
+                                                    .transition(.opacity)
                                             }
                                             .buttonStyle(BorderlessButtonStyle())
                                         }
@@ -134,14 +139,13 @@ struct CategoryManagementView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
-                        isEditingMode.toggle()
+                        withAnimation {
+                            isEditingMode.toggle()
+                        }
                     }) {
                         Text(isEditingMode ? "닫기" : "수정")
                             .font(.headline)
                             .foregroundColor(isEditingMode ? .red : .blue)
-                    }
-                    Button("완료") {
-                        presentationMode.wrappedValue.dismiss()
                     }
                 }
             }
@@ -181,20 +185,24 @@ struct CategoryManagementView: View {
     }
 
     private func handleSelectionAction() {
-        if selectedCategories.isEmpty {
-            selectedCategories = Set(viewModel.customCategories)
-        } else if selectedCategories.count == viewModel.customCategories.count {
-            selectedCategories.removeAll()
-        } else {
-            selectedCategories.removeAll()
+        withAnimation {
+            if selectedCategories.isEmpty {
+                selectedCategories = Set(viewModel.customCategories)
+            } else if selectedCategories.count == viewModel.customCategories.count {
+                selectedCategories.removeAll()
+            } else {
+                selectedCategories.removeAll()
+            }
         }
     }
 
     private func toggleSelection(for category: String) {
-        if selectedCategories.contains(category) {
-            selectedCategories.remove(category)
-        } else {
-            selectedCategories.insert(category)
+        withAnimation {
+            if selectedCategories.contains(category) {
+                selectedCategories.remove(category)
+            } else {
+                selectedCategories.insert(category)
+            }
         }
     }
 
