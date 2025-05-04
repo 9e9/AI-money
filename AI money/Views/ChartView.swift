@@ -72,6 +72,14 @@ struct ChartView: View {
                 .padding(.vertical, 10)
 
             HStack {
+                Button(action: {
+                    isShowingYearMonthPicker = true
+                }) {
+                    Text("\(selectedYear)년 \(selectedMonth)월")
+                        .font(.headline)
+                        .foregroundColor(.black)
+                }
+
                 Text("카테고리별 총 지출")
                     .font(.headline)
 
@@ -95,24 +103,6 @@ struct ChartView: View {
             }
             .padding(.horizontal)
 
-            Button(action: {
-                isShowingYearMonthPicker = true
-            }) {
-                Text("\(selectedYear)년 \(selectedMonth)월")
-                    .font(.headline)
-                    .padding()
-                    .background(Color.blue.opacity(0.2))
-                    .cornerRadius(8)
-            }
-            .sheet(isPresented: $isShowingYearMonthPicker) {
-                YearMonthPickerView(
-                    viewModel: viewModel,
-                    selectedYear: $selectedYear,
-                    selectedMonth: $selectedMonth,
-                    showingPicker: $isShowingYearMonthPicker
-                )
-            }
-
             List {
                 ForEach(sortedCategoryTotals, id: \.0) { category, total in
                     HStack {
@@ -127,6 +117,14 @@ struct ChartView: View {
             .listStyle(PlainListStyle())
         }
         .padding()
+        .sheet(isPresented: $isShowingYearMonthPicker) {
+            YearMonthPickerView(
+                viewModel: viewModel,
+                selectedYear: $selectedYear,
+                selectedMonth: $selectedMonth,
+                showingPicker: $isShowingYearMonthPicker
+            )
+        }
     }
 }
 
