@@ -104,6 +104,7 @@ struct ExpenseCalendarView: View {
                 .background(Color.gray.opacity(0.5))
                 .frame(minWidth: 400, maxHeight: 350)
                 .padding(.top, 30)
+                .padding(.bottom, -30)
             }
             .navigationTitle("")
             .toolbar {
