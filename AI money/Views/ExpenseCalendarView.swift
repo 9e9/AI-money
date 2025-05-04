@@ -10,8 +10,9 @@ import SwiftUI
 struct ExpenseCalendarView: View {
     @ObservedObject var viewModel: ExpenseViewModel
     @State private var showingAddExpense = false
-    @State private var selectedDate: Date = Date()
     @State private var showingDeleteAlert = false
+    @State private var showInformationView = false
+    @State private var selectedDate: Date = Date()
     @State private var expenseToDelete: Expense? = nil
     @State private var selectedYear: Int = Calendar.current.component(.year, from: Date())
     @State private var selectedMonth: Int = Calendar.current.component(.month, from: Date())
@@ -19,20 +20,8 @@ struct ExpenseCalendarView: View {
     var body: some View {
         NavigationView {
             VStack {
-                HStack {
-                    Text("지출 내역")
-                        .font(.largeTitle)
-                        .padding(.leading)
-                    Spacer()
-                }
-                .padding(.top, -45)
-                .padding(.bottom, 20)
-                
                 CalendarView(
-                    viewModel: viewModel, selectedYear: $selectedYear,
-                    selectedMonth: $selectedMonth,
-                    showHeaders: true
-                ) { date in
+                    viewModel: viewModel, selectedYear: $selectedYear, selectedMonth: $selectedMonth, showHeaders: true) { date in
                     VStack {
                         Text(String(Calendar.current.component(.day, from: date)))
                             .foregroundColor(Calendar.current.isDate(date, inSameDayAs: selectedDate) ? .white : .primary)
@@ -126,6 +115,25 @@ struct ExpenseCalendarView: View {
             }
             .sheet(isPresented: $showingAddExpense) {
                 AddExpenseView(viewModel: viewModel, selectedDate: selectedDate)
+            }
+            .toolbar {
+                ToolbarItemGroup(placement: .navigationBarLeading) {
+                    Button(action: {
+                        showInformationView = true
+                    }) {
+                        Text("AI money")
+                            .font(.largeTitle)
+                            .foregroundColor(.black)
+                    }
+                    .padding(.leading, -7)
+                    .contentShape(Rectangle())
+                }
+            }
+            .padding(.vertical, 35)
+            .sheet(isPresented: $showInformationView) {
+                NavigationView {
+                    InformationView()
+                }
             }
         }
     }
