@@ -70,16 +70,8 @@ struct ChartView: View {
 
             Divider()
                 .padding(.vertical, 10)
-
+            
             HStack {
-                Button(action: {
-                    isShowingYearMonthPicker = true
-                }) {
-                    Text("\(selectedYear)년 \(selectedMonth)월")
-                        .font(.headline)
-                        .foregroundColor(.black)
-                }
-
                 Text("카테고리별 총 지출")
                     .font(.headline)
 
@@ -100,6 +92,18 @@ struct ChartView: View {
                         .font(.title2)
                         .padding(.horizontal)
                 }
+            }
+            .padding(.horizontal)
+            
+            HStack {
+                Button(action: {
+                    isShowingYearMonthPicker = true
+                }) {
+                    Text("\(formatYear(selectedYear))년 \(selectedMonth)월")
+                        //.font(.headline)
+                        .foregroundColor(.black)
+                }
+                Spacer()
             }
             .padding(.horizontal)
 
@@ -126,6 +130,12 @@ struct ChartView: View {
             )
         }
     }
+}
+
+private func formatYear(_ year: Int) -> String {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .none
+    return formatter.string(from: NSNumber(value: year)) ?? "\(year)"
 }
 
 struct DottedPieChartView: View {
