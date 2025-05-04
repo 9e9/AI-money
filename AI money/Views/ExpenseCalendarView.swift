@@ -29,7 +29,9 @@ struct ExpenseCalendarView: View {
                             .background(Calendar.current.isDate(date, inSameDayAs: selectedDate) ? Color.blue : Color.clear)
                             .clipShape(Circle())
                             .onTapGesture {
-                                selectedDate = date
+                                withAnimation {
+                                    selectedDate = date
+                                }
                             }
                         
                         let totalExpense = viewModel.totalExpense(for: date)
@@ -52,6 +54,7 @@ struct ExpenseCalendarView: View {
                                 .font(.headline)
                                 .foregroundColor(.secondary)
                                 .padding()
+                                .transition(.opacity)
                         } else {
                             ForEach(dailyExpenses) { expense in
                                 HStack {
@@ -103,6 +106,7 @@ struct ExpenseCalendarView: View {
                     }
                     .padding(.top, 10)
                     .frame(maxWidth: .infinity)
+                    .transition(.opacity)
                 }
                 .background(Color.gray.opacity(0.5))
                 .frame(minWidth: 400, maxHeight: 350)
