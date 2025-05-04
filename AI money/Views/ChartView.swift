@@ -6,11 +6,13 @@
 //
 
 import SwiftUI
-import Charts
 
 struct ChartView: View {
     @ObservedObject var viewModel: ExpenseViewModel
     @State private var sortOrder: SortOrder = .defaultOrder
+    @State private var selectedYear: Int = Calendar.current.component(.year, from: Date())
+    @State private var selectedMonth: Int = Calendar.current.component(.month, from: Date())
+    @State private var isShowingYearMonthPicker = false
 
     enum SortOrder: String, CaseIterable, Identifiable {
         case defaultOrder = "기본순"
@@ -25,8 +27,15 @@ struct ChartView: View {
         return predefinedCategories + viewModel.customCategories
     }
 
+    private var filteredExpenses: [Expense] {
+        viewModel.expenses.filter { expense in
+            let expenseDate = Calendar.current.dateComponents([.year, .month], from: expense.date)
+            return expenseDate.year == selectedYear && expenseDate.month == selectedMonth
+        }
+    }
+
     private var sortedCategoryTotals: [(String, Double)] {
-        let totals = viewModel.expenses.reduce(into: [String: Double]()) { result, expense in
+        let totals = filteredExpenses.reduce(into: [String: Double]()) { result, expense in
             result[expense.category, default: 0.0] += expense.amount
         }
 
@@ -51,7 +60,7 @@ struct ChartView: View {
             Text("원형 차트")
                 .font(.headline)
 
-            if viewModel.expenses.isEmpty {
+            if filteredExpenses.isEmpty {
                 DottedPieChartView()
                     .frame(height: 200)
             } else {
@@ -86,6 +95,24 @@ struct ChartView: View {
             }
             .padding(.horizontal)
 
+            Button(action: {
+                isShowingYearMonthPicker = true
+            }) {
+                Text("\(selectedYear)년 \(selectedMonth)월")
+                    .font(.headline)
+                    .padding()
+                    .background(Color.blue.opacity(0.2))
+                    .cornerRadius(8)
+            }
+            .sheet(isPresented: $isShowingYearMonthPicker) {
+                YearMonthPickerView(
+                    viewModel: viewModel,
+                    selectedYear: $selectedYear,
+                    selectedMonth: $selectedMonth,
+                    showingPicker: $isShowingYearMonthPicker
+                )
+            }
+
             List {
                 ForEach(sortedCategoryTotals, id: \.0) { category, total in
                     HStack {
@@ -103,13 +130,12 @@ struct ChartView: View {
     }
 }
 
-// 점선 원형 차트 뷰
 struct DottedPieChartView: View {
     var body: some View {
         ZStack {
             Circle()
-                .stroke(style: StrokeStyle(lineWidth: 2, dash: [5])) // 점선 스타일
-                .foregroundColor(.gray) // 점선 색상
+                .stroke(style: StrokeStyle(lineWidth: 2, dash: [5]))
+                .foregroundColor(.gray)
                 .padding()
             Text("지출 없음")
                 .font(.headline)
