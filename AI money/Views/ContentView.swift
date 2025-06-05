@@ -21,9 +21,9 @@ struct ContentView: View {
                 .tabItem {
                     Label("차트", systemImage: "chart.bar")
                 }
-            PredictionView()
+            ChatBotView()
                 .tabItem {
-                    Label("예측", systemImage: "brain.head.profile")
+                    Label("AI", systemImage: "brain.head.profile")
                 }
         }
         .onAppear {

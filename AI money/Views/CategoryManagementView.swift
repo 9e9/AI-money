@@ -103,10 +103,12 @@ struct CategoryManagementView: View {
                             }
                             .padding(.horizontal)
                         }
+                        .background(Color(UIColor.systemGray5))
                     }
 
                     Spacer()
                 }
+                .background(Color(UIColor.systemGray5))
 
                 VStack {
                     Spacer()
@@ -126,6 +128,7 @@ struct CategoryManagementView: View {
                     .background(Color(UIColor.systemGray5))
                 }
             }
+            .background(Color(UIColor.systemGray5))
             .navigationTitle("카테고리 관리")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {

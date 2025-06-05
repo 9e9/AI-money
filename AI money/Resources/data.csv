@@ -1,0 +1,93 @@
+text,label
+이번 달의 총 지출은?,total_expense
+가장 많이 소비한 카테고리는?,top_category
+이번 주의 총 지출은?,total_expense
+지난달 지출 요약은?,total_expense
+어제 얼마 썼어?,date_expense
+가장 적게 소비한 항목은?,min_category
+이번 달 교통비는 얼마야?,category_expense
+이번 주 외식비는?,category_expense
+이번 달 소비 내역 알려줘,total_expense
+지난주 소비 요약해줘,total_expense
+오늘의 지출은?,date_expense
+이번 달 가장 많이 쓴 날은?,date_expense
+이번 달에 몇 번 외식했어?,count
+이번 달 쇼핑한 금액은?,category_expense
+이번 달 고정 지출은 얼마야?,category_expense
+이번 주 가장 많이 쓴 항목은 뭐야?,top_category
+지난달보다 더 썼어?,compare
+최근 일주일간 총 소비는?,total_expense
+월별 소비 추세 알려줘,compare
+이번 달 문화생활 지출은?,category_expense
+이번 주 교통비 얼마야?,category_expense
+식비가 지난달보다 늘었어?,compare
+주말에 쓴 돈 알려줘,date_expense
+이번 달 중에 가장 지출이 적은 날은?,date_expense
+카페에 쓴 돈은?,category_expense
+지난주 식비 알려줘,category_expense
+이번 달 몇 번 지출했어?,count
+지난달 교통비는 어땠어?,category_expense
+어제 교통비 얼마 썼어?,date_expense
+총 지출?,total_expense
+식비?,category_expense
+카드 썼어?,category_expense
+현금 사용?,category_expense
+교통?,category_expense
+외식?,category_expense
+이번 달 통신비는?,category_expense
+이번 달 총 몇 건 지출했어?,count
+가장 적게 쓴 날은?,date_expense
+5월 총 소비?,total_expense
+6월 예산 초과했어?,compare
+교통비 지난주보다 어때?,compare
+지난달 식비는?,category_expense
+월 평균 지출은?,avg_expense
+오늘은 안 썼어?,date_expense
+5월 10일에 얼마 썼어?,date_expense
+지출 제일 많은 요일은?,date_expense
+평균 외식 횟수는?,avg_expense
+외식 자주해?,count
+이번 달 절약했어?,compare
+소비가 증가했어?,compare
+교통비 아껴졌어?,compare
+이번 달 옷 산 금액은?,category_expense
+가장 많이 쓴 날은?,date_expense
+어제는?,date_expense
+이번 주말은?,date_expense
+식비 얼마야?,category_expense
+월세 얼마야?,category_expense
+이번 달 가장 큰 지출은?,top_category
+카페 지출 얼마나?,category_expense
+교통비 얼마나 썼어?,category_expense
+이번 달 얼마 남았어?,left_budget
+남은 예산?,left_budget
+이번달총지출은?,total_expense
+가장많이쓴카테고리는?,top_category
+이번주지출얼마,total_expense
+지출 요약좀,total_expense
+어재 얼마나씀?,date_expense
+가장적게쓴항목,min_category
+교통비얼마,category_expense
+외식비얼마야,category_expense
+이번달소비요약,total_expense
+오늘지출?,date_expense
+가장많이쓴날?,date_expense
+이번달 외식몇번?,count
+쇼핑 금액?,category_expense
+고정지출 얼마야,category_expense
+요즘 식비어때,compare
+지출 제일작은날,date_expense
+카페?,category_expense
+지출건수?,count
+지출 많았나,compare
+외식자주함?,count
+요약,total_expense
+식비얼마,category_expense
+총지출은얼마,total_expense
+이번달카페지출얼만가요,category_expense
+카드쓴금액알려줘,category_expense
+이번달남은예산?,left_budget
+남은돈?,left_budget
+5월 총소비는요,total_expense
+오늘은 안썼나,date_expense
+이달에쓸돈?,left_budget
