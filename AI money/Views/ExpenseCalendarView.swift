@@ -21,7 +21,12 @@ struct ExpenseCalendarView: View {
         NavigationView {
             VStack {
                 CalendarView(
-                    viewModel: viewModel, selectedYear: $selectedYear, selectedMonth: $selectedMonth, showHeaders: true) { date in
+                    viewModel: viewModel,
+                    selectedYear: $selectedYear,
+                    selectedMonth: $selectedMonth,
+                    selectedDate: $selectedDate,    // <--- 추가!
+                    showHeaders: true
+                ) { date in
                     VStack {
                         Text(String(Calendar.current.component(.day, from: date)))
                             .foregroundColor(Calendar.current.isDate(date, inSameDayAs: selectedDate) ? .white : .primary)

@@ -12,6 +12,7 @@ struct CalendarView<DateView>: View where DateView: View {
     @Environment(\.calendar) var calendar
     @Binding var selectedYear: Int
     @Binding var selectedMonth: Int
+    @Binding var selectedDate: Date      // <--- 추가!
     let showHeaders: Bool
     let content: (Date) -> DateView
 
@@ -95,6 +96,7 @@ struct CalendarView<DateView>: View where DateView: View {
         let components = calendar.dateComponents([.year, .month], from: currentDate)
         selectedYear = components.year ?? selectedYear
         selectedMonth = components.month ?? selectedMonth
+        selectedDate = currentDate   // <-- 오늘 날짜로 변경!
     }
 }
 
