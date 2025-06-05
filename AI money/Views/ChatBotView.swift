@@ -40,6 +40,7 @@ struct ChatBotView: View {
                     }
                     .padding()
                 }
+                .background(Color .white)
                 .onChange(of: messages) { _ in
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                         if let lastId = messages.last?.id {
