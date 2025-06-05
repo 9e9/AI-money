@@ -12,7 +12,7 @@ struct ExpenseCalendarView: View {
     @State private var showingAddExpense = false
     @State private var showingDeleteAlert = false
     @State private var showInformationView = false
-    @State private var selectedDate: Date = Date()
+    @State private var selectedDate: Date? = Date()
     @State private var expenseToDelete: Expense? = nil
     @State private var selectedYear: Int = Calendar.current.component(.year, from: Date())
     @State private var selectedMonth: Int = Calendar.current.component(.month, from: Date())
@@ -24,18 +24,26 @@ struct ExpenseCalendarView: View {
                     viewModel: viewModel,
                     selectedYear: $selectedYear,
                     selectedMonth: $selectedMonth,
-                    selectedDate: $selectedDate,    // <--- 추가!
+                    selectedDate: $selectedDate,
                     showHeaders: true
                 ) { date in
                     VStack {
                         Text(String(Calendar.current.component(.day, from: date)))
-                            .foregroundColor(Calendar.current.isDate(date, inSameDayAs: selectedDate) ? .white : .primary)
+                            .foregroundColor(
+                                selectedDate != nil && Calendar.current.isDate(date, inSameDayAs: selectedDate!) ? .white : .primary
+                            )
                             .padding(4)
-                            .background(Calendar.current.isDate(date, inSameDayAs: selectedDate) ? Color.blue : Color.clear)
+                            .background(
+                                selectedDate != nil && Calendar.current.isDate(date, inSameDayAs: selectedDate!) ? Color.blue : Color.clear
+                            )
                             .clipShape(Circle())
                             .onTapGesture {
                                 withAnimation {
-                                    selectedDate = date
+                                    if let selected = selectedDate, Calendar.current.isDate(selected, inSameDayAs: date) {
+                                        selectedDate = nil
+                                    } else {
+                                        selectedDate = date
+                                    }
                                 }
                             }
                         
@@ -53,59 +61,69 @@ struct ExpenseCalendarView: View {
 
                 ScrollView {
                     VStack {
-                        let dailyExpenses = viewModel.expenses.filter { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }
-                        if dailyExpenses.isEmpty {
-                            Text("지출 없음")
+                        if selectedDate == nil {
+                            Text("날짜를 선택하세요")
                                 .font(.headline)
                                 .foregroundColor(.secondary)
                                 .padding()
                                 .transition(.opacity)
                         } else {
-                            ForEach(dailyExpenses) { expense in
-                                HStack {
-                                    VStack(alignment: .leading) {
-                                        Text(expense.category)
-                                            .font(.headline)
-                                        HStack {
-                                            Text("\(Int(expense.amount)) 원")
-                                                .font(.subheadline)
-                                            if !expense.note.isEmpty {
-                                                Text("- \(expense.note)")
+                            let dailyExpenses = viewModel.expenses.filter {
+                                selectedDate != nil && Calendar.current.isDate($0.date, inSameDayAs: selectedDate!)
+                            }
+                            if dailyExpenses.isEmpty {
+                                Text("지출 없음")
+                                    .font(.headline)
+                                    .foregroundColor(.secondary)
+                                    .padding()
+                                    .transition(.opacity)
+                            } else {
+                                ForEach(dailyExpenses) { expense in
+                                    HStack {
+                                        VStack(alignment: .leading) {
+                                            Text(expense.category)
+                                                .font(.headline)
+                                            HStack {
+                                                Text("\(Int(expense.amount)) 원")
                                                     .font(.subheadline)
-                                                    .foregroundColor(.secondary)
+                                                if !expense.note.isEmpty {
+                                                    Text("- \(expense.note)")
+                                                        .font(.subheadline)
+                                                        .foregroundColor(.secondary)
+                                                }
                                             }
                                         }
-                                    }
-                                    Spacer()
-                                    Button(action: {
-                                        expenseToDelete = expense
-                                        showingDeleteAlert = true
-                                    }) {
-                                        Image(systemName: "trash")
-                                            .foregroundColor(.red)
-                                    }
-                                    .alert(isPresented: $showingDeleteAlert) {
-                                        Alert(
-                                            title: Text("삭제 확인"),
-                                            message: Text("이 지출 내역을 삭제하시겠습니까?"),
-                                            primaryButton: .destructive(Text("삭제")) {
-                                                withAnimation {
-                                                    if let expenseToDelete = expenseToDelete {
-                                                        viewModel.removeExpense(expenseToDelete)
+                                        Spacer()
+                                        Button(action: {
+                                            expenseToDelete = expense
+                                            showingDeleteAlert = true
+                                        }) {
+                                            Image(systemName: "trash")
+                                                .foregroundColor(.red)
+                                        }
+                                        .alert(isPresented: $showingDeleteAlert) {
+                                            Alert(
+                                                title: Text("삭제 확인"),
+                                                message: Text("이 지출 내역을 삭제하시겠습니까?"),
+                                                primaryButton: .destructive(Text("삭제")) {
+                                                    withAnimation {
+                                                        if let expenseToDelete = expenseToDelete {
+                                                            viewModel.removeExpense(expenseToDelete)
+                                                        }
                                                     }
-                                                }
-                                            },
-                                            secondaryButton: .cancel(Text("취소"))
-                                        )
+                                                },
+                                                secondaryButton: .cancel(Text("취소"))
+                                            )
+                                        }
                                     }
+                                    .padding()
+                                    .background(Color.white)
+                                    .cornerRadius(10)
+                                    .shadow(radius: 5)
+                                    .padding(.horizontal)
+                                    .padding(.vertical, 5)
+                                    .transition(.opacity)
                                 }
-                                .padding()
-                                .background(Color.white)
-                                .cornerRadius(10)
-                                .shadow(radius: 5)
-                                .padding(.horizontal)
-                                .padding(.vertical, 5)
-                                .transition(.opacity)
                             }
                         }
                     }
@@ -127,7 +145,7 @@ struct ExpenseCalendarView: View {
                 }
             }
             .sheet(isPresented: $showingAddExpense) {
-                AddExpenseView(viewModel: viewModel, selectedDate: selectedDate)
+                AddExpenseView(viewModel: viewModel, selectedDate: selectedDate ?? Date())
             }
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
