@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct ChatMessage: Identifiable {
+struct ChatMessage: Identifiable, Equatable {
     let id = UUID()
     let text: String
     let isUser: Bool
@@ -35,14 +35,21 @@ struct ChatBotView: View {
                                     Spacer()
                                 }
                             }
+                            .id(message.id) // 각 메시지에 고유 id 부여
                         }
                     }
                     .padding()
                 }
                 .background(Color(UIColor.systemGroupedBackground))
-                .onChange(of: messages.count) { _ in
-                    withAnimation {
-                        scrollViewProxy.scrollTo(messages.last?.id, anchor: .bottom)
+                // iOS 17 이상에서 권장하는 onChange 문법
+                .onChange(of: messages) { _ in
+                    // 약간의 지연을 두어 UI가 그려진 후 스크롤 (더 자연스러움)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                        if let lastId = messages.last?.id {
+                            withAnimation {
+                                scrollViewProxy.scrollTo(lastId, anchor: .bottom)
+                            }
+                        }
                     }
                 }
             }
@@ -89,6 +96,7 @@ struct ChatBotView: View {
             await MainActor.run {
                 conversationContext = tempContext
                 messages.append(ChatMessage(text: aiReply, isUser: false))
+                // scroll은 onChange에서 자동 처리
             }
         }
     }
