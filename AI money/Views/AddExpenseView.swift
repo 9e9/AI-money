@@ -9,29 +9,28 @@ import SwiftUI
 
 struct AddExpenseView: View {
     @ObservedObject var viewModel: ExpenseViewModel
+    @StateObject private var vm = AddExpenseViewModel()
     @Environment(\.presentationMode) var presentationMode
     @State private var showingAlert = false
     @State private var alertMessage = ""
     @State private var alertTitle = ""
     @State private var deletingIndex: Int? = nil
     @State private var showCategoryManagement = false
-    @State private var allCategories: [String] = []
     @State private var isEditing = false
-    @State private var expenseGroups: [ExpenseGroup] = [ExpenseGroup()]
     var selectedDate: Date
 
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 16) {
-                    ForEach(expenseGroups.indices, id: \.self) { index in
-                        expenseGroupView(group: $expenseGroups[index], index: index)
+                    ForEach(vm.expenseGroups.indices, id: \.self) { index in
+                        expenseGroupView(group: $vm.expenseGroups[index], index: index)
                             .transition(.opacity)
                     }
 
                     Button(action: {
                         withAnimation {
-                            expenseGroups.append(ExpenseGroup())
+                            vm.addGroup()
                         }
                     }) {
                         Text("새로운 지출 추가")
@@ -75,11 +74,11 @@ struct AddExpenseView: View {
             } message: {
                 Text(alertMessage)
             }
-            .sheet(isPresented: $showCategoryManagement, onDismiss: updateCategories) {
+            .sheet(isPresented: $showCategoryManagement, onDismiss: vm.updateCategories) {
                 CategoryManagementView()
             }
             .onAppear {
-                updateCategories()
+                vm.updateCategories()
             }
         }
     }
@@ -112,7 +111,7 @@ struct AddExpenseView: View {
                 }
                 Spacer()
                 Picker("", selection: group.category) {
-                    ForEach(allCategories, id: \.self) { category in
+                    ForEach(vm.allCategories, id: \.self) { category in
                         Text(category)
                     }
                 }
@@ -154,7 +153,7 @@ struct AddExpenseView: View {
             }
             .frame(maxHeight: 20)
             
-            if isEditing && expenseGroups.count > 1 {
+            if isEditing && vm.expenseGroups.count > 1 {
                 Button(action: {
                     deletingIndex = index
                     alertTitle = "삭제 확인"
@@ -183,23 +182,17 @@ struct AddExpenseView: View {
     }
 
     private func validateAndSaveExpenses() {
-        for group in expenseGroups {
-            guard let expenseAmount = Double(group.amount), expenseAmount > 0 else {
-                alertTitle = "금액을 입력하세요"
-                alertMessage = "지출 금액을 입력해야 저장할 수 있습니다."
-                showingAlert = true
-                return
-            }
+        let (isValid, errorMsg) = vm.validate()
+        if !isValid {
+            alertTitle = "금액을 입력하세요"
+            alertMessage = errorMsg ?? ""
+            showingAlert = true
+            return
         }
 
-        for group in expenseGroups {
-            let newExpense = Expense(
-                date: selectedDate,
-                category: group.category,
-                amount: Double(group.amount) ?? 0,
-                note: group.note
-            )
-            viewModel.addExpense(newExpense)
+        let newExpenses = vm.makeExpenses(selectedDate: selectedDate)
+        for expense in newExpenses {
+            viewModel.addExpense(expense)
         }
 
         presentationMode.wrappedValue.dismiss()
@@ -208,7 +201,7 @@ struct AddExpenseView: View {
     private func confirmDelete() {
         withAnimation {
             if let index = deletingIndex {
-                expenseGroups.remove(at: index)
+                vm.removeGroup(at: index)
             }
             deletingIndex = nil
         }
@@ -216,12 +209,6 @@ struct AddExpenseView: View {
 
     private func cancelExpense() {
         presentationMode.wrappedValue.dismiss()
-    }
-
-    private func updateCategories() {
-        let predefinedCategories = ["식비", "교통", "쇼핑", "여가", "기타"]
-        let customCategories = UserDefaults.standard.customCategories
-        allCategories = predefinedCategories + customCategories
     }
 
     private static func formatDate(_ date: Date) -> String {
@@ -238,11 +225,4 @@ struct AddExpenseView: View {
         formatter.maximumFractionDigits = 0
         return formatter.string(from: NSNumber(value: number)) ?? numberString
     }
-}
-
-struct ExpenseGroup {
-    var category: String = "기타"
-    var amount: String = ""
-    var formattedAmount: String = ""
-    var note: String = ""
 }
