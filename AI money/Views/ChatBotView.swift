@@ -40,7 +40,6 @@ struct ChatBotView: View {
                     }
                     .padding()
                 }
-                .background(Color(UIColor.systemGroupedBackground))
                 .onChange(of: messages) { _ in
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                         if let lastId = messages.last?.id {
@@ -53,13 +52,13 @@ struct ChatBotView: View {
                 .safeAreaInset(edge: .top, spacing: 0) {
                     Color.clear
                         .background(.ultraThinMaterial)
-                        .frame(height: 10)
+                        .overlay(Color.white.opacity(1.0))
+                        .frame(height: 0)
                         .allowsHitTesting(false)
                 }
             }
 
             ZStack {
-                Color(UIColor.systemGray6)
                 HStack {
                     TextField("메시지를 입력하세요", text: $inputText, onCommit: sendMessage)
                         .padding(12)
@@ -80,7 +79,6 @@ struct ChatBotView: View {
             }
             .fixedSize(horizontal: false, vertical: true)
         }
-        .background(Color(UIColor.systemGroupedBackground))
     }
 
     func sendMessage() {
@@ -116,11 +114,5 @@ struct ChatBubble: View {
             .foregroundColor(isUser ? .white : .black)
             .cornerRadius(14)
             .frame(maxWidth: 280, alignment: isUser ? .trailing : .leading)
-    }
-}
-
-struct ChatBotView_Previews: PreviewProvider {
-    static var previews: some View {
-        ChatBotView()
     }
 }
