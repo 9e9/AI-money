@@ -52,8 +52,9 @@ struct ChatBotView: View {
                 }
                 .safeAreaInset(edge: .top, spacing: 0) {
                     Color.clear
-                        .background(.ultraThinMaterial)
-                        .overlay(Color.white.opacity(1.0))
+                        //.background(.ultraThinMaterial)
+                        //.overlay(Color.white.opacity(0.1))
+                        .background(Color .white)
                         .frame(height: 0)
                         .allowsHitTesting(false)
                 }
