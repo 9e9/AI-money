@@ -35,15 +35,13 @@ struct ChatBotView: View {
                                     Spacer()
                                 }
                             }
-                            .id(message.id) // 각 메시지에 고유 id 부여
+                            .id(message.id)
                         }
                     }
                     .padding()
                 }
                 .background(Color(UIColor.systemGroupedBackground))
-                // iOS 17 이상에서 권장하는 onChange 문법
                 .onChange(of: messages) { _ in
-                    // 약간의 지연을 두어 UI가 그려진 후 스크롤 (더 자연스러움)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                         if let lastId = messages.last?.id {
                             withAnimation {
@@ -51,6 +49,12 @@ struct ChatBotView: View {
                             }
                         }
                     }
+                }
+                .safeAreaInset(edge: .top, spacing: 0) {
+                    Color.clear
+                        .background(.ultraThinMaterial)
+                        .frame(height: 10)
+                        .allowsHitTesting(false)
                 }
             }
 
@@ -96,7 +100,6 @@ struct ChatBotView: View {
             await MainActor.run {
                 conversationContext = tempContext
                 messages.append(ChatMessage(text: aiReply, isUser: false))
-                // scroll은 onChange에서 자동 처리
             }
         }
     }
