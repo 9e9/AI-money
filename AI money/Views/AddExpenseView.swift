@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AddExpenseView: View {
-    @ObservedObject var viewModel: ExpenseViewModel
+    @ObservedObject var viewModel: ExpenseCalendarViewModel
     @StateObject private var vm = AddExpenseViewModel()
     @Environment(\.presentationMode) var presentationMode
     @State private var showingAlert = false

@@ -22,9 +22,9 @@ class ChartViewModel: ObservableObject {
         var id: String { self.rawValue }
     }
 
-    private var expenseViewModel: ExpenseViewModel
+    private var expenseViewModel: ExpenseCalendarViewModel
 
-    init(expenseViewModel: ExpenseViewModel) {
+    init(expenseViewModel: ExpenseCalendarViewModel) {
         self.expenseViewModel = expenseViewModel
         let now = Date()
         let calendar = Calendar.current

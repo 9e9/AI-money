@@ -1,5 +1,5 @@
 //
-//  ExpenseViewModel.swift
+//  ExpenseCalendarViewModel.swift
 //  AI money
 //
 //  Created by 조준희 on 3/30/25.
@@ -9,8 +9,8 @@ import Foundation
 import SwiftData
 import SwiftUI
 
-class ExpenseViewModel: ObservableObject {
-    static let shared = ExpenseViewModel()
+class ExpenseCalendarViewModel: ObservableObject {
+    static let shared = ExpenseCalendarViewModel()
 
     @Published private(set) var expenses: [Expense] = []
     @Published var customCategories: [String] = []

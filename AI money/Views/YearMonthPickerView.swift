@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct YearMonthPickerView: View {
-    @ObservedObject var viewModel: ExpenseViewModel
+    @ObservedObject var viewModel: ExpenseCalendarViewModel
     @Binding var selectedYear: Int
     @Binding var selectedMonth: Int
     @Binding var showingPicker: Bool

@@ -15,7 +15,7 @@ class CategoryManagementViewModel: ObservableObject {
     @Published var selectedCategories: Set<String> = []
     @Published var isEditingMode = false
 
-    var expenseViewModel: ExpenseViewModel = ExpenseViewModel.shared
+    var expenseViewModel: ExpenseCalendarViewModel = ExpenseCalendarViewModel.shared
 
     var customCategories: [String] {
         expenseViewModel.customCategories

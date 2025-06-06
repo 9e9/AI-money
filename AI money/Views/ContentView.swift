@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    @StateObject private var viewModel = ExpenseViewModel.shared
+    @StateObject private var viewModel = ExpenseCalendarViewModel.shared
 
     var body: some View {
         TabView {

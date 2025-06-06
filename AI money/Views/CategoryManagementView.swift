@@ -9,16 +9,16 @@ import SwiftUI
 
 struct CategoryManagementView: View {
     @Environment(\.presentationMode) var presentationMode
-    @StateObject private var vm = CategoryManagementViewModel()
+    @StateObject private var viewModel = CategoryManagementViewModel()
 
     var body: some View {
         NavigationView {
             ZStack {
                 VStack(spacing: 16) {
-                    if vm.isEditingMode {
+                    if viewModel.isEditingMode {
                         HStack {
-                            Button(action: { vm.handleSelectionAction() }) {
-                                Text(vm.selectionButtonTitle)
+                            Button(action: { viewModel.handleSelectionAction() }) {
+                                Text(viewModel.selectionButtonTitle)
                                     .font(.headline)
                                     .padding(8)
                                     .background(Color.blue.opacity(0.2))
@@ -27,8 +27,8 @@ struct CategoryManagementView: View {
                             }
                             Spacer()
 
-                            if !vm.selectedCategories.isEmpty {
-                                Button(action: { vm.askDeleteSelectedCategories() }) {
+                            if !viewModel.selectedCategories.isEmpty {
+                                Button(action: { viewModel.askDeleteSelectedCategories() }) {
                                     Text("삭제")
                                         .font(.headline)
                                         .padding(8)
@@ -40,10 +40,10 @@ struct CategoryManagementView: View {
                             }
                         }
                         .padding(.horizontal)
-                        .animation(.easeInOut, value: vm.isEditingMode)
+                        .animation(.easeInOut, value: viewModel.isEditingMode)
                     }
 
-                    if vm.customCategories.isEmpty {
+                    if viewModel.customCategories.isEmpty {
                         Spacer()
                         Text("카테고리가 없음")
                             .font(.body)
@@ -52,11 +52,11 @@ struct CategoryManagementView: View {
                     } else {
                         ScrollView {
                             VStack(spacing: 16) {
-                                ForEach(vm.customCategories, id: \.self) { category in
+                                ForEach(viewModel.customCategories, id: \.self) { category in
                                     HStack {
-                                        if vm.isEditingMode {
-                                            Button(action: { vm.toggleSelection(for: category) }) {
-                                                Image(systemName: vm.selectedCategories.contains(category) ? "checkmark.square.fill" : "square")
+                                        if viewModel.isEditingMode {
+                                            Button(action: { viewModel.toggleSelection(for: category) }) {
+                                                Image(systemName: viewModel.selectedCategories.contains(category) ? "checkmark.square.fill" : "square")
                                                     .foregroundColor(.blue)
                                                     .transition(.opacity)
                                             }
@@ -69,8 +69,8 @@ struct CategoryManagementView: View {
                                             .transition(.opacity)
                                         Spacer()
 
-                                        if vm.isEditingMode {
-                                            Button(action: { vm.askDeleteCategory(category) }) {
+                                        if viewModel.isEditingMode {
+                                            Button(action: { viewModel.askDeleteCategory(category) }) {
                                                 Image(systemName: "trash")
                                                     .foregroundColor(.red)
                                                     .transition(.opacity)
@@ -97,10 +97,10 @@ struct CategoryManagementView: View {
                 VStack {
                     Spacer()
                     HStack {
-                        TextField("새 카테고리", text: $vm.newCategoryName)
+                        TextField("새 카테고리", text: $viewModel.newCategoryName)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .padding(.vertical, 8)
-                        Button(action: { vm.addCategory() }) {
+                        Button(action: { viewModel.addCategory() }) {
                             Text("추가")
                                 .padding(8)
                                 .background(Color.blue)
@@ -123,27 +123,27 @@ struct CategoryManagementView: View {
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: { withAnimation { vm.isEditingMode.toggle() } }) {
-                        Text(vm.isEditingMode ? "닫기" : "수정")
+                    Button(action: { withAnimation { viewModel.isEditingMode.toggle() } }) {
+                        Text(viewModel.isEditingMode ? "닫기" : "수정")
                             .font(.headline)
-                            .foregroundColor(vm.isEditingMode ? .red : .blue)
+                            .foregroundColor(viewModel.isEditingMode ? .red : .blue)
                     }
                 }
             }
-            .alert(isPresented: $vm.showingAlert) {
-                if (vm.alertMessage.contains("삭제하시겠습니까")) {
+            .alert(isPresented: $viewModel.showingAlert) {
+                if (viewModel.alertMessage.contains("삭제하시겠습니까")) {
                     return Alert(
                         title: Text("삭제 확인"),
-                        message: Text(vm.alertMessage),
+                        message: Text(viewModel.alertMessage),
                         primaryButton: .destructive(Text("삭제")) {
-                            vm.handleAlertDelete()
+                            viewModel.handleAlertDelete()
                         },
                         secondaryButton: .cancel(Text("취소"))
                     )
                 } else {
                     return Alert(
                         title: Text("알림"),
-                        message: Text(vm.alertMessage),
+                        message: Text(viewModel.alertMessage),
                         dismissButton: .default(Text("확인"))
                     )
                 }

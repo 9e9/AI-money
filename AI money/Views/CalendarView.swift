@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CalendarView<DateView>: View where DateView: View {
-    @ObservedObject var viewModel: ExpenseViewModel
+    @ObservedObject var viewModel: ExpenseCalendarViewModel
     @Environment(\.calendar) var calendar
     @Binding var selectedYear: Int
     @Binding var selectedMonth: Int

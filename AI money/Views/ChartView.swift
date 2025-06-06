@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct ChartView: View {
-    @ObservedObject var viewModel: ExpenseViewModel
+    @ObservedObject var viewModel: ExpenseCalendarViewModel
     @StateObject private var vm: ChartViewModel
 
-    init(viewModel: ExpenseViewModel) {
+    init(viewModel: ExpenseCalendarViewModel) {
         _viewModel = ObservedObject(wrappedValue: viewModel)
         _vm = StateObject(wrappedValue: ChartViewModel(expenseViewModel: viewModel))
     }
