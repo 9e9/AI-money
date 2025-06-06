@@ -8,24 +8,16 @@
 import SwiftUI
 import SwiftData
 
-struct ChatMessage: Identifiable, Equatable {
-    let id = UUID()
-    let text: String
-    let isUser: Bool
-}
-
 struct ChatBotView: View {
     @Environment(\.modelContext) private var modelContext
-    @State private var messages: [ChatMessage] = []
-    @State private var inputText: String = ""
-    @State private var conversationContext = ConversationContext()
+    @StateObject private var viewModel = ChatBotViewModel()
 
     var body: some View {
         VStack(spacing: 0) {
             ScrollViewReader { scrollViewProxy in
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 8) {
-                        ForEach(messages) { message in
+                        ForEach(viewModel.messages) { message in
                             HStack {
                                 if message.isUser {
                                     Spacer()
@@ -40,10 +32,10 @@ struct ChatBotView: View {
                     }
                     .padding()
                 }
-                .background(Color .white)
-                .onChange(of: messages) { _ in
+                .background(Color.white)
+                .onChange(of: viewModel.messages) { _ in
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                        if let lastId = messages.last?.id {
+                        if let lastId = viewModel.messages.last?.id {
                             withAnimation {
                                 scrollViewProxy.scrollTo(lastId, anchor: .bottom)
                             }
@@ -52,9 +44,7 @@ struct ChatBotView: View {
                 }
                 .safeAreaInset(edge: .top, spacing: 0) {
                     Color.clear
-                        //.background(.ultraThinMaterial)
-                        //.overlay(Color.white.opacity(0.1))
-                        .background(Color .white)
+                        .background(Color.white)
                         .frame(height: 0)
                         .allowsHitTesting(false)
                 }
@@ -62,45 +52,28 @@ struct ChatBotView: View {
 
             ZStack {
                 HStack {
-                    TextField("메시지를 입력하세요", text: $inputText, onCommit: sendMessage)
+                    TextField("메시지를 입력하세요", text: $viewModel.inputText, onCommit: {
+                        viewModel.sendMessage(modelContext: modelContext)
+                    })
                         .padding(12)
                         .background(Color(UIColor.secondarySystemFill))
                         .cornerRadius(10)
                         .foregroundColor(.primary)
                         .font(.system(size: 16))
-                    Button(action: sendMessage) {
+                    Button(action: {
+                        viewModel.sendMessage(modelContext: modelContext)
+                    }) {
                         Image(systemName: "paperplane.fill")
                             .rotationEffect(.degrees(45))
                             .font(.system(size: 22))
                             .foregroundColor(.blue)
                     }
-                    .disabled(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .disabled(viewModel.inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
                 .padding(.horizontal)
                 .padding(.vertical, 8)
             }
             .fixedSize(horizontal: false, vertical: true)
-        }
-    }
-
-    func sendMessage() {
-        let trimmed = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return }
-        let userMessage = ChatMessage(text: trimmed, isUser: true)
-        messages.append(userMessage)
-        inputText = ""
-
-        Task {
-            var tempContext = conversationContext
-            let aiReply = await AIService.shared.reply(
-                to: trimmed,
-                context: modelContext,
-                conversationContext: &tempContext
-            )
-            await MainActor.run {
-                conversationContext = tempContext
-                messages.append(ChatMessage(text: aiReply, isUser: false))
-            }
         }
     }
 }
