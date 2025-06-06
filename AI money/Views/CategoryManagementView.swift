@@ -9,22 +9,16 @@ import SwiftUI
 
 struct CategoryManagementView: View {
     @Environment(\.presentationMode) var presentationMode
-    @ObservedObject var viewModel: ExpenseViewModel = ExpenseViewModel.shared
-    @State private var newCategoryName = ""
-    @State private var showingAlert = false
-    @State private var alertMessage = ""
-    @State private var categoryToDelete: String?
-    @State private var selectedCategories: Set<String> = []
-    @State private var isEditingMode = false
+    @StateObject private var vm = CategoryManagementViewModel()
 
     var body: some View {
         NavigationView {
             ZStack {
                 VStack(spacing: 16) {
-                    if isEditingMode {
+                    if vm.isEditingMode {
                         HStack {
-                            Button(action: handleSelectionAction) {
-                                Text(selectionButtonTitle())
+                            Button(action: { vm.handleSelectionAction() }) {
+                                Text(vm.selectionButtonTitle)
                                     .font(.headline)
                                     .padding(8)
                                     .background(Color.blue.opacity(0.2))
@@ -33,11 +27,8 @@ struct CategoryManagementView: View {
                             }
                             Spacer()
 
-                            if !selectedCategories.isEmpty {
-                                Button(action: {
-                                    showingAlert = true
-                                    alertMessage = "선택한 카테고리를 삭제하시겠습니까? 관련된 지출 내역도 삭제됩니다."
-                                }) {
+                            if !vm.selectedCategories.isEmpty {
+                                Button(action: { vm.askDeleteSelectedCategories() }) {
                                     Text("삭제")
                                         .font(.headline)
                                         .padding(8)
@@ -49,10 +40,10 @@ struct CategoryManagementView: View {
                             }
                         }
                         .padding(.horizontal)
-                        .animation(.easeInOut, value: isEditingMode)
+                        .animation(.easeInOut, value: vm.isEditingMode)
                     }
 
-                    if viewModel.customCategories.isEmpty {
+                    if vm.customCategories.isEmpty {
                         Spacer()
                         Text("카테고리가 없음")
                             .font(.body)
@@ -61,13 +52,11 @@ struct CategoryManagementView: View {
                     } else {
                         ScrollView {
                             VStack(spacing: 16) {
-                                ForEach(viewModel.customCategories, id: \.self) { category in
+                                ForEach(vm.customCategories, id: \.self) { category in
                                     HStack {
-                                        if isEditingMode {
-                                            Button(action: {
-                                                toggleSelection(for: category)
-                                            }) {
-                                                Image(systemName: selectedCategories.contains(category) ? "checkmark.square.fill" : "square")
+                                        if vm.isEditingMode {
+                                            Button(action: { vm.toggleSelection(for: category) }) {
+                                                Image(systemName: vm.selectedCategories.contains(category) ? "checkmark.square.fill" : "square")
                                                     .foregroundColor(.blue)
                                                     .transition(.opacity)
                                             }
@@ -80,12 +69,8 @@ struct CategoryManagementView: View {
                                             .transition(.opacity)
                                         Spacer()
 
-                                        if isEditingMode {
-                                            Button(action: {
-                                                categoryToDelete = category
-                                                showingAlert = true
-                                                alertMessage = "'\(category)' 카테고리를 삭제하시겠습니까? 관련된 지출 내역도 삭제됩니다."
-                                            }) {
+                                        if vm.isEditingMode {
+                                            Button(action: { vm.askDeleteCategory(category) }) {
                                                 Image(systemName: "trash")
                                                     .foregroundColor(.red)
                                                     .transition(.opacity)
@@ -105,7 +90,6 @@ struct CategoryManagementView: View {
                         }
                         .background(Color(UIColor.systemGray5))
                     }
-
                     Spacer()
                 }
                 .background(Color(UIColor.systemGray5))
@@ -113,10 +97,10 @@ struct CategoryManagementView: View {
                 VStack {
                     Spacer()
                     HStack {
-                        TextField("새 카테고리", text: $newCategoryName)
+                        TextField("새 카테고리", text: $vm.newCategoryName)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .padding(.vertical, 8)
-                        Button(action: addCategory) {
+                        Button(action: { vm.addCategory() }) {
                             Text("추가")
                                 .padding(8)
                                 .background(Color.blue)
@@ -132,115 +116,38 @@ struct CategoryManagementView: View {
             .navigationTitle("카테고리 관리")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: {
-                        presentationMode.wrappedValue.dismiss()
-                    }) {
+                    Button(action: { presentationMode.wrappedValue.dismiss() }) {
                         Text("취소")
                             .font(.headline)
                             .foregroundColor(.blue)
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        withAnimation {
-                            isEditingMode.toggle()
-                        }
-                    }) {
-                        Text(isEditingMode ? "닫기" : "수정")
+                    Button(action: { withAnimation { vm.isEditingMode.toggle() } }) {
+                        Text(vm.isEditingMode ? "닫기" : "수정")
                             .font(.headline)
-                            .foregroundColor(isEditingMode ? .red : .blue)
+                            .foregroundColor(vm.isEditingMode ? .red : .blue)
                     }
                 }
             }
-            .alert(isPresented: $showingAlert) {
-                if alertMessage.contains("삭제하시겠습니까") {
+            .alert(isPresented: $vm.showingAlert) {
+                if (vm.alertMessage.contains("삭제하시겠습니까")) {
                     return Alert(
                         title: Text("삭제 확인"),
-                        message: Text(alertMessage),
+                        message: Text(vm.alertMessage),
                         primaryButton: .destructive(Text("삭제")) {
-                            if let category = categoryToDelete {
-                                deleteCategory(named: category)
-                            } else {
-                                deleteSelectedCategories()
-                            }
+                            vm.handleAlertDelete()
                         },
                         secondaryButton: .cancel(Text("취소"))
                     )
                 } else {
                     return Alert(
                         title: Text("알림"),
-                        message: Text(alertMessage),
+                        message: Text(vm.alertMessage),
                         dismissButton: .default(Text("확인"))
                     )
                 }
             }
-        }
-    }
-
-    private func selectionButtonTitle() -> String {
-        if selectedCategories.isEmpty {
-            return "전체 선택"
-        } else if selectedCategories.count == viewModel.customCategories.count {
-            return "전체 해제"
-        } else {
-            return "선택 해제"
-        }
-    }
-
-    private func handleSelectionAction() {
-        withAnimation {
-            if selectedCategories.isEmpty {
-                selectedCategories = Set(viewModel.customCategories)
-            } else if selectedCategories.count == viewModel.customCategories.count {
-                selectedCategories.removeAll()
-            } else {
-                selectedCategories.removeAll()
-            }
-        }
-    }
-
-    private func toggleSelection(for category: String) {
-        withAnimation {
-            if selectedCategories.contains(category) {
-                selectedCategories.remove(category)
-            } else {
-                selectedCategories.insert(category)
-            }
-        }
-    }
-
-    private func addCategory() {
-        let trimmedName = newCategoryName.trimmingCharacters(in: .whitespaces)
-        guard !trimmedName.isEmpty else { return }
-        let normalizedNewCategory = trimmedName.replacingOccurrences(of: " ", with: "").lowercased()
-        let normalizedCategories = viewModel.customCategories.map { $0.replacingOccurrences(of: " ", with: "").lowercased() }
-        
-        if normalizedCategories.contains(normalizedNewCategory) {
-            showingAlert = true
-            alertMessage = "'\(trimmedName)' 카테고리는 이미 존재합니다."
-            return
-        }
-        
-        withAnimation {
-            viewModel.addCustomCategory(trimmedName)
-        }
-        newCategoryName = ""
-    }
-
-    private func deleteCategory(named category: String) {
-        withAnimation {
-            viewModel.removeCustomCategory(category)
-            selectedCategories.remove(category)
-            viewModel.removeExpenses(for: category)
-        }
-    }
-
-    private func deleteSelectedCategories() {
-        withAnimation {
-            for category in selectedCategories {
-                deleteCategory(named: category)
-            }
-            selectedCategories.removeAll()
         }
     }
 }

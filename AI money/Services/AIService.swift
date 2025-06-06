@@ -93,7 +93,6 @@ final class AIService {
 
     private func isNotAValidQuestion(_ input: String) -> Bool {
         let trimmed = input.trimmingCharacters(in: .whitespacesAndNewlines)
-        // 간단한 패턴들만 예시로
         let meaningless = ["?", "네", "그래", "응", "ㅇㅋ", "좋아", "오키", "ok", "okay"]
         return meaningless.contains(trimmed.lowercased())
     }
