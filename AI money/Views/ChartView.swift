@@ -9,50 +9,11 @@ import SwiftUI
 
 struct ChartView: View {
     @ObservedObject var viewModel: ExpenseViewModel
-    @State private var sortOrder: SortOrder = .defaultOrder
-    @State private var selectedYear: Int = Calendar.current.component(.year, from: Date())
-    @State private var selectedMonth: Int = Calendar.current.component(.month, from: Date())
-    @State private var isShowingYearMonthPicker = false
+    @StateObject private var vm: ChartViewModel
 
-    enum SortOrder: String, CaseIterable, Identifiable {
-        case defaultOrder = "기본순"
-        case highToLow = "높은 순"
-        case lowToHigh = "낮은 순"
-
-        var id: String { self.rawValue }
-    }
-
-    private var allCategories: [String] {
-        let predefinedCategories = ["식비", "교통", "쇼핑", "여가", "기타"]
-        return predefinedCategories + viewModel.customCategories
-    }
-
-    private var filteredExpenses: [Expense] {
-        viewModel.expenses.filter { expense in
-            let expenseDate = Calendar.current.dateComponents([.year, .month], from: expense.date)
-            return expenseDate.year == selectedYear && expenseDate.month == selectedMonth
-        }
-    }
-
-    private var sortedCategoryTotals: [(String, Double)] {
-        let totals = filteredExpenses.reduce(into: [String: Double]()) { result, expense in
-            result[expense.category, default: 0.0] += expense.amount
-        }
-
-        let completeTotals = allCategories.reduce(into: [String: Double]()) { result, category in
-            result[category] = totals[category, default: 0.0]
-        }
-
-        let sorted: [(String, Double)]
-        switch sortOrder {
-        case .highToLow:
-            sorted = completeTotals.sorted { $0.value > $1.value }
-        case .lowToHigh:
-            sorted = completeTotals.sorted { $0.value < $1.value }
-        case .defaultOrder:
-            sorted = completeTotals.sorted { $0.key < $1.key }
-        }
-        return sorted
+    init(viewModel: ExpenseViewModel) {
+        _viewModel = ObservedObject(wrappedValue: viewModel)
+        _vm = StateObject(wrappedValue: ChartViewModel(expenseViewModel: viewModel))
     }
 
     var body: some View {
@@ -60,11 +21,11 @@ struct ChartView: View {
             Text("원형 차트")
                 .font(.headline)
 
-            if filteredExpenses.isEmpty {
+            if vm.filteredExpenses.isEmpty {
                 DottedPieChartView()
                     .frame(height: 200)
             } else {
-                PieChartView(data: Dictionary(uniqueKeysWithValues: sortedCategoryTotals))
+                PieChartView(data: Dictionary(uniqueKeysWithValues: vm.sortedCategoryTotals))
                     .frame(height: 200)
             }
 
@@ -78,13 +39,13 @@ struct ChartView: View {
                 Spacer()
 
                 Menu {
-                    Button(action: { sortOrder = .defaultOrder }) {
+                    Button(action: { vm.sortOrder = .defaultOrder }) {
                         Label("기본순", systemImage: "line.3.horizontal.decrease.circle")
                     }
-                    Button(action: { sortOrder = .highToLow }) {
+                    Button(action: { vm.sortOrder = .highToLow }) {
                         Label("높은 순", systemImage: "arrow.down")
                     }
-                    Button(action: { sortOrder = .lowToHigh }) {
+                    Button(action: { vm.sortOrder = .lowToHigh }) {
                         Label("낮은 순", systemImage: "arrow.up")
                     }
                 } label: {
@@ -96,17 +57,14 @@ struct ChartView: View {
 
             HStack {
                 Button(action: {
-                    isShowingYearMonthPicker = true
+                    vm.isShowingYearMonthPicker = true
                 }) {
-                    Text("\(formatYear(selectedYear))년 \(selectedMonth)월")
+                    Text("\(vm.formatYear(vm.selectedYear))년 \(vm.selectedMonth)월")
                         .foregroundColor(.black)
                 }
                 
                 Button(action: {
-                    let currentDate = Date()
-                    let calendar = Calendar.current
-                    selectedYear = calendar.component(.year, from: currentDate)
-                    selectedMonth = calendar.component(.month, from: currentDate)
+                    vm.resetToCurrentDate()
                 }) {
                     Image(systemName: "arrow.clockwise")
                 }
@@ -115,7 +73,7 @@ struct ChartView: View {
             .padding(.horizontal)
 
             List {
-                ForEach(sortedCategoryTotals, id: \.0) { category, total in
+                ForEach(vm.sortedCategoryTotals, id: \.0) { category, total in
                     HStack {
                         Text(category)
                             .font(.body)
@@ -128,21 +86,15 @@ struct ChartView: View {
             .listStyle(PlainListStyle())
         }
         .padding()
-        .sheet(isPresented: $isShowingYearMonthPicker) {
+        .sheet(isPresented: $vm.isShowingYearMonthPicker) {
             YearMonthPickerView(
                 viewModel: viewModel,
-                selectedYear: $selectedYear,
-                selectedMonth: $selectedMonth,
-                showingPicker: $isShowingYearMonthPicker
+                selectedYear: $vm.selectedYear,
+                selectedMonth: $vm.selectedMonth,
+                showingPicker: $vm.isShowingYearMonthPicker
             )
         }
     }
-}
-
-private func formatYear(_ year: Int) -> String {
-    let formatter = NumberFormatter()
-    formatter.numberStyle = .none
-    return formatter.string(from: NSNumber(value: year)) ?? "\(year)"
 }
 
 struct DottedPieChartView: View {

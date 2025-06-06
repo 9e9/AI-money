@@ -1,0 +1,80 @@
+//
+//  ChartViewModel.swift
+//  AI money
+//
+//  Created by 조준희 on 6/6/25.
+//
+
+import Foundation
+import SwiftUI
+
+class ChartViewModel: ObservableObject {
+    @Published var sortOrder: SortOrder = .defaultOrder
+    @Published var selectedYear: Int
+    @Published var selectedMonth: Int
+    @Published var isShowingYearMonthPicker = false
+
+    enum SortOrder: String, CaseIterable, Identifiable {
+        case defaultOrder = "기본순"
+        case highToLow = "높은 순"
+        case lowToHigh = "낮은 순"
+
+        var id: String { self.rawValue }
+    }
+
+    private var expenseViewModel: ExpenseViewModel
+
+    init(expenseViewModel: ExpenseViewModel) {
+        self.expenseViewModel = expenseViewModel
+        let now = Date()
+        let calendar = Calendar.current
+        _selectedYear = Published(initialValue: calendar.component(.year, from: now))
+        _selectedMonth = Published(initialValue: calendar.component(.month, from: now))
+    }
+
+    var allCategories: [String] {
+        let predefinedCategories = ["식비", "교통", "쇼핑", "여가", "기타"]
+        return predefinedCategories + expenseViewModel.customCategories
+    }
+
+    var filteredExpenses: [Expense] {
+        expenseViewModel.expenses.filter { expense in
+            let expenseDate = Calendar.current.dateComponents([.year, .month], from: expense.date)
+            return expenseDate.year == selectedYear && expenseDate.month == selectedMonth
+        }
+    }
+
+    var sortedCategoryTotals: [(String, Double)] {
+        let totals = filteredExpenses.reduce(into: [String: Double]()) { result, expense in
+            result[expense.category, default: 0.0] += expense.amount
+        }
+
+        let completeTotals = allCategories.reduce(into: [String: Double]()) { result, category in
+            result[category] = totals[category, default: 0.0]
+        }
+
+        let sorted: [(String, Double)]
+        switch sortOrder {
+        case .highToLow:
+            sorted = completeTotals.sorted { $0.value > $1.value }
+        case .lowToHigh:
+            sorted = completeTotals.sorted { $0.value < $1.value }
+        case .defaultOrder:
+            sorted = completeTotals.sorted { $0.key < $1.key }
+        }
+        return sorted
+    }
+
+    func resetToCurrentDate() {
+        let now = Date()
+        let calendar = Calendar.current
+        selectedYear = calendar.component(.year, from: now)
+        selectedMonth = calendar.component(.month, from: now)
+    }
+
+    func formatYear(_ year: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .none
+        return formatter.string(from: NSNumber(value: year)) ?? "\(year)"
+    }
+}
