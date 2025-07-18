@@ -10,7 +10,6 @@ import SwiftUI
 struct CategoryManagementView: View {
     @Environment(\.presentationMode) var presentationMode
     @StateObject private var viewModel = CategoryManagementViewModel()
-    @State private var deleteButtonOpacity: Double = 1.0
 
     var body: some View {
         NavigationView {
@@ -33,17 +32,14 @@ struct CategoryManagementView: View {
                             Spacer()
 
                             if !viewModel.selectedCategories.isEmpty {
-                                Button(action: {
-                                    withAnimation(.easeInOut) {
-                                        viewModel.askDeleteSelectedCategories()
-                                    }
-                                }) {
+                                Button(action: { viewModel.askDeleteSelectedCategories() }) {
                                     Text("삭제")
                                         .font(.headline)
                                         .padding(8)
                                         .background(Color.red)
                                         .foregroundColor(.white)
                                         .cornerRadius(8)
+                                        .transition(.opacity)
                                 }
                                 .transition(.opacity.animation(.easeInOut(duration: 0.5)))
                                 .opacity(viewModel.selectedCategories.isEmpty ? 0 : 1)
@@ -66,7 +62,7 @@ struct CategoryManagementView: View {
                                     HStack {
                                         if viewModel.isEditingMode {
                                             Button(action: {
-                                                withAnimation(.spring(response: 0.25, dampingFraction: 0.45)) {
+                                                withAnimation(.spring(response: 0.5, dampingFraction: 0.45)) {
                                                     viewModel.toggleSelection(for: category)
                                                 }
                                             }) {
@@ -76,7 +72,6 @@ struct CategoryManagementView: View {
                                                     .animation(.spring(response: 0.25, dampingFraction: 0.45), value: viewModel.selectedCategories)
                                             }
                                             .buttonStyle(BorderlessButtonStyle())
-                                            .transition(.scale.combined(with: .opacity))
                                         }
 
                                         Text(category)
@@ -86,17 +81,12 @@ struct CategoryManagementView: View {
                                         Spacer()
 
                                         if viewModel.isEditingMode {
-                                            Button(action: {
-                                                withAnimation(.easeInOut) {
-                                                    viewModel.askDeleteCategory(category)
-                                                }
-                                            }) {
+                                            Button(action: { viewModel.askDeleteCategory(category) }) {
                                                 Image(systemName: "trash")
                                                     .foregroundColor(.red)
-                                                    .padding(8)
+                                                    .transition(.opacity)
                                             }
                                             .buttonStyle(BorderlessButtonStyle())
-                                            .transition(.opacity.animation(.easeInOut(duration: 0.5)))
                                         }
                                     }
                                     .padding()
@@ -108,7 +98,6 @@ struct CategoryManagementView: View {
                                 }
                             }
                             .padding(.horizontal)
-                            .animation(.spring(response: 0.5, dampingFraction: 0.75), value: viewModel.selectedCategories)
                         }
                         .background(Color(UIColor.systemGray5))
                     }
@@ -145,11 +134,7 @@ struct CategoryManagementView: View {
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
-                            viewModel.isEditingMode.toggle()
-                        }
-                    }) {
+                    Button(action: { withAnimation { viewModel.isEditingMode.toggle() } }) {
                         Text(viewModel.isEditingMode ? "닫기" : "수정")
                             .font(.headline)
                             .foregroundColor(viewModel.isEditingMode ? .red : .blue)
