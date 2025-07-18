@@ -10,6 +10,7 @@ import SwiftUI
 struct CategoryManagementView: View {
     @Environment(\.presentationMode) var presentationMode
     @StateObject private var viewModel = CategoryManagementViewModel()
+    @State private var recentlyAddedCategory: String? = nil
 
     var body: some View {
         NavigationView {
@@ -94,7 +95,15 @@ struct CategoryManagementView: View {
                                     .cornerRadius(8)
                                     .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                                     .padding(.horizontal)
-                                    .transition(.opacity)
+                                    .opacity(recentlyAddedCategory == category ? 0 : 1)
+                                    .animation(.easeInOut(duration: 0.5), value: recentlyAddedCategory)
+                                    .onAppear {
+                                        if recentlyAddedCategory == category {
+                                            withAnimation(.easeInOut(duration: 0.5)) {
+                                                recentlyAddedCategory = nil
+                                            }
+                                        }
+                                    }
                                 }
                             }
                             .padding(.horizontal)
@@ -111,7 +120,16 @@ struct CategoryManagementView: View {
                         TextField("새 카테고리", text: $viewModel.newCategoryName)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .padding(.vertical, 8)
-                        Button(action: { viewModel.addCategory() }) {
+                        Button(action: {
+                            let trimmed = viewModel.newCategoryName.trimmingCharacters(in: .whitespaces)
+                            viewModel.addCategory()
+                            if !trimmed.isEmpty && viewModel.customCategories.contains(trimmed) {
+                                recentlyAddedCategory = trimmed
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                    recentlyAddedCategory = nil
+                                }
+                            }
+                        }) {
                             Text("추가")
                                 .padding(8)
                                 .background(Color.blue)
