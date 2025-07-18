@@ -10,6 +10,7 @@ import SwiftUI
 struct CategoryManagementView: View {
     @Environment(\.presentationMode) var presentationMode
     @StateObject private var viewModel = CategoryManagementViewModel()
+    @State private var deleteButtonOpacity: Double = 1.0
 
     var body: some View {
         NavigationView {
@@ -17,7 +18,11 @@ struct CategoryManagementView: View {
                 VStack(spacing: 16) {
                     if viewModel.isEditingMode {
                         HStack {
-                            Button(action: { viewModel.handleSelectionAction() }) {
+                            Button(action: {
+                                withAnimation(.easeInOut) {
+                                    viewModel.handleSelectionAction()
+                                }
+                            }) {
                                 Text(viewModel.selectionButtonTitle)
                                     .font(.headline)
                                     .padding(8)
@@ -28,15 +33,20 @@ struct CategoryManagementView: View {
                             Spacer()
 
                             if !viewModel.selectedCategories.isEmpty {
-                                Button(action: { viewModel.askDeleteSelectedCategories() }) {
+                                Button(action: {
+                                    withAnimation(.easeInOut) {
+                                        viewModel.askDeleteSelectedCategories()
+                                    }
+                                }) {
                                     Text("삭제")
                                         .font(.headline)
                                         .padding(8)
                                         .background(Color.red)
                                         .foregroundColor(.white)
                                         .cornerRadius(8)
-                                        .transition(.opacity)
                                 }
+                                .transition(.opacity.animation(.easeInOut(duration: 0.5)))
+                                .opacity(viewModel.selectedCategories.isEmpty ? 0 : 1)
                             }
                         }
                         .padding(.horizontal)
@@ -55,12 +65,18 @@ struct CategoryManagementView: View {
                                 ForEach(viewModel.customCategories, id: \.self) { category in
                                     HStack {
                                         if viewModel.isEditingMode {
-                                            Button(action: { viewModel.toggleSelection(for: category) }) {
+                                            Button(action: {
+                                                withAnimation(.spring(response: 0.25, dampingFraction: 0.45)) {
+                                                    viewModel.toggleSelection(for: category)
+                                                }
+                                            }) {
                                                 Image(systemName: viewModel.selectedCategories.contains(category) ? "checkmark.square.fill" : "square")
                                                     .foregroundColor(.blue)
-                                                    .transition(.opacity)
+                                                    .scaleEffect(viewModel.selectedCategories.contains(category) ? 1.18 : 1.0)
+                                                    .animation(.spring(response: 0.25, dampingFraction: 0.45), value: viewModel.selectedCategories)
                                             }
                                             .buttonStyle(BorderlessButtonStyle())
+                                            .transition(.scale.combined(with: .opacity))
                                         }
 
                                         Text(category)
@@ -70,12 +86,17 @@ struct CategoryManagementView: View {
                                         Spacer()
 
                                         if viewModel.isEditingMode {
-                                            Button(action: { viewModel.askDeleteCategory(category) }) {
+                                            Button(action: {
+                                                withAnimation(.easeInOut) {
+                                                    viewModel.askDeleteCategory(category)
+                                                }
+                                            }) {
                                                 Image(systemName: "trash")
                                                     .foregroundColor(.red)
-                                                    .transition(.opacity)
+                                                    .padding(8)
                                             }
                                             .buttonStyle(BorderlessButtonStyle())
+                                            .transition(.opacity.animation(.easeInOut(duration: 0.5)))
                                         }
                                     }
                                     .padding()
@@ -87,6 +108,7 @@ struct CategoryManagementView: View {
                                 }
                             }
                             .padding(.horizontal)
+                            .animation(.spring(response: 0.5, dampingFraction: 0.75), value: viewModel.selectedCategories)
                         }
                         .background(Color(UIColor.systemGray5))
                     }
@@ -123,7 +145,11 @@ struct CategoryManagementView: View {
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: { withAnimation { viewModel.isEditingMode.toggle() } }) {
+                    Button(action: {
+                        withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                            viewModel.isEditingMode.toggle()
+                        }
+                    }) {
                         Text(viewModel.isEditingMode ? "닫기" : "수정")
                             .font(.headline)
                             .foregroundColor(viewModel.isEditingMode ? .red : .blue)
