@@ -15,41 +15,46 @@ struct ChatBotView: View {
     var body: some View {
         VStack(spacing: 0) {
             ScrollViewReader { scrollViewProxy in
-                ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 8) {
-                        ForEach(viewModel.messages) { message in
-                            HStack {
-                                if message.isUser {
-                                    Spacer()
-                                    ChatBubble(text: message.text, isUser: true)
-                                } else {
-                                    ChatBubble(text: message.text, isUser: false)
-                                    Spacer()
+                ZStack {
+                    if viewModel.messages.isEmpty {
+                        VStack {
+                            Spacer()
+                            Text("아직 대화가 시작되지 않았어요.\n아래에 메시지를 입력해보세요!")
+                                .font(.system(size: 17))
+                                .foregroundColor(.gray)
+                                .multilineTextAlignment(.center)
+                                .padding()
+                            Spacer()
+                        }
+                    } else {
+                        ScrollView {
+                            LazyVStack(alignment: .leading, spacing: 8) {
+                                ForEach(viewModel.messages) { message in
+                                    AnimatedChatRow(message: message)
+                                        .id(message.id)
                                 }
                             }
-                            .id(message.id)
+                            .padding()
                         }
-                    }
-                    .padding()
-                }
-                .background(Color.white)
-                .onChange(of: viewModel.messages) { _ in
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                        if let lastId = viewModel.messages.last?.id {
-                            withAnimation {
-                                scrollViewProxy.scrollTo(lastId, anchor: .bottom)
+                        .background(Color.white)
+                        .onChange(of: viewModel.messages) { _ in
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                                if let lastId = viewModel.messages.last?.id {
+                                    withAnimation(.easeInOut(duration: 0.35)) {
+                                        scrollViewProxy.scrollTo(lastId, anchor: .bottom)
+                                    }
+                                }
                             }
                         }
+                        .safeAreaInset(edge: .top, spacing: 0) {
+                            Color.clear
+                                .background(Color.white)
+                                .frame(height: 0)
+                                .allowsHitTesting(false)
+                        }
                     }
                 }
-                .safeAreaInset(edge: .top, spacing: 0) {
-                    Color.clear
-                        .background(Color.white)
-                        .frame(height: 0)
-                        .allowsHitTesting(false)
-                }
             }
-
             ZStack {
                 HStack {
                     TextField("메시지를 입력하세요", text: $viewModel.inputText, onCommit: {
@@ -74,6 +79,30 @@ struct ChatBotView: View {
                 .padding(.vertical, 8)
             }
             .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+}
+
+struct AnimatedChatRow: View {
+    let message: ChatMessage
+    @State private var isVisible = false
+
+    var body: some View {
+        HStack {
+            if message.isUser {
+                Spacer()
+                ChatBubble(text: message.text, isUser: true)
+                    .opacity(isVisible ? 1 : 0)
+                    .animation(.easeInOut(duration: 0.5), value: isVisible)
+            } else {
+                ChatBubble(text: message.text, isUser: false)
+                    .opacity(isVisible ? 1 : 0)
+                    .animation(.easeInOut(duration: 1.3), value: isVisible)
+                Spacer()
+            }
+        }
+        .onAppear {
+            isVisible = true
         }
     }
 }
