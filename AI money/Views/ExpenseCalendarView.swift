@@ -72,11 +72,13 @@ struct ExpenseCalendarView: View {
                                 selectedDate != nil && Calendar.current.isDate($0.date, inSameDayAs: selectedDate!)
                             }
                             if dailyExpenses.isEmpty {
+                                Spacer()
                                 Text("지출 없음")
                                     .font(.headline)
                                     .foregroundColor(.secondary)
                                     .padding()
                                     .transition(.opacity)
+                                Spacer()
                             } else {
                                 ForEach(dailyExpenses) { expense in
                                     HStack {
@@ -128,7 +130,7 @@ struct ExpenseCalendarView: View {
                         }
                     }
                     .padding(.top, 10)
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity, minHeight: 350)
                     .transition(.opacity)
                 }
                 .background(Color.gray.opacity(0.5))
