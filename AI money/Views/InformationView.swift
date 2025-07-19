@@ -14,27 +14,27 @@ struct InformationView: View {
         VStack(spacing: 20) {
             Spacer()
 
-            HStack {
-                Text("🤖") //
+            VStack {
+                Text("🤖")
                 Text("AI money")
                     .font(.headline)
             }
 
-            HStack {
+            VStack {
                 Text("🛠")
                 Text("버전: 1.0 beta")
                     .font(.subheadline)
             }
             
-            HStack {
+            VStack {
                 Text("👨‍💻")
                 Text("개발: 조준희")
                     .font(.subheadline)
             }
 
-            HStack {
+            VStack {
                 Text("🏫")
-                Text("소속: 상지대학교 컴퓨터공학과 202048049")
+                Text("상지대학교\n컴퓨터공학과\n학번: 202048049")
                     .font(.subheadline)
             }
             
