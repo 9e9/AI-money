@@ -34,8 +34,6 @@ class CategoryManagementViewModel: ObservableObject {
     func handleSelectionAction() {
         if selectedCategories.isEmpty {
             selectedCategories = Set(customCategories)
-        } else if selectedCategories.count == customCategories.count {
-            selectedCategories.removeAll()
         } else {
             selectedCategories.removeAll()
         }
@@ -82,9 +80,8 @@ class CategoryManagementViewModel: ObservableObject {
     }
 
     func deleteSelectedCategories() {
-        for category in selectedCategories {
-            deleteCategory(named: category)
-        }
+        // 최적화: Set의 forEach 사용
+        selectedCategories.forEach { deleteCategory(named: $0) }
         selectedCategories.removeAll()
     }
 
