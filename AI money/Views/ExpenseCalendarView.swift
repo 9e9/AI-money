@@ -62,23 +62,31 @@ struct ExpenseCalendarView: View {
                 ScrollView {
                     VStack {
                         if selectedDate == nil {
-                            Text("날짜를 선택하세요")
-                                .font(.headline)
-                                .foregroundColor(.secondary)
-                                .padding()
-                                .transition(.opacity)
-                        } else {
-                            let dailyExpenses = viewModel.expenses.filter {
-                                selectedDate != nil && Calendar.current.isDate($0.date, inSameDayAs: selectedDate!)
-                            }
-                            if dailyExpenses.isEmpty {
+                            VStack {
                                 Spacer()
-                                Text("지출 없음")
+                                Text("날짜를 선택하세요")
                                     .font(.headline)
                                     .foregroundColor(.secondary)
                                     .padding()
                                     .transition(.opacity)
                                 Spacer()
+                            }
+                            .frame(maxWidth: .infinity, minHeight: 330)
+                        } else {
+                            let dailyExpenses = viewModel.expenses.filter {
+                                selectedDate != nil && Calendar.current.isDate($0.date, inSameDayAs: selectedDate!)
+                            }
+                            if dailyExpenses.isEmpty {
+                                VStack {
+                                    Spacer()
+                                    Text("지출 없음")
+                                        .font(.headline)
+                                        .foregroundColor(.secondary)
+                                        .padding()
+                                        .transition(.opacity)
+                                    Spacer()
+                                }
+                                .frame(maxWidth: .infinity, minHeight: 330)
                             } else {
                                 ForEach(dailyExpenses) { expense in
                                     HStack {
@@ -130,7 +138,7 @@ struct ExpenseCalendarView: View {
                         }
                     }
                     .padding(.top, 10)
-                    .frame(maxWidth: .infinity, minHeight: 350)
+                    .frame(maxWidth: .infinity)
                     .transition(.opacity)
                 }
                 .background(Color.gray.opacity(0.5))
