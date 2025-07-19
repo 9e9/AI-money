@@ -46,9 +46,31 @@ enum QuestionType: Equatable {
 final class AIService {
     static let shared = AIService()
     private let classifier: ExpenseClassifier
-    private let appKeywords = [
+
+    private static let appKeywords: Set<String> = [
         "지출", "카테고리", "얼마", "가장", "쇼핑", "교통", "카드", "현금", "예산", "합계", "최대", "최소", "요약", "내역", "많이", "적게", "건수", "횟수", "추세", "통계"
     ]
+    private static let meaningless: Set<String> = [
+        "?", "네", "그래", "응", "ㅇㅋ", "좋아", "오키", "ok", "okay"
+    ]
+
+    private static let dayFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd(E)"
+        return f
+    }()
+    private static let monthFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy년 M월"
+        return f
+    }()
+    private static let amountFormatter: NumberFormatter = {
+        let f = NumberFormatter()
+        f.numberStyle = .decimal
+        return f
+    }()
+    private static let specificDateRegex = try! NSRegularExpression(pattern: #"(\d{1,2})월(\d{1,2})일"#)
+    private static let monthRegex = try! NSRegularExpression(pattern: #"(\d{1,2})월"#)
 
     private init() {
         guard let classifier = try? ExpenseClassifier(configuration: MLModelConfiguration()) else {
@@ -88,13 +110,12 @@ final class AIService {
 
     private func isRelatedToApp(_ input: String) -> Bool {
         let lower = input.lowercased()
-        return appKeywords.contains { lower.contains($0) }
+        return AIService.appKeywords.contains(where: { lower.contains($0) })
     }
 
     private func isNotAValidQuestion(_ input: String) -> Bool {
-        let trimmed = input.trimmingCharacters(in: .whitespacesAndNewlines)
-        let meaningless = ["?", "네", "그래", "응", "ㅇㅋ", "좋아", "오키", "ok", "okay"]
-        return meaningless.contains(trimmed.lowercased())
+        let trimmed = input.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        return AIService.meaningless.contains(trimmed)
     }
 
     private func parseUserInput(
@@ -112,7 +133,7 @@ final class AIService {
         var refDate: Date? = nil
         var isCompare = false
 
-        if let date = parseSpecificDate(text: lower) {
+        if let date = Self.parseSpecificDate(text: lower) {
             period = .specificDay(date)
             refDate = date
         } else if lower.contains("오늘") {
@@ -127,7 +148,7 @@ final class AIService {
             period = .thisMonth
         } else if lower.contains("지난달") || lower.contains("저번달") || lower.contains("전월") || lower.contains("이전달") {
             period = .lastMonth
-        } else if let customMonth = parseMonth(text: lower) {
+        } else if let customMonth = Self.parseMonth(text: lower) {
             let start = customMonth
             let end = calendar.date(byAdding: .month, value: 1, to: start)!
             period = .custom(start, end)
@@ -181,7 +202,6 @@ final class AIService {
         if period == nil { period = previousContext.period }
         if category == nil { category = previousContext.category }
         if questionType == nil { questionType = previousContext.questionType }
-
         if questionType == nil { questionType = .none }
 
         return ParsedQuery(period: period, category: category, questionType: questionType, referenceDate: refDate, isCompare: isCompare)
@@ -210,57 +230,57 @@ final class AIService {
         case .totalAmount:
             let sum = filtered.reduce(0) { $0 + $1.amount }
             if let cat = parsed.category ?? conversationContext.category {
-                return "\(format(period: period)) \(cat) 총 지출은 \(format(amount: sum))원입니다."
+                return "\(Self.format(period: period)) \(cat) 총 지출은 \(Self.format(amount: sum))원입니다."
             }
-            return "\(format(period: period)) 총 지출은 \(format(amount: sum))원입니다."
+            return "\(Self.format(period: period)) 총 지출은 \(Self.format(amount: sum))원입니다."
         case .byCategory, .summary:
             let sums = Dictionary(grouping: filtered, by: { $0.category }).mapValues { $0.reduce(0) { $0 + $1.amount } }
             if sums.isEmpty { return "지출 내역이 없습니다." }
             let sorted = sums.sorted { $0.value > $1.value }
-            let lines = sorted.map { "\($0.key): \(format(amount: $0.value))원" }
-            return "\(format(period: period)) 소비 요약\n" + lines.joined(separator: "\n")
+            let lines = sorted.map { "\($0.key): \(Self.format(amount: $0.value))원" }
+            return "\(Self.format(period: period)) 소비 요약\n" + lines.joined(separator: "\n")
         case .topCategory:
             let sums = Dictionary(grouping: filtered, by: { $0.category }).mapValues { $0.reduce(0) { $0 + $1.amount } }
             if let top = sums.max(by: { $0.value < $1.value }) {
-                return "\(format(period: period)) 가장 많이 쓴 카테고리는 '\(top.key)' (\(format(amount: top.value))원)입니다."
+                return "\(Self.format(period: period)) 가장 많이 쓴 카테고리는 '\(top.key)' (\(Self.format(amount: top.value))원)입니다."
             }
             return "지출 내역이 없습니다."
         case .minCategory:
             let sums = Dictionary(grouping: filtered, by: { $0.category }).mapValues { $0.reduce(0) { $0 + $1.amount } }
             if let min = sums.min(by: { $0.value < $1.value }) {
-                return "\(format(period: period)) 가장 적게 쓴 항목은 '\(min.key)' (\(format(amount: min.value))원)입니다."
+                return "\(Self.format(period: period)) 가장 적게 쓴 항목은 '\(min.key)' (\(Self.format(amount: min.value))원)입니다."
             }
             return "지출 내역이 없습니다."
         case .topDay:
-            let sums = Dictionary(grouping: filtered, by: { dayString($0.date) }).mapValues { $0.reduce(0) { $0 + $1.amount } }
+            let sums = Dictionary(grouping: filtered, by: { Self.dayString($0.date) }).mapValues { $0.reduce(0) { $0 + $1.amount } }
             if let top = sums.max(by: { $0.value < $1.value }) {
-                return "\(format(period: period)) 가장 많이 쓴 날은 \(top.key) (\(format(amount: top.value))원)입니다."
+                return "\(Self.format(period: period)) 가장 많이 쓴 날은 \(top.key) (\(Self.format(amount: top.value))원)입니다."
             }
             return "지출 내역이 없습니다."
         case .minDay:
-            let sums = Dictionary(grouping: filtered, by: { dayString($0.date) }).mapValues { $0.reduce(0) { $0 + $1.amount } }
+            let sums = Dictionary(grouping: filtered, by: { Self.dayString($0.date) }).mapValues { $0.reduce(0) { $0 + $1.amount } }
             if let min = sums.min(by: { $0.value < $1.value }) {
-                return "\(format(period: period)) 가장 적게 쓴 날은 \(min.key) (\(format(amount: min.value))원)입니다."
+                return "\(Self.format(period: period)) 가장 적게 쓴 날은 \(min.key) (\(Self.format(amount: min.value))원)입니다."
             }
             return "지출 내역이 없습니다."
         case .count:
             let count = filtered.count
             if let cat = parsed.category ?? conversationContext.category {
-                return "\(format(period: period)) \(cat) 지출은 총 \(count)회입니다."
+                return "\(Self.format(period: period)) \(cat) 지출은 총 \(count)회입니다."
             }
-            return "\(format(period: period)) 지출 건수는 총 \(count)회입니다."
+            return "\(Self.format(period: period)) 지출 건수는 총 \(count)회입니다."
         case .remainedBudget:
             let budget: Double = 800_000
             let sum = filtered.reduce(0) { $0 + $1.amount }
             let remain = max(0, budget - sum)
-            return "\(format(period: period)) 남은 예산은 \(format(amount: remain))원입니다."
+            return "\(Self.format(period: period)) 남은 예산은 \(Self.format(amount: remain))원입니다."
         case .overspent:
             let budget: Double = 800_000
             let sum = filtered.reduce(0) { $0 + $1.amount }
             if sum > budget {
-                return "\(format(period: period)) 예산을 \(format(amount: sum-budget))원 초과했습니다."
+                return "\(Self.format(period: period)) 예산을 \(Self.format(amount: sum-budget))원 초과했습니다."
             } else {
-                return "\(format(period: period)) 예산을 초과하지 않았습니다."
+                return "\(Self.format(period: period)) 예산을 초과하지 않았습니다."
             }
         case .trend:
             var trendLines: [String] = []
@@ -274,13 +294,13 @@ final class AIService {
                     ? expenses.reduce(0) { $0 + $1.amount }
                     : expenses.filter { $0.category == (parsed.category ?? conversationContext.category) }
                         .reduce(0) { $0 + $1.amount }
-                trendLines.append("\(monthString(start)): \(format(amount: sum))원")
+                trendLines.append("\(Self.monthString(start)): \(Self.format(amount: sum))원")
             }
             return "월별 소비 추세\n" + trendLines.joined(separator: "\n")
         case .paymentType(let type):
             let filteredPay = filtered.filter { $0.note.contains(type) }
             let sum = filteredPay.reduce(0) { $0 + $1.amount }
-            return "\(format(period: period)) \(type) 사용 금액은 \(format(amount: sum))원입니다."
+            return "\(Self.format(period: period)) \(type) 사용 금액은 \(Self.format(amount: sum))원입니다."
         case .none:
             return "앱 사용과 관련된 지출/소비/예산 질문을 해주세요!"
         }
@@ -353,25 +373,19 @@ final class AIService {
         return Array(unique)
     }
 
-    private func dayString(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd(E)"
-        return formatter.string(from: date)
+    private static func dayString(_ date: Date) -> String {
+        return dayFormatter.string(from: date)
     }
 
-    private func monthString(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy년 M월"
-        return formatter.string(from: date)
+    private static func monthString(_ date: Date) -> String {
+        return monthFormatter.string(from: date)
     }
 
-    private func format(amount: Double) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        return formatter.string(from: NSNumber(value: amount)) ?? "\(amount)"
+    private static func format(amount: Double) -> String {
+        return amountFormatter.string(from: NSNumber(value: amount)) ?? "\(amount)"
     }
 
-    private func format(period: Period) -> String {
+    private static func format(period: Period) -> String {
         switch period {
         case .today: return "오늘"
         case .yesterday: return "어제"
@@ -381,15 +395,14 @@ final class AIService {
         case .lastMonth: return "지난달"
         case .thisYear: return "올해"
         case .lastYear: return "작년"
-        case .custom(let s, _): return "\(monthString(s))"
+        case .custom(let s, _): return monthString(s)
         case .specificDay(let d): return dayString(d)
         case .recentNDays(let n): return "최근 \(n)일"
         }
     }
 
-    private func parseSpecificDate(text: String) -> Date? {
-        let regex = try! NSRegularExpression(pattern: #"(\d{1,2})월(\d{1,2})일"#)
-        if let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
+    private static func parseSpecificDate(text: String) -> Date? {
+        if let match = specificDateRegex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
            let monthRange = Range(match.range(at: 1), in: text),
            let dayRange = Range(match.range(at: 2), in: text) {
             let month = Int(text[monthRange])!
@@ -402,9 +415,8 @@ final class AIService {
         return nil
     }
 
-    private func parseMonth(text: String) -> Date? {
-        let regex = try! NSRegularExpression(pattern: #"(\d{1,2})월"#)
-        if let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
+    private static func parseMonth(text: String) -> Date? {
+        if let match = monthRegex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
            let monthRange = Range(match.range(at: 1), in: text) {
             let month = Int(text[monthRange])!
             let calendar = Calendar.current
