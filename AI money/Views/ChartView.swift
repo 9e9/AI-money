@@ -10,6 +10,7 @@ import SwiftUI
 struct ChartView: View {
     @ObservedObject var viewModel: ExpenseCalendarViewModel
     @StateObject private var vm: ChartViewModel
+    @State private var showChart = true
 
     init(viewModel: ExpenseCalendarViewModel) {
         _viewModel = ObservedObject(wrappedValue: viewModel)
@@ -20,13 +21,18 @@ struct ChartView: View {
         VStack {
             Text("원형 차트")
                 .font(.headline)
-
-            if vm.filteredExpenses.isEmpty {
-                DottedPieChartView()
-                    .frame(height: 200)
-            } else {
-                PieChartView(data: Dictionary(uniqueKeysWithValues: vm.sortedCategoryTotals))
-                    .frame(height: 200)
+            ZStack {
+                if vm.filteredExpenses.isEmpty {
+                    DottedPieChartView()
+                        .frame(height: 200)
+                        .opacity(showChart ? 1 : 0)
+                        .animation(.easeInOut(duration: 0.5), value: showChart)
+                } else {
+                    PieChartView(data: Dictionary(uniqueKeysWithValues: vm.sortedCategoryTotals))
+                        .frame(height: 200)
+                        .opacity(showChart ? 1 : 0)
+                        .animation(.easeInOut(duration: 0.5), value: showChart)
+                }
             }
 
             Divider()
@@ -64,7 +70,15 @@ struct ChartView: View {
                 }
                 
                 Button(action: {
-                    vm.resetToCurrentDate()
+                    withAnimation(.easeInOut(duration: 0.5)) {
+                        showChart = false
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        vm.resetToCurrentDate()
+                        withAnimation(.easeInOut(duration: 0.5)) {
+                            showChart = true
+                        }
+                    }
                 }) {
                     Image(systemName: "arrow.clockwise")
                 }
@@ -93,6 +107,9 @@ struct ChartView: View {
                 selectedMonth: $vm.selectedMonth,
                 showingPicker: $vm.isShowingYearMonthPicker
             )
+        }
+        .onAppear {
+            showChart = true
         }
     }
 }
