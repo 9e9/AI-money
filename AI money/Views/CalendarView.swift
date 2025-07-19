@@ -32,7 +32,9 @@ struct CalendarView<DateView>: View where DateView: View {
                 Spacer()
 
                 Button(action: {
-                    resetToCurrentDate()
+                    withAnimation(.easeInOut) {
+                        resetToCurrentDate()
+                    }
                 }) {
                     Image(systemName: "arrow.clockwise")
                         .font(.title2)
@@ -64,6 +66,8 @@ struct CalendarView<DateView>: View where DateView: View {
                 }
             }
             .padding(.top, 10)
+            .animation(.easeInOut, value: selectedYear)
+            .animation(.easeInOut, value: selectedMonth)
         }
         .sheet(isPresented: $showingPicker) {
             YearMonthPickerView(
