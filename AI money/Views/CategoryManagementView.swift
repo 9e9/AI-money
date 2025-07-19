@@ -154,7 +154,6 @@ struct CategoryManagementView: View {
                         title: Text("삭제 확인"),
                         message: Text(viewModel.alertMessage),
                         primaryButton: .destructive(Text("삭제")) {
-                            // 여러 개 삭제일 경우 모두 페이드아웃
                             if !viewModel.selectedCategories.isEmpty {
                                 deletingCategories = viewModel.selectedCategories
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
