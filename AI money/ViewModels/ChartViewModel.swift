@@ -24,6 +24,12 @@ class ChartViewModel: ObservableObject {
 
     private var expenseViewModel: ExpenseCalendarViewModel
 
+    private static let plainNumberFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .none
+        return formatter
+    }()
+
     init(expenseViewModel: ExpenseCalendarViewModel) {
         self.expenseViewModel = expenseViewModel
         let now = Date()
@@ -38,8 +44,9 @@ class ChartViewModel: ObservableObject {
     }
 
     var filteredExpenses: [Expense] {
-        expenseViewModel.expenses.filter { expense in
-            let expenseDate = Calendar.current.dateComponents([.year, .month], from: expense.date)
+        let calendar = Calendar.current
+        return expenseViewModel.expenses.filter { expense in
+            let expenseDate = calendar.dateComponents([.year, .month], from: expense.date)
             return expenseDate.year == selectedYear && expenseDate.month == selectedMonth
         }
     }
@@ -73,8 +80,6 @@ class ChartViewModel: ObservableObject {
     }
 
     func formatYear(_ year: Int) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .none
-        return formatter.string(from: NSNumber(value: year)) ?? "\(year)"
+        return Self.plainNumberFormatter.string(from: NSNumber(value: year)) ?? "\(year)"
     }
 }
