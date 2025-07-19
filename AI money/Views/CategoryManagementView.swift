@@ -69,8 +69,6 @@ struct CategoryManagementView: View {
                                             }) {
                                                 Image(systemName: viewModel.selectedCategories.contains(category) ? "checkmark.square.fill" : "square")
                                                     .foregroundColor(.blue)
-                                                    .scaleEffect(viewModel.selectedCategories.contains(category) ? 1.18 : 1.0)
-                                                    .animation(.spring(response: 0.25, dampingFraction: 0.45), value: viewModel.selectedCategories)
                                             }
                                             .buttonStyle(BorderlessButtonStyle())
                                         }
