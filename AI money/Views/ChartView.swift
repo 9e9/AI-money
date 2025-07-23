@@ -75,8 +75,10 @@ struct ChartView: View {
                         showChart = false
                         showList = false
                     }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    withAnimation(.easeInOut) {
                         vm.resetToCurrentDate()
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         withAnimation(.easeInOut(duration: 0.5)) {
                             showChart = true
                             showList = true
