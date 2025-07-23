@@ -8,6 +8,11 @@
 import Foundation
 import SwiftUI
 
+struct CategoryTotal: Hashable {
+    let category: String
+    let total: Double
+}
+
 class ChartViewModel: ObservableObject {
     @Published var sortOrder: SortOrder = .defaultOrder
     @Published var selectedYear: Int
@@ -51,7 +56,7 @@ class ChartViewModel: ObservableObject {
         }
     }
 
-    var sortedCategoryTotals: [(String, Double)] {
+    var sortedCategoryTotals: [CategoryTotal] {
         let totals = filteredExpenses.reduce(into: [String: Double]()) { result, expense in
             result[expense.category, default: 0.0] += expense.amount
         }
@@ -60,14 +65,24 @@ class ChartViewModel: ObservableObject {
             result[category] = totals[category, default: 0.0]
         }
 
-        let sorted: [(String, Double)]
+        let sorted: [CategoryTotal]
         switch sortOrder {
         case .highToLow:
-            sorted = completeTotals.sorted { $0.value > $1.value }
+            sorted = completeTotals.sorted {
+                if $0.value == $1.value {
+                    return allCategories.firstIndex(of: $0.key)! < allCategories.firstIndex(of: $1.key)!
+                }
+                return $0.value > $1.value
+            }.map { CategoryTotal(category: $0.key, total: $0.value) }
         case .lowToHigh:
-            sorted = completeTotals.sorted { $0.value < $1.value }
+            sorted = completeTotals.sorted {
+                if $0.value == $1.value {
+                    return allCategories.firstIndex(of: $0.key)! < allCategories.firstIndex(of: $1.key)!
+                }
+                return $0.value < $1.value
+            }.map { CategoryTotal(category: $0.key, total: $0.value) }
         case .defaultOrder:
-            sorted = completeTotals.sorted { $0.key < $1.key }
+            sorted = allCategories.map { CategoryTotal(category: $0, total: completeTotals[$0] ?? 0.0) }
         }
         return sorted
     }

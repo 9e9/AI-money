@@ -11,6 +11,7 @@ struct ChartView: View {
     @ObservedObject var viewModel: ExpenseCalendarViewModel
     @StateObject private var vm: ChartViewModel
     @State private var showChart = true
+    @State private var showList = true
 
     init(viewModel: ExpenseCalendarViewModel) {
         _viewModel = ObservedObject(wrappedValue: viewModel)
@@ -28,7 +29,9 @@ struct ChartView: View {
                         .opacity(showChart ? 1 : 0)
                         .animation(.easeInOut(duration: 0.5), value: showChart)
                 } else {
-                    PieChartView(data: Dictionary(uniqueKeysWithValues: vm.sortedCategoryTotals))
+                    PieChartView(
+                        data: Dictionary(uniqueKeysWithValues: vm.sortedCategoryTotals.map { ($0.category, $0.total) })
+                    )
                         .frame(height: 200)
                         .opacity(showChart ? 1 : 0)
                         .animation(.easeInOut(duration: 0.5), value: showChart)
@@ -41,17 +44,15 @@ struct ChartView: View {
             HStack {
                 Text("카테고리별 총 지출")
                     .font(.headline)
-
                 Spacer()
-
                 Menu {
-                    Button(action: { vm.sortOrder = .defaultOrder }) {
+                    Button(action: { animateSortChange(to: .defaultOrder) }) {
                         Label("기본순", systemImage: "line.3.horizontal.decrease.circle")
                     }
-                    Button(action: { vm.sortOrder = .highToLow }) {
+                    Button(action: { animateSortChange(to: .highToLow) }) {
                         Label("높은 순", systemImage: "arrow.down")
                     }
-                    Button(action: { vm.sortOrder = .lowToHigh }) {
+                    Button(action: { animateSortChange(to: .lowToHigh) }) {
                         Label("낮은 순", systemImage: "arrow.up")
                     }
                 } label: {
@@ -87,17 +88,20 @@ struct ChartView: View {
             .padding(.horizontal)
 
             List {
-                ForEach(vm.sortedCategoryTotals, id: \.0) { category, total in
+                ForEach(vm.sortedCategoryTotals, id: \.self) { item in
                     HStack {
-                        Text(category)
+                        Text(item.category)
                             .font(.body)
                         Spacer()
-                        Text("\(Int(total)) 원")
+                        Text("\(Int(item.total)) 원")
                             .fontWeight(.bold)
                     }
                 }
             }
             .listStyle(PlainListStyle())
+            .opacity(showList ? 1 : 0)
+            .animation(.easeInOut(duration: 0.4), value: showList)
+
         }
         .padding()
         .sheet(isPresented: $vm.isShowingYearMonthPicker) {
@@ -110,6 +114,18 @@ struct ChartView: View {
         }
         .onAppear {
             showChart = true
+        }
+    }
+    
+    private func animateSortChange(to order: ChartViewModel.SortOrder) {
+        withAnimation(.easeInOut(duration: 0.3)) {
+            showList = false
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            vm.sortOrder = order
+            withAnimation(.easeInOut(duration: 0.3)) {
+                showList = true
+            }
         }
     }
 }
