@@ -109,7 +109,10 @@ struct ChartView: View {
                 viewModel: viewModel,
                 selectedYear: $vm.selectedYear,
                 selectedMonth: $vm.selectedMonth,
-                showingPicker: $vm.isShowingYearMonthPicker
+                showingPicker: $vm.isShowingYearMonthPicker,
+                onComplete: { year, month in
+                    vm.setYearMonth(year: year, month: month)
+                }
             )
         }
         .onAppear {

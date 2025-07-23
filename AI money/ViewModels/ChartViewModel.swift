@@ -92,6 +92,13 @@ class ChartViewModel: ObservableObject {
         let calendar = Calendar.current
         selectedYear = calendar.component(.year, from: now)
         selectedMonth = calendar.component(.month, from: now)
+        sortOrder = .defaultOrder
+    }
+
+    func setYearMonth(year: Int, month: Int) {
+        selectedYear = year
+        selectedMonth = month
+        sortOrder = .defaultOrder
     }
 
     func formatYear(_ year: Int) -> String {

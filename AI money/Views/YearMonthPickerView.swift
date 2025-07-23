@@ -12,7 +12,9 @@ struct YearMonthPickerView: View {
     @Binding var selectedYear: Int
     @Binding var selectedMonth: Int
     @Binding var showingPicker: Bool
-    
+
+    var onComplete: ((Int, Int) -> Void)? = nil
+
     @State private var totalExpense: Double = 0
     
     private let availableYears = Array(2000...2100)
@@ -55,6 +57,7 @@ struct YearMonthPickerView: View {
             }
             .navigationTitle("연도 및 월 선택")
             .navigationBarItems(trailing: Button("완료") {
+                onComplete?(selectedYear, selectedMonth)
                 showingPicker = false
             })
             .onAppear {
