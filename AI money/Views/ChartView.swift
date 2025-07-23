@@ -73,11 +73,13 @@ struct ChartView: View {
                 Button(action: {
                     withAnimation(.easeInOut(duration: 0.5)) {
                         showChart = false
+                        showList = false
                     }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         vm.resetToCurrentDate()
                         withAnimation(.easeInOut(duration: 0.5)) {
                             showChart = true
+                            showList = true
                         }
                     }
                 }) {
