@@ -28,8 +28,17 @@ struct CalendarView<DateView>: View where DateView: View {
                         .font(.title2)
                         .foregroundColor(.black)
                 }
-
+                
                 Spacer()
+                
+                Button(action: {
+                    withAnimation {
+                        moveToPreviousMonth()
+                    }
+                }) {
+                    Image(systemName: "chevron.left")
+                        .font(.title2)
+                }
 
                 Button(action: {
                     withAnimation {
@@ -37,6 +46,15 @@ struct CalendarView<DateView>: View where DateView: View {
                     }
                 }) {
                     Image(systemName: "arrow.clockwise")
+                        .font(.title2)
+                }
+                
+                Button(action: {
+                    withAnimation {
+                        moveToNextMonth()
+                    }
+                }) {
+                    Image(systemName: "chevron.right")
                         .font(.title2)
                 }
             }
@@ -47,9 +65,9 @@ struct CalendarView<DateView>: View where DateView: View {
                 calendarGrid
                     .id("\(selectedYear)-\(selectedMonth)")
                     .transition(.opacity)
+                    .animation(.easeInOut, value: selectedYear)
+                    .animation(.easeInOut, value: selectedMonth)
             }
-            .animation(.easeInOut, value: selectedYear)
-            .animation(.easeInOut, value: selectedMonth)
 
             .sheet(isPresented: $showingPicker) {
                 YearMonthPickerView(
@@ -60,6 +78,26 @@ struct CalendarView<DateView>: View where DateView: View {
                 )
             }
         }
+    }
+
+    private func moveToPreviousMonth() {
+        if selectedMonth == 1 {
+            selectedMonth = 12
+            selectedYear -= 1
+        } else {
+            selectedMonth -= 1
+        }
+        selectedDate = nil
+    }
+
+    private func moveToNextMonth() {
+        if selectedMonth == 12 {
+            selectedMonth = 1
+            selectedYear += 1
+        } else {
+            selectedMonth += 1
+        }
+        selectedDate = nil
     }
 
     private var calendarGrid: some View {
