@@ -49,12 +49,23 @@ struct CalendarView<DateView>: View where DateView: View {
                         ForEach(0..<7, id: \.self) { index in
                             Text(weekdaySymbol(for: index))
                                 .padding(.bottom, 5)
+                                .frame(maxWidth: .infinity)
                         }
                     }
-                    ForEach(calendar.generateDates(
-                        inside: calendar.dateInterval(of: .month, for: calendar.date(from: DateComponents(year: selectedYear, month: selectedMonth))!)!,
-                        matching: DateComponents(hour: 0)
-                    ), id: \.self) { date in
+                    
+                    let firstOfMonth = calendar.date(from: DateComponents(year: selectedYear, month: selectedMonth, day: 1))!
+                    let weekdayOfFirst = calendar.component(.weekday, from: firstOfMonth)
+                    let emptySlots = weekdayOfFirst - 1
+                    let daysInMonth = calendar.range(of: .day, in: .month, for: firstOfMonth)!.count
+
+                    ForEach(0..<emptySlots, id: \.self) { i in
+                        Text("")
+                            .frame(maxWidth: .infinity, minHeight: 36)
+                            .background(Color.clear)
+                            .id("empty-\(i)")
+                    }
+                    ForEach(1...daysInMonth, id: \.self) { day in
+                        let date = calendar.date(from: DateComponents(year: selectedYear, month: selectedMonth, day: day))!
                         content(date)
                             .padding(4)
                             .background(
@@ -63,6 +74,7 @@ struct CalendarView<DateView>: View where DateView: View {
                             )
                             .cornerRadius(6)
                             .frame(maxWidth: .infinity)
+                            .id("day-\(day)")
                     }
                 }
                 .animation(.easeInOut, value: selectedYear)
@@ -104,30 +116,5 @@ struct CalendarView<DateView>: View where DateView: View {
         selectedYear = components.year ?? selectedYear
         selectedMonth = components.month ?? selectedMonth
         selectedDate = currentDate
-    }
-}
-
-extension Calendar {
-    func generateDates(
-        inside interval: DateInterval,
-        matching components: DateComponents
-    ) -> [Date] {
-        var dates = [interval.start]
-
-        enumerateDates(
-            startingAfter: interval.start,
-            matching: components,
-            matchingPolicy: .nextTime
-        ) { date, _, stop in
-            if let date = date {
-                if date < interval.end {
-                    dates.append(date)
-                } else {
-                    stop = true
-                }
-            }
-        }
-
-        return dates
     }
 }
