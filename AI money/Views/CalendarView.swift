@@ -32,7 +32,7 @@ struct CalendarView<DateView>: View where DateView: View {
                 Spacer()
 
                 Button(action: {
-                    withAnimation(.easeInOut) {
+                    withAnimation {
                         resetToCurrentDate()
                     }
                 }) {
@@ -43,43 +43,14 @@ struct CalendarView<DateView>: View where DateView: View {
             .padding(.horizontal)
             .padding(.top, 20)
             
-            VStack(spacing: 0) {
-                LazyVGrid(columns: Array(repeating: GridItem(), count: 7)) {
-                    if showHeaders {
-                        ForEach(0..<7, id: \.self) { index in
-                            Text(weekdaySymbol(for: index))
-                                .padding(.bottom, 5)
-                                .frame(maxWidth: .infinity)
-                        }
-                    }
-                    
-                    let firstOfMonth = calendar.date(from: DateComponents(year: selectedYear, month: selectedMonth, day: 1))!
-                    let weekdayOfFirst = calendar.component(.weekday, from: firstOfMonth)
-                    let emptySlots = weekdayOfFirst - 1
-                    let daysInMonth = calendar.range(of: .day, in: .month, for: firstOfMonth)!.count
-
-                    ForEach(0..<emptySlots, id: \.self) { i in
-                        Text("")
-                            .frame(maxWidth: .infinity, minHeight: 36)
-                            .background(Color.clear)
-                            .id("empty-\(i)")
-                    }
-                    ForEach(1...daysInMonth, id: \.self) { day in
-                        let date = calendar.date(from: DateComponents(year: selectedYear, month: selectedMonth, day: day))!
-                        content(date)
-                            .padding(4)
-                            .background(
-                                (selectedDate != nil && calendar.isDate(date, equalTo: selectedDate!, toGranularity: .day)) ?
-                                    Color.blue.opacity(0.3) : Color.clear
-                            )
-                            .cornerRadius(6)
-                            .frame(maxWidth: .infinity)
-                            .id("day-\(day)")
-                    }
-                }
-                .animation(.easeInOut, value: selectedYear)
-                .animation(.easeInOut, value: selectedMonth)
+            ZStack {
+                calendarGrid
+                    .id("\(selectedYear)-\(selectedMonth)")
+                    .transition(.opacity)
             }
+            .animation(.easeInOut, value: selectedYear)
+            .animation(.easeInOut, value: selectedMonth)
+
             .sheet(isPresented: $showingPicker) {
                 YearMonthPickerView(
                     viewModel: viewModel,
@@ -87,6 +58,44 @@ struct CalendarView<DateView>: View where DateView: View {
                     selectedMonth: $selectedMonth,
                     showingPicker: $showingPicker
                 )
+            }
+        }
+    }
+
+    private var calendarGrid: some View {
+        VStack(spacing: 0) {
+            LazyVGrid(columns: Array(repeating: GridItem(), count: 7)) {
+                if showHeaders {
+                    ForEach(0..<7, id: \.self) { index in
+                        Text(weekdaySymbol(for: index))
+                            .padding(.bottom, 5)
+                            .frame(maxWidth: .infinity)
+                    }
+                }
+                
+                let firstOfMonth = calendar.date(from: DateComponents(year: selectedYear, month: selectedMonth, day: 1))!
+                let weekdayOfFirst = calendar.component(.weekday, from: firstOfMonth)
+                let emptySlots = weekdayOfFirst - 1
+                let daysInMonth = calendar.range(of: .day, in: .month, for: firstOfMonth)!.count
+
+                ForEach(0..<emptySlots, id: \.self) { i in
+                    Text("")
+                        .frame(maxWidth: .infinity, minHeight: 36)
+                        .background(Color.clear)
+                        .id("empty-\(i)")
+                }
+                ForEach(1...daysInMonth, id: \.self) { day in
+                    let date = calendar.date(from: DateComponents(year: selectedYear, month: selectedMonth, day: day))!
+                    content(date)
+                        .padding(4)
+                        .background(
+                            (selectedDate != nil && calendar.isDate(date, equalTo: selectedDate!, toGranularity: .day)) ?
+                                Color.blue.opacity(0.3) : Color.clear
+                        )
+                        .cornerRadius(6)
+                        .frame(maxWidth: .infinity)
+                        .id("day-\(day)")
+                }
             }
         }
     }
