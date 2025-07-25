@@ -29,7 +29,7 @@ struct AddExpenseView: View {
                     }
 
                     Button(action: {
-                        withAnimation {
+                        withAnimation(.easeInOut(duration: 0.5)) {
                             vm.addGroup()
                         }
                     }) {

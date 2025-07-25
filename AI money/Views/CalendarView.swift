@@ -19,7 +19,7 @@ struct CalendarView<DateView>: View where DateView: View {
     @State private var showingPicker = false
 
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 10) {
             HStack {
                 Button(action: {
                     showingPicker.toggle()
@@ -41,41 +41,41 @@ struct CalendarView<DateView>: View where DateView: View {
                 }
             }
             .padding(.horizontal)
-            .padding(.top, 10)
-            .background(Color.white)
-
-            LazyVGrid(columns: Array(repeating: GridItem(), count: 7)) {
-                if showHeaders {
-                    ForEach(0..<7, id: \.self) { index in
-                        Text(weekdaySymbol(for: index))
-                            .padding(.bottom, 5)
+            .padding(.top, 20)
+            
+            VStack(spacing: 0) {
+                LazyVGrid(columns: Array(repeating: GridItem(), count: 7)) {
+                    if showHeaders {
+                        ForEach(0..<7, id: \.self) { index in
+                            Text(weekdaySymbol(for: index))
+                                .padding(.bottom, 5)
+                        }
+                    }
+                    ForEach(calendar.generateDates(
+                        inside: calendar.dateInterval(of: .month, for: calendar.date(from: DateComponents(year: selectedYear, month: selectedMonth))!)!,
+                        matching: DateComponents(hour: 0)
+                    ), id: \.self) { date in
+                        content(date)
+                            .padding(4)
+                            .background(
+                                (selectedDate != nil && calendar.isDate(date, equalTo: selectedDate!, toGranularity: .day)) ?
+                                    Color.blue.opacity(0.3) : Color.clear
+                            )
+                            .cornerRadius(6)
+                            .frame(maxWidth: .infinity)
                     }
                 }
-                ForEach(calendar.generateDates(
-                    inside: calendar.dateInterval(of: .month, for: calendar.date(from: DateComponents(year: selectedYear, month: selectedMonth))!)!,
-                    matching: DateComponents(hour: 0)
-                ), id: \.self) { date in
-                    content(date)
-                        .padding(4)
-                        .background(
-                            (selectedDate != nil && calendar.isDate(date, equalTo: selectedDate!, toGranularity: .day)) ?
-                                Color.blue.opacity(0.3) : Color.clear
-                        )
-                        .cornerRadius(6)
-                        .frame(maxWidth: .infinity)
-                }
+                .animation(.easeInOut, value: selectedYear)
+                .animation(.easeInOut, value: selectedMonth)
             }
-            .padding(.top, 10)
-            .animation(.easeInOut, value: selectedYear)
-            .animation(.easeInOut, value: selectedMonth)
-        }
-        .sheet(isPresented: $showingPicker) {
-            YearMonthPickerView(
-                viewModel: viewModel,
-                selectedYear: $selectedYear,
-                selectedMonth: $selectedMonth,
-                showingPicker: $showingPicker
-            )
+            .sheet(isPresented: $showingPicker) {
+                YearMonthPickerView(
+                    viewModel: viewModel,
+                    selectedYear: $selectedYear,
+                    selectedMonth: $selectedMonth,
+                    showingPicker: $showingPicker
+                )
+            }
         }
     }
 
