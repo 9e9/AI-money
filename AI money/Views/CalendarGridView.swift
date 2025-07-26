@@ -54,7 +54,7 @@ struct CalendarGridView<DateView>: View where DateView: View {
                 HStack(spacing: 0) {
                     ForEach(0..<7, id: \.self) { index in
                         Text(weekdaySymbol(for: index))
-                            .font(.system(size: 15, weight: .bold))
+                            .font(.system(size: 17))
                             .foregroundColor(index == 0 ? .red : (index == 6 ? .blue : .primary))
                             .frame(maxWidth: .infinity, minHeight: 32)
                     }
