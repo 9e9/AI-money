@@ -62,7 +62,7 @@ struct ExpenseCalendarView: View {
 
                 VStack {
                     ScrollView {
-                        VStack {
+                        VStack(spacing: 12) {
                             if selectedDate == nil {
                                 VStack {
                                     Spacer()
@@ -91,49 +91,53 @@ struct ExpenseCalendarView: View {
                                     .frame(maxWidth: .infinity, minHeight: 330)
                                 } else {
                                     ForEach(dailyExpenses) { expense in
-                                        HStack {
-                                            VStack(alignment: .leading) {
-                                                Text(expense.category)
-                                                    .font(.headline)
-                                                HStack {
-                                                    Text("\(Int(expense.amount)) 원")
-                                                        .font(.subheadline)
-                                                    if !expense.note.isEmpty {
-                                                        Text("- \(expense.note)")
+                                        ZStack {
+                                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                                .fill(Color(.systemGray6))
+                                                .shadow(color: Color(.systemGray4).opacity(0.18), radius: 8, x: 0, y: 3)
+                                            HStack {
+                                                VStack(alignment: .leading, spacing: 6) {
+                                                    Text(expense.category)
+                                                        .font(.headline)
+                                                    HStack {
+                                                        Text("\(Int(expense.amount)) 원")
                                                             .font(.subheadline)
-                                                            .foregroundColor(.secondary)
+                                                        if !expense.note.isEmpty {
+                                                            Text("- \(expense.note)")
+                                                                .font(.subheadline)
+                                                                .foregroundColor(.secondary)
+                                                        }
                                                     }
                                                 }
-                                            }
-                                            Spacer()
-                                            Button(action: {
-                                                expenseToDelete = expense
-                                                showingDeleteAlert = true
-                                            }) {
-                                                Image(systemName: "trash")
-                                                    .foregroundColor(.red)
-                                            }
-                                            .alert(isPresented: $showingDeleteAlert) {
-                                                Alert(
-                                                    title: Text("삭제 확인"),
-                                                    message: Text("이 지출 내역을 삭제하시겠습니까?"),
-                                                    primaryButton: .destructive(Text("삭제")) {
-                                                        withAnimation {
-                                                            if let expenseToDelete = expenseToDelete {
-                                                                viewModel.removeExpense(expenseToDelete)
+                                                Spacer()
+                                                Button(action: {
+                                                    expenseToDelete = expense
+                                                    showingDeleteAlert = true
+                                                }) {
+                                                    Image(systemName: "trash")
+                                                        .foregroundColor(.red)
+                                                        .padding(8)
+                                                }
+                                                .alert(isPresented: $showingDeleteAlert) {
+                                                    Alert(
+                                                        title: Text("삭제 확인"),
+                                                        message: Text("이 지출 내역을 삭제하시겠습니까?"),
+                                                        primaryButton: .destructive(Text("삭제")) {
+                                                            withAnimation {
+                                                                if let expenseToDelete = expenseToDelete {
+                                                                    viewModel.removeExpense(expenseToDelete)
+                                                                }
                                                             }
-                                                        }
-                                                    },
-                                                    secondaryButton: .cancel(Text("취소"))
-                                                )
+                                                        },
+                                                        secondaryButton: .cancel(Text("취소"))
+                                                    )
+                                                }
                                             }
+                                            .padding(.horizontal, 16)
+                                            .padding(.vertical, 10)
                                         }
-                                        .padding()
-                                        .background(Color.white)
-                                        .cornerRadius(10)
-                                        .shadow(radius: 5)
-                                        .padding(.horizontal)
-                                        .padding(.vertical, 5)
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 4)
                                         .transition(.opacity)
                                     }
                                 }
@@ -143,7 +147,8 @@ struct ExpenseCalendarView: View {
                         .frame(maxWidth: .infinity)
                         .transition(.opacity)
                     }
-                    .background(Color.gray.opacity(0.5))
+                    .background(RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(Color(.systemGray4)))
                     .frame(minWidth: 400, maxHeight: 395)
                     .padding(.bottom, -20)
                 }
