@@ -147,8 +147,10 @@ struct ExpenseCalendarView: View {
                         .frame(maxWidth: .infinity)
                         .transition(.opacity)
                     }
-                    .background(RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(Color(.systemGray4)))
+                    .background(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .fill(Color(.systemGray4))
+                    )
                     .frame(minWidth: 400, maxHeight: 395)
                     .padding(.bottom, -20)
                 }
