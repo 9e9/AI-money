@@ -27,7 +27,7 @@ struct ExpenseCalendarView: View {
                         selectedMonth: $selectedMonth,
                         selectedDate: $selectedDate,
                         showHeaders: true
-                    ) { date in
+                    ) { date, isInCurrentMonth in
                         VStack {
                             Text(String(Calendar.current.component(.day, from: date)))
                                 .foregroundColor(
@@ -144,7 +144,8 @@ struct ExpenseCalendarView: View {
                         .transition(.opacity)
                     }
                     .background(Color.gray.opacity(0.5))
-                    .frame(minWidth: 400, maxHeight: 365)
+                    .frame(minWidth: 400, maxHeight: 395)
+                    .padding(.bottom, -20)
                 }
             }
             .navigationTitle("")
