@@ -21,47 +21,71 @@ struct AddExpenseView: View {
 
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(spacing: 16) {
-                    ForEach(vm.expenseGroups.indices, id: \.self) { index in
-                        expenseGroupView(group: $vm.expenseGroups[index], index: index)
+            ZStack {
+                ScrollView {
+                    VStack(spacing: 18) {
+                        ForEach(vm.expenseGroups.indices, id: \.self) { index in
+                            AddExpenseCardView(
+                                group: $vm.expenseGroups[index],
+                                index: index,
+                                selectedDate: selectedDate,
+                                isEditing: isEditing,
+                                allCategories: vm.allCategories,
+                                expenseGroupCount: vm.expenseGroups.count,
+                                onDelete: { idx in
+                                    deletingIndex = idx
+                                    alertTitle = "삭제 확인"
+                                    alertMessage = "이 지출 묶음을 삭제하시겠습니까?"
+                                    showingAlert = true
+                                },
+                                onShowCategoryManagement: { showCategoryManagement = true }
+                            )
                             .transition(.opacity)
+                        }
+                        Spacer().frame(height: 70)
                     }
-
+                    .padding(.top, 20)
+                }
+                VStack {
+                    Spacer()
                     Button(action: {
                         withAnimation(.easeInOut(duration: 0.5)) {
                             vm.addGroup()
                         }
                     }) {
-                        Text("새로운 지출 추가")
+                        Label("새로운 지출 추가", systemImage: "plus")
                             .font(.headline)
                             .foregroundColor(.white)
-                            .padding()
+                            .padding(.vertical, 14)
                             .frame(maxWidth: .infinity)
                             .background(Color.blue)
-                            .cornerRadius(8)
+                            .cornerRadius(14)
+                            .shadow(color: Color.blue.opacity(0.18), radius: 8, x: 0, y: 3)
                     }
-                    .padding(.horizontal)
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 12)
                 }
             }
             .navigationTitle("지출 추가")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("취소", action: cancelExpense)
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
-                        withAnimation {
-                            isEditing.toggle()
-                        }
+                        withAnimation { isEditing.toggle() }
                     }) {
                         Text(isEditing ? "닫기" : "수정")
                             .font(.headline)
                             .foregroundColor(isEditing ? .red : .blue)
                     }
                 }
-                ToolbarItem(placement: .confirmationAction) {
+                ToolbarItemGroup(placement: .bottomBar) {
                     Button("저장", action: validateAndSaveExpenses)
-                }
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("취소", action: cancelExpense)
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
                 }
             }
             .alert(alertTitle, isPresented: $showingAlert) {
@@ -77,108 +101,8 @@ struct AddExpenseView: View {
             .sheet(isPresented: $showCategoryManagement, onDismiss: vm.updateCategories) {
                 CategoryManagementView()
             }
-            .onAppear {
-                vm.updateCategories()
-            }
+            .onAppear { vm.updateCategories() }
         }
-    }
-
-    private func expenseGroupView(group: Binding<ExpenseGroup>, index: Int) -> some View {
-        VStack {
-            HStack {
-                Text("날짜")
-                Spacer()
-                Text(Self.formatDate(selectedDate))
-                    .foregroundColor(.secondary)
-            }
-            .frame(maxHeight: 23)
-            Divider()
-
-            HStack {
-                Text("카테고리")
-                if isEditing {
-                    withAnimation {
-                        Button(action: {
-                            showCategoryManagement = true
-                        }) {
-                            Text("관리")
-                                .foregroundColor(.blue)
-                                .bold()
-                        }
-                        .buttonStyle(BorderlessButtonStyle())
-                        .transition(.opacity)
-                    }
-                }
-                Spacer()
-                Picker("", selection: group.category) {
-                    ForEach(vm.allCategories, id: \.self) { category in
-                        Text(category)
-                    }
-                }
-                .pickerStyle(MenuPickerStyle())
-            }
-            .frame(maxHeight: 23)
-            Divider()
-
-            HStack {
-                Text("금액")
-                Spacer()
-                HStack {
-                    TextField("금액 입력(필수)", text: group.formattedAmount)
-                        .keyboardType(.numberPad)
-                        .onChange(of: group.formattedAmount.wrappedValue, perform: { newValue in
-                            let filteredValue = newValue.replacingOccurrences(of: ",", with: "")
-                            if let number = Int(filteredValue) {
-                                group.wrappedValue.formattedAmount = Self.formatWithComma(String(number))
-                                group.wrappedValue.amount = String(number)
-                            } else {
-                                group.wrappedValue.formattedAmount = ""
-                                group.wrappedValue.amount = ""
-                            }
-                        })
-                        .multilineTextAlignment(.trailing)
-                    if !group.wrappedValue.formattedAmount.isEmpty {
-                        Text("원").foregroundColor(.secondary)
-                    }
-                }
-            }
-            .frame(maxHeight: 35)
-            Divider()
-
-            HStack {
-                Text("메모")
-                Spacer()
-                TextField("선택 사항", text: group.note)
-                    .multilineTextAlignment(.trailing)
-            }
-            .frame(maxHeight: 20)
-            
-            if isEditing && vm.expenseGroups.count > 1 {
-                Button(action: {
-                    deletingIndex = index
-                    alertTitle = "삭제 확인"
-                    alertMessage = "이 지출 묶음을 삭제하시겠습니까?"
-                    showingAlert = true
-                }) {
-                    VStack {
-                        Divider()
-                        Image(systemName: "trash")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 24, height: 24)
-                            .foregroundColor(.red)
-                    }
-                    .frame(maxHeight: 23)
-                }
-                .buttonStyle(BorderlessButtonStyle())
-                .padding(.top, 8)
-            }
-        }
-        .padding()
-        .background(Color(UIColor.systemGray6))
-        .cornerRadius(8)
-        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
-        .padding(.horizontal)
     }
 
     private func validateAndSaveExpenses() {
@@ -189,12 +113,10 @@ struct AddExpenseView: View {
             showingAlert = true
             return
         }
-
         let newExpenses = vm.makeExpenses(selectedDate: selectedDate)
         for expense in newExpenses {
             viewModel.addExpense(expense)
         }
-
         presentationMode.wrappedValue.dismiss()
     }
 
@@ -210,15 +132,17 @@ struct AddExpenseView: View {
     private func cancelExpense() {
         presentationMode.wrappedValue.dismiss()
     }
+}
 
-    private static func formatDate(_ date: Date) -> String {
+extension AddExpenseView {
+    static func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "YYYY년 MM월 dd일"
+        formatter.dateFormat = "yyyy년 MM월 dd일"
         return formatter.string(from: date)
     }
 
-    private static func formatWithComma(_ numberString: String) -> String {
+    static func formatWithComma(_ numberString: String) -> String {
         guard let number = Double(numberString) else { return numberString }
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
