@@ -71,7 +71,7 @@ struct CalendarGridView<DateView>: View where DateView: View {
                                 .frame(maxWidth: .infinity, minHeight: 44)
                                 .background(
                                     selectedDate != nil && calendar.isDate(day.date, equalTo: selectedDate!, toGranularity: .day)
-                                    ? Color.blue.opacity(0.2)
+                                    ? Color.blue.opacity(0.5)
                                     : Color.clear
                                 )
                                 .cornerRadius(8)

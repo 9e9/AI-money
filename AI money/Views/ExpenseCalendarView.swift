@@ -34,10 +34,6 @@ struct ExpenseCalendarView: View {
                                     selectedDate != nil && Calendar.current.isDate(date, inSameDayAs: selectedDate!) ? .white : .primary
                                 )
                                 .padding(4)
-                                .background(
-                                    selectedDate != nil && Calendar.current.isDate(date, inSameDayAs: selectedDate!) ? Color.blue : Color.clear
-                                )
-                                .clipShape(Circle())
                                 .onTapGesture {
                                     withAnimation {
                                         if let selected = selectedDate, Calendar.current.isDate(selected, inSameDayAs: date) {
