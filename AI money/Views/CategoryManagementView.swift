@@ -10,127 +10,159 @@ import SwiftUI
 struct CategoryManagementView: View {
     @Environment(\.presentationMode) var presentationMode
     @StateObject private var viewModel = CategoryManagementViewModel()
+    @State private var showTextField = false
     @State private var recentlyAddedCategory: String? = nil
     @State private var deletingCategories: Set<String> = []
+    @State private var trashPressed: String? = nil
 
     var body: some View {
         NavigationView {
             ZStack {
-                VStack(spacing: 16) {
+                VStack(spacing: 0) {
                     if viewModel.isEditingMode {
                         HStack {
                             Button(action: {
-                                withAnimation(.easeInOut) {
-                                    viewModel.handleSelectionAction()
-                                }
+                                withAnimation { viewModel.handleSelectionAction() }
                             }) {
                                 Text(viewModel.selectionButtonTitle)
                                     .font(.headline)
-                                    .padding(8)
-                                    .background(Color.blue.opacity(0.2))
-                                    .cornerRadius(8)
-                                    .transition(.opacity)
+                                    .padding(.horizontal, 14)
+                                    .padding(.vertical, 8)
+                                    .background(Color.blue.opacity(0.12))
+                                    .cornerRadius(10)
                             }
+                            
                             Spacer()
+                            
                             if !viewModel.selectedCategories.isEmpty {
                                 Button(action: { viewModel.askDeleteSelectedCategories() }) {
-                                    Text("삭제")
-                                        .font(.headline)
-                                        .padding(8)
-                                        .background(Color.red)
-                                        .foregroundColor(.white)
-                                        .cornerRadius(8)
-                                        .transition(.opacity)
+                                    HStack {
+                                        Text("삭제")
+                                            .font(.headline)
+                                            .foregroundColor(.white)
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 8)
+                                    .background(Color.red)
+                                    .cornerRadius(10)
                                 }
-                                .transition(.opacity.animation(.easeInOut(duration: 0.5)))
-                                .opacity(viewModel.selectedCategories.isEmpty ? 0 : 1)
+                                .animation(.easeInOut(duration: 0.33), value: viewModel.selectedCategories)
                             }
                         }
                         .padding(.horizontal)
-                        .animation(.easeInOut, value: viewModel.isEditingMode)
+                        .padding(.top, 8)
                     }
-
                     if viewModel.customCategories.isEmpty {
                         Spacer()
-                        Text("카테고리가 없음")
+                        Text("카테고리가 없습니다")
                             .font(.body)
                             .foregroundColor(.secondary)
                         Spacer()
                     } else {
                         ScrollView {
-                            VStack(spacing: 16) {
+                            VStack(spacing: 14) {
                                 ForEach(viewModel.customCategories, id: \.self) { category in
                                     HStack {
                                         if viewModel.isEditingMode {
                                             Button(action: {
-                                                withAnimation(.spring(response: 0.5, dampingFraction: 0.45)) {
+                                                withAnimation {
                                                     viewModel.toggleSelection(for: category)
                                                 }
                                             }) {
-                                                Image(systemName: viewModel.selectedCategories.contains(category) ? "checkmark.square.fill" : "square")
+                                                Image(systemName: viewModel.selectedCategories.contains(category) ? "checkmark.circle.fill" : "circle")
                                                     .foregroundColor(.blue)
+                                                    .font(.title3)
                                             }
                                             .buttonStyle(BorderlessButtonStyle())
                                         }
                                         Text(category)
                                             .font(.body)
                                             .foregroundColor(.primary)
-                                            .transition(.opacity)
+                                        
                                         Spacer()
+                                        
                                         if viewModel.isEditingMode {
-                                            Button(action: { viewModel.askDeleteCategory(category) }) {
+                                            Button(action: {
+                                                withAnimation(.spring(response: 0.3, dampingFraction: 0.5, blendDuration: 0.2)) {
+                                                    trashPressed = category
+                                                }
+                                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                                                    withAnimation(.spring(response: 0.2, dampingFraction: 0.7)) {
+                                                        trashPressed = nil
+                                                    }
+                                                }
+                                                viewModel.askDeleteCategory(category)
+                                            }) {
                                                 Image(systemName: "trash")
+                                                    .font(.system(size: 20, weight: .regular))
                                                     .foregroundColor(.red)
-                                                    .transition(.opacity)
+                                                    .opacity(trashPressed == category ? 0.3 : 1.0)
+                                                    .animation(.easeInOut(duration: 0.5), value: trashPressed)
                                             }
                                             .buttonStyle(BorderlessButtonStyle())
                                         }
                                     }
-                                    .padding()
-                                    .background(Color(UIColor.systemGray6))
-                                    .cornerRadius(8)
-                                    .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
-                                    .padding(.horizontal)
-                                    .opacity(deletingCategories.contains(category) ? 0 : 1)
-                                    .animation(.easeInOut(duration: 0.5), value: deletingCategories)
+                                    .padding(.vertical, 10)
+                                    .padding(.horizontal, 14)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(Color(.systemGray6))
+                                            .shadow(color: Color.black.opacity(0.07), radius: 3, x: 0, y: 2)
+                                    )
                                 }
                             }
-                            .padding(.horizontal)
+                            .padding(.horizontal, 16)
+                            .padding(.top, 8)
                         }
-                        .background(Color(UIColor.systemGray5))
                     }
                     Spacer()
                 }
-                .background(Color(UIColor.systemGray5))
-
                 VStack {
                     Spacer()
                     HStack {
-                        TextField("새 카테고리", text: $viewModel.newCategoryName)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .padding(.vertical, 8)
-                        Button(action: {
-                            let trimmed = viewModel.newCategoryName.trimmingCharacters(in: .whitespaces)
-                            viewModel.addCategory()
-                            if !trimmed.isEmpty && viewModel.customCategories.contains(trimmed) {
-                                recentlyAddedCategory = trimmed
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-                                    recentlyAddedCategory = nil
-                                }
+                        if showTextField {
+                            TextField("새 카테고리", text: $viewModel.newCategoryName, onCommit: {
+                                addCategoryWithEffect()
+                            })
+                            .padding(.horizontal)
+                            .frame(height: 44)
+                            .background(Color(.systemGray6))
+                            .cornerRadius(8)
+                            Button(action: addCategoryWithEffect) {
+                                Text("추가")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 14)
+                                    .padding(.vertical, 8)
+                                    .background(Color.blue)
+                                    .cornerRadius(8)
                             }
-                        }) {
-                            Text("추가")
-                                .padding(8)
-                                .background(Color.blue)
-                                .foregroundColor(.white)
-                                .cornerRadius(8)
+                            Button(action: {
+                                withAnimation { showTextField = false }
+                                viewModel.newCategoryName = ""
+                            }) {
+                                Image(systemName: "xmark.circle.fill")
+                                    .font(.system(size: 28))
+                                    .foregroundColor(.gray)
+                            }
+                            .padding(.leading, 6)
+                        } else {
+                            Spacer()
+                            Button(action: {
+                                withAnimation { showTextField = true }
+                            }) {
+                                Image(systemName: "plus.circle.fill")
+                                    .resizable()
+                                    .frame(width: 54, height: 54)
+                                    .foregroundColor(.blue)
+                                    .shadow(radius: 6)
+                            }
                         }
                     }
-                    .padding()
-                    .background(Color(UIColor.systemGray5))
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 18)
                 }
             }
-            .background(Color(UIColor.systemGray5))
             .navigationTitle("카테고리 관리")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -179,5 +211,11 @@ struct CategoryManagementView: View {
                 }
             }
         }
+    }
+
+    private func addCategoryWithEffect() {
+        let trimmed = viewModel.newCategoryName.trimmingCharacters(in: .whitespaces)
+        viewModel.addCategory()
+        viewModel.newCategoryName = ""
     }
 }

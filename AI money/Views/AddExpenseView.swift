@@ -71,7 +71,6 @@ struct AddExpenseView: View {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("취소", action: cancelExpense)
                         .font(.headline)
-                        .foregroundColor(.secondary)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {

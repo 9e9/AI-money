@@ -24,7 +24,7 @@ struct AddExpenseCardView: View {
                     .foregroundColor(.blue)
                 Spacer()
                 Text(AddExpenseView.formatDate(selectedDate))
-                    .font(.title3)
+                    .font(.body)
                     .foregroundColor(.secondary)
             }
             
