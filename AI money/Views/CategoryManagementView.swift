@@ -214,7 +214,6 @@ struct CategoryManagementView: View {
     }
 
     private func addCategoryWithEffect() {
-        let trimmed = viewModel.newCategoryName.trimmingCharacters(in: .whitespaces)
         viewModel.addCategory()
         viewModel.newCategoryName = ""
     }

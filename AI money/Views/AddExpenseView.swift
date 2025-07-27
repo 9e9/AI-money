@@ -17,6 +17,7 @@ struct AddExpenseView: View {
     @State private var deletingIndex: Int? = nil
     @State private var showCategoryManagement = false
     @State private var isEditing = false
+    
     var selectedDate: Date
 
     var body: some View {

@@ -82,30 +82,33 @@ final class AIService {
     func reply(
         to userInput: String,
         context: ModelContext,
-        conversationContext: inout ConversationContext
-    ) async -> String {
+        conversationContext: ConversationContext
+    ) async -> (String, ConversationContext) {
+        var tempContext = conversationContext
         if !isRelatedToApp(userInput) {
-            return "앱 사용과 관련된 지출/소비/예산 질문을 해주세요!"
+            return ("앱 사용과 관련된 지출/소비/예산 질문을 해주세요!", tempContext)
         }
         if isNotAValidQuestion(userInput) {
-            return "앱 사용과 관련된 지출/소비/예산 질문을 해주세요!"
+            return ("앱 사용과 관련된 지출/소비/예산 질문을 해주세요!", tempContext)
         }
 
         let parsed = parseUserInput(
             userInput: userInput,
             context: context,
-            previousContext: conversationContext
+            previousContext: tempContext
         )
 
-        if parsed.questionType == .none && parsed.category == nil && parsed.period == nil {
-            return "앱 사용과 관련된 지출/소비/예산 질문을 해주세요!"
+        if parsed.questionType == QuestionType.none && parsed.category == nil && parsed.period == nil {
+            return ("앱 사용과 관련된 지출/소비/예산 질문을 해주세요!", tempContext)
         }
 
-        if let p = parsed.period { conversationContext.period = p }
-        if let c = parsed.category { conversationContext.category = c }
-        if let q = parsed.questionType, q != .none { conversationContext.questionType = q }
+        if let p = parsed.period { tempContext.period = p }
+        if let c = parsed.category { tempContext.category = c }
+        if let q = parsed.questionType, q != QuestionType.none { tempContext.questionType = q }
 
-        return await answer(for: parsed, context: context, conversationContext: conversationContext)
+        let answerText = await answer(for: parsed, context: context, conversationContext: tempContext)
+        
+        return (answerText, tempContext)
     }
 
     private func isRelatedToApp(_ input: String) -> Bool {
@@ -202,7 +205,7 @@ final class AIService {
         if period == nil { period = previousContext.period }
         if category == nil { category = previousContext.category }
         if questionType == nil { questionType = previousContext.questionType }
-        if questionType == nil { questionType = .none }
+        if questionType == nil { questionType = QuestionType.none }
 
         return ParsedQuery(period: period, category: category, questionType: questionType, referenceDate: refDate, isCompare: isCompare)
     }
@@ -224,8 +227,7 @@ final class AIService {
             filtered = expenses
         }
 
-        let questionType = parsed.questionType ?? conversationContext.questionType ?? .totalAmount
-
+        let questionType = parsed.questionType ?? conversationContext.questionType ?? QuestionType.totalAmount
         switch questionType {
         case .totalAmount:
             let sum = filtered.reduce(0) { $0 + $1.amount }

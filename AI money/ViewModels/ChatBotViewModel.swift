@@ -20,15 +20,15 @@ class ChatBotViewModel: ObservableObject {
         messages.append(userMessage)
         inputText = ""
 
+        let currentContext = conversationContext
         Task {
-            var tempContext = conversationContext
-            let aiReply = await AIService.shared.reply(
+            let (aiReply, newContext) = await AIService.shared.reply(
                 to: trimmed,
                 context: modelContext,
-                conversationContext: &tempContext
+                conversationContext: currentContext
             )
             await MainActor.run {
-                conversationContext = tempContext
+                conversationContext = newContext
                 messages.append(ChatMessage(text: aiReply, isUser: false))
             }
         }

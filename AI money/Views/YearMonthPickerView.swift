@@ -42,7 +42,7 @@ struct YearMonthPickerView: View {
                         .pickerStyle(WheelPickerStyle())
                         .frame(maxWidth: .infinity)
                         .clipped()
-                        .onChange(of: selectedYear) { _ in
+                        .onChange(of: selectedYear) { oldValue, newValue in
                             updateExpenseStats()
                         }
                     }
@@ -60,7 +60,7 @@ struct YearMonthPickerView: View {
                         .pickerStyle(WheelPickerStyle())
                         .frame(maxWidth: .infinity)
                         .clipped()
-                        .onChange(of: selectedMonth) { _ in
+                        .onChange(of: selectedMonth) { oldValue, newValue in
                             updateExpenseStats()
                         }
                     }

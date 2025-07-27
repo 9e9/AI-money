@@ -80,7 +80,6 @@ class CategoryManagementViewModel: ObservableObject {
     }
 
     func deleteSelectedCategories() {
-        // 최적화: Set의 forEach 사용
         selectedCategories.forEach { deleteCategory(named: $0) }
         selectedCategories.removeAll()
     }

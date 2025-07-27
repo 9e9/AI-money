@@ -55,7 +55,7 @@ struct AddExpenseCardView: View {
                 Spacer()
                 TextField("금액 입력(필수)", text: $group.formattedAmount)
                     .keyboardType(.numberPad)
-                    .onChange(of: group.formattedAmount) { newValue in
+                    .onChange(of: group.formattedAmount) { oldValue, newValue in
                         let filteredValue = newValue.replacingOccurrences(of: ",", with: "")
                         if let number = Int(filteredValue) {
                             group.formattedAmount = AddExpenseView.formatWithComma(String(number))

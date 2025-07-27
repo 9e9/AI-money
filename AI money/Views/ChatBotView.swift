@@ -37,9 +37,9 @@ struct ChatBotView: View {
                             .padding()
                         }
                         .background(Color.white)
-                        .onChange(of: viewModel.messages) { _ in
+                        .onChange(of: viewModel.messages) { oldValue, newValue in
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                                if let lastId = viewModel.messages.last?.id {
+                                if let lastId = newValue.last?.id {
                                     withAnimation(.easeInOut(duration: 0.35)) {
                                         scrollViewProxy.scrollTo(lastId, anchor: .bottom)
                                     }
