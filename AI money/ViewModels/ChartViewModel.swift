@@ -56,6 +56,10 @@ class ChartViewModel: ObservableObject {
         }
     }
 
+    var totalAmount: Double {
+        return filteredExpenses.reduce(0) { $0 + $1.amount }
+    }
+
     var sortedCategoryTotals: [CategoryTotal] {
         let totals = filteredExpenses.reduce(into: [String: Double]()) { result, expense in
             result[expense.category, default: 0.0] += expense.amount
