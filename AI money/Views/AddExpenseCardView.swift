@@ -18,24 +18,43 @@ struct AddExpenseCardView: View {
     let onShowCategoryManagement: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 18) {
+            // Date section with modern styling
             HStack {
                 Image(systemName: "calendar")
+                    .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.blue)
+                    .frame(width: 28, height: 28)
+                    .background(
+                        Circle()
+                            .fill(Color.blue.opacity(0.15))
+                    )
                 Spacer()
                 Text(AddExpenseView.formatDate(selectedDate))
-                    .font(.body)
+                    .font(.system(size: 16, weight: .medium, design: .rounded))
                     .foregroundColor(.secondary)
             }
             
+            // Category section with enhanced styling
             HStack {
-                Image(systemName: "tag")
+                Image(systemName: "tag.fill")
+                    .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.green)
+                    .frame(width: 28, height: 28)
+                    .background(
+                        Circle()
+                            .fill(Color.green.opacity(0.15))
+                    )
                 if isEditing {
                     Button(action: onShowCategoryManagement) {
                         Image(systemName: "slider.horizontal.3")
+                            .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.blue)
-                            .imageScale(.medium)
+                            .padding(8)
+                            .background(
+                                Circle()
+                                    .fill(Color.blue.opacity(0.1))
+                            )
                     }
                     .buttonStyle(BorderlessButtonStyle())
                 }
@@ -43,62 +62,121 @@ struct AddExpenseCardView: View {
                 Picker("카테고리", selection: $group.category) {
                     ForEach(allCategories, id: \.self) { category in
                         Text(category)
+                            .font(.system(size: 16, weight: .medium))
                     }
                 }
                 .pickerStyle(MenuPickerStyle())
-                .padding(.leading, 200)
+                .tint(.primary)
             }
             
-            HStack {
-                Image(systemName: "creditcard")
-                    .foregroundColor(.orange)
-                Spacer()
-                TextField("금액 입력(필수)", text: $group.formattedAmount)
-                    .keyboardType(.numberPad)
-                    .onChange(of: group.formattedAmount) { oldValue, newValue in
-                        let filteredValue = newValue.replacingOccurrences(of: ",", with: "")
-                        if let number = Int(filteredValue) {
-                            group.formattedAmount = AddExpenseView.formatWithComma(String(number))
-                            group.amount = String(number)
-                        } else {
-                            group.formattedAmount = ""
-                            group.amount = ""
+            // Amount section with improved input styling
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Image(systemName: "creditcard.fill")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(.orange)
+                        .frame(width: 28, height: 28)
+                        .background(
+                            Circle()
+                                .fill(Color.orange.opacity(0.15))
+                        )
+                    Spacer()
+                    TextField("금액 입력(필수)", text: $group.formattedAmount)
+                        .keyboardType(.numberPad)
+                        .onChange(of: group.formattedAmount) { oldValue, newValue in
+                            group.updateAmount(newValue)
                         }
+                        .font(.system(size: 18, weight: .semibold, design: .rounded))
+                        .foregroundColor(.primary)
+                        .multilineTextAlignment(.trailing)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 10)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(group.formattedAmount.isEmpty ? Color(.systemGray6) : 
+                                      (group.isValid ? Color.blue.opacity(0.05) : Color.red.opacity(0.05)))
+                                .stroke(group.formattedAmount.isEmpty ? Color.clear : 
+                                       (group.isValid ? Color.blue.opacity(0.3) : Color.red.opacity(0.5)), lineWidth: 1.5)
+                        )
+                        .animation(.easeInOut(duration: 0.2), value: group.formattedAmount.isEmpty)
+                        .animation(.easeInOut(duration: 0.2), value: group.isValid)
+                    
+                    if !group.formattedAmount.isEmpty {
+                        Text("원")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.secondary)
                     }
-                    .multilineTextAlignment(.trailing)
-                
-                if !group.formattedAmount.isEmpty {
-                    Text("원").foregroundColor(.secondary)
                 }
             }
             
+            // Note section with enhanced styling
             HStack {
-                Image(systemName: "note.text")
+                Image(systemName: "note.text.badge.plus")
+                    .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.purple)
+                    .frame(width: 28, height: 28)
+                    .background(
+                        Circle()
+                            .fill(Color.purple.opacity(0.15))
+                    )
                 Spacer()
                 TextField("메모 (선택)", text: $group.note)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.primary)
                     .multilineTextAlignment(.trailing)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 10)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(group.note.isEmpty ? Color(.systemGray6) : Color.purple.opacity(0.05))
+                            .stroke(group.note.isEmpty ? Color.clear : Color.purple.opacity(0.3), lineWidth: 1.5)
+                    )
+                    .animation(.easeInOut(duration: 0.2), value: group.note.isEmpty)
             }
+            
+            // Delete button with enhanced styling
             if isEditing && expenseGroupCount > 1 {
                 Button(action: { onDelete(index) }) {
                     HStack {
                         Spacer()
-                        Image(systemName: "trash")
-                            .foregroundColor(.red)
+                        Image(systemName: "trash.fill")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.white)
                         Text("삭제")
-                            .foregroundColor(.red)
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.white)
                     }
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(
+                                LinearGradient(
+                                    colors: [.red, .red.opacity(0.8)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                    )
                 }
                 .padding(.top, 8)
+                .buttonStyle(BorderlessButtonStyle())
             }
         }
-        .padding(16)
+        .padding(20)
         .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(Color(.systemGray6))
-                .shadow(color: Color.black.opacity(0.10), radius: 6, x: 0, y: 3)
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .fill(
+                    LinearGradient(
+                        colors: [Color(.systemBackground), Color(.systemGray6).opacity(0.3)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .stroke(Color(.systemGray4).opacity(0.3), lineWidth: 1)
+                .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 4)
+                .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 2)
         )
-        .padding(.horizontal, 14)
-        .padding(.vertical, 2)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 4)
     }
 }

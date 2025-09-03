@@ -23,8 +23,20 @@ struct AddExpenseView: View {
     var body: some View {
         NavigationView {
             ZStack {
+                // Modern gradient background
+                LinearGradient(
+                    colors: [
+                        Color(.systemBackground),
+                        Color(.systemGray6).opacity(0.4),
+                        Color(.systemBackground)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+                
                 ScrollView {
-                    VStack(spacing: 18) {
+                    LazyVStack(spacing: 20) {
                         ForEach(vm.expenseGroups.indices, id: \.self) { index in
                             AddExpenseCardView(
                                 group: $vm.expenseGroups[index],
@@ -41,51 +53,95 @@ struct AddExpenseView: View {
                                 },
                                 onShowCategoryManagement: { showCategoryManagement = true }
                             )
-                            .transition(.opacity)
+                            .transition(.asymmetric(
+                                insertion: .scale.combined(with: .opacity),
+                                removal: .scale.combined(with: .opacity)
+                            ))
                         }
-                        Spacer().frame(height: 70)
+                        Spacer().frame(height: 80)
                     }
-                    .padding(.top, 20)
+                    .padding(.top, 24)
                 }
+                
                 VStack {
                     Spacer()
                     Button(action: {
-                        withAnimation(.easeInOut(duration: 0.5)) {
+                        withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
                             vm.addGroup()
                         }
                     }) {
-                        Label("새로운 지출 추가", systemImage: "plus")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding(.vertical, 14)
-                            .frame(maxWidth: .infinity)
-                            .background(Color.blue)
-                            .cornerRadius(14)
-                            .shadow(color: Color.blue.opacity(0.18), radius: 8, x: 0, y: 3)
+                        HStack(spacing: 12) {
+                            Image(systemName: "plus.circle.fill")
+                                .font(.system(size: 20, weight: .semibold))
+                            Text("새로운 지출 추가")
+                                .font(.system(size: 18, weight: .semibold, design: .rounded))
+                        }
+                        .foregroundColor(.white)
+                        .padding(.vertical, 16)
+                        .frame(maxWidth: .infinity)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .fill(
+                                    LinearGradient(
+                                        colors: [.blue, .blue.opacity(0.8)],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                        )
+                        .shadow(color: Color.blue.opacity(0.25), radius: 12, x: 0, y: 6)
+                        .shadow(color: Color.blue.opacity(0.15), radius: 4, x: 0, y: 2)
                     }
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 12)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 16)
                 }
             }
             .navigationTitle("지출 추가")
+            .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("취소", action: cancelExpense)
-                        .font(.headline)
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundColor(.secondary)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
-                        withAnimation { isEditing.toggle() }
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) { 
+                            isEditing.toggle() 
+                        }
                     }) {
-                        Text(isEditing ? "닫기" : "수정")
-                            .font(.headline)
-                            .foregroundColor(isEditing ? .red : .blue)
+                        HStack(spacing: 6) {
+                            Image(systemName: isEditing ? "xmark.circle.fill" : "pencil.circle.fill")
+                                .font(.system(size: 16, weight: .semibold))
+                            Text(isEditing ? "닫기" : "수정")
+                                .font(.system(size: 17, weight: .semibold))
+                        }
+                        .foregroundColor(isEditing ? .red : .blue)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(
+                            Capsule()
+                                .fill((isEditing ? Color.red : Color.blue).opacity(0.1))
+                        )
                     }
                 }
                 ToolbarItemGroup(placement: .bottomBar) {
                     Button("저장", action: validateAndSaveExpenses)
-                        .font(.headline)
+                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .fill(
+                                    LinearGradient(
+                                        colors: [.green, .green.opacity(0.8)],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                        )
+                        .shadow(color: Color.green.opacity(0.3), radius: 8, x: 0, y: 4)
                 }
             }
             .alert(alertTitle, isPresented: $showingAlert) {
