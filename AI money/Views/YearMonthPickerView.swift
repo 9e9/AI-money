@@ -147,7 +147,6 @@ struct YearMonthPickerView: View {
                                 )
                             }
                             
-                            // 평균 지출 vs 작년 동월 비교
                             HStack(spacing: 12) {
                                 StatCard(
                                     icon: "chart.line.uptrend.xyaxis",
