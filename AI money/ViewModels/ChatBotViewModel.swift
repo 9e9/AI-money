@@ -8,28 +8,32 @@
 import Foundation
 import SwiftData
 
+@MainActor
 class ChatBotViewModel: ObservableObject {
     @Published var messages: [ChatMessage] = []
     @Published var inputText: String = ""
     @Published var conversationContext = ConversationContext()
 
-    func sendMessage(modelContext: ModelContext) {
+    func sendMessage(modelContainer: ModelContainer) {
         let trimmed = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
+        
         let userMessage = ChatMessage(text: trimmed, isUser: true)
         messages.append(userMessage)
         inputText = ""
 
         let currentContext = conversationContext
+        
         Task {
             let (aiReply, newContext) = await AIService.shared.reply(
                 to: trimmed,
-                context: modelContext,
+                modelContainer: modelContainer,
                 conversationContext: currentContext
             )
+            
             await MainActor.run {
-                conversationContext = newContext
-                messages.append(ChatMessage(text: aiReply, isUser: false))
+                self.conversationContext = newContext
+                self.messages.append(ChatMessage(text: aiReply, isUser: false))
             }
         }
     }

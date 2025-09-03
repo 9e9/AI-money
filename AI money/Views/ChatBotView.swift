@@ -58,7 +58,7 @@ struct ChatBotView: View {
             ZStack {
                 HStack {
                     TextField("메시지를 입력하세요", text: $viewModel.inputText, onCommit: {
-                        viewModel.sendMessage(modelContext: modelContext)
+                        viewModel.sendMessage(modelContainer: modelContext.container)
                     })
                         .padding(12)
                         .background(Color(UIColor.secondarySystemFill))
@@ -66,7 +66,7 @@ struct ChatBotView: View {
                         .foregroundColor(.primary)
                         .font(.system(size: 16))
                     Button(action: {
-                        viewModel.sendMessage(modelContext: modelContext)
+                        viewModel.sendMessage(modelContainer: modelContext.container)
                     }) {
                         Image(systemName: "paperplane.fill")
                             .rotationEffect(.degrees(45))

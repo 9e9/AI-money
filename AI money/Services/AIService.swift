@@ -81,10 +81,11 @@ final class AIService {
 
     func reply(
         to userInput: String,
-        context: ModelContext,
+        modelContainer: ModelContainer,
         conversationContext: ConversationContext
     ) async -> (String, ConversationContext) {
         var tempContext = conversationContext
+        
         if !isRelatedToApp(userInput) {
             return ("앱 사용과 관련된 지출/소비/예산 질문을 해주세요!", tempContext)
         }
@@ -92,9 +93,11 @@ final class AIService {
             return ("앱 사용과 관련된 지출/소비/예산 질문을 해주세요!", tempContext)
         }
 
-        let parsed = parseUserInput(
+        let dataActor = DataActor(modelContainer: modelContainer)
+        
+        let parsed = await parseUserInput(
             userInput: userInput,
-            context: context,
+            dataActor: dataActor,
             previousContext: tempContext
         )
 
@@ -106,7 +109,7 @@ final class AIService {
         if let c = parsed.category { tempContext.category = c }
         if let q = parsed.questionType, q != QuestionType.none { tempContext.questionType = q }
 
-        let answerText = await answer(for: parsed, context: context, conversationContext: tempContext)
+        let answerText = await answer(for: parsed, dataActor: dataActor, conversationContext: tempContext)
         
         return (answerText, tempContext)
     }
@@ -123,9 +126,9 @@ final class AIService {
 
     private func parseUserInput(
         userInput: String,
-        context: ModelContext,
+        dataActor: DataActor,
         previousContext: ConversationContext
-    ) -> ParsedQuery {
+    ) async -> ParsedQuery {
         let lower = userInput.replacingOccurrences(of: " ", with: "").lowercased()
         let now = Date()
         let calendar = Calendar.current
@@ -165,7 +168,7 @@ final class AIService {
             isCompare = true
         }
 
-        let categories = extractAllCategories(context: context)
+        let categories = await extractAllCategories(dataActor: dataActor)
         if let found = categories.first(where: { lower.contains($0.replacingOccurrences(of: " ", with: "").lowercased()) }) {
             category = found
         }
@@ -212,15 +215,15 @@ final class AIService {
 
     private func answer(
         for parsed: ParsedQuery,
-        context: ModelContext,
+        dataActor: DataActor,
         conversationContext: ConversationContext
     ) async -> String {
         guard let period = parsed.period ?? conversationContext.period else {
             return "질문에서 기간(예: 이번달, 지난달 등)을 명확히 말씀해 주세요."
         }
         let dateRange = dateRange(for: period)
-        let expenses = await fetchExpenses(from: dateRange.0, to: dateRange.1, context: context)
-        let filtered: [Expense]
+        let expenses = await dataActor.fetchExpenses(from: dateRange.0, to: dateRange.1)
+        let filtered: [DataActor.ExpenseData]
         if let cat = parsed.category ?? conversationContext.category {
             filtered = expenses.filter { $0.category == cat }
         } else {
@@ -291,7 +294,7 @@ final class AIService {
                 let month = cal.date(byAdding: .month, value: -i, to: Date())!
                 let start = cal.date(from: cal.dateComponents([.year, .month], from: month))!
                 let end = cal.date(byAdding: .month, value: 1, to: start)!
-                let expenses = await fetchExpenses(from: start, to: end, context: context)
+                let expenses = await dataActor.fetchExpenses(from: start, to: end)
                 let sum = (parsed.category ?? conversationContext.category) == nil
                     ? expenses.reduce(0) { $0 + $1.amount }
                     : expenses.filter { $0.category == (parsed.category ?? conversationContext.category) }
@@ -361,18 +364,8 @@ final class AIService {
         }
     }
 
-    private func fetchExpenses(from: Date, to: Date, context: ModelContext) async -> [Expense] {
-        let request = FetchDescriptor<Expense>(
-            predicate: #Predicate { $0.date >= from && $0.date < to }
-        )
-        return (try? context.fetch(request)) ?? []
-    }
-
-    private func extractAllCategories(context: ModelContext) -> [String] {
-        let request = FetchDescriptor<Expense>()
-        let expenses = (try? context.fetch(request)) ?? []
-        let unique = Set(expenses.map { $0.category })
-        return Array(unique)
+    private func extractAllCategories(dataActor: DataActor) async -> [String] {
+        return await dataActor.getAllCategories()
     }
 
     private static func dayString(_ date: Date) -> String {
