@@ -92,6 +92,8 @@ struct AddExpenseView: View {
                         .shadow(color: Color.blue.opacity(0.25), radius: 12, x: 0, y: 6)
                         .shadow(color: Color.blue.opacity(0.15), radius: 4, x: 0, y: 2)
                     }
+                    .accessibilityLabel("새로운 지출 추가")
+                    .accessibilityHint("새로운 지출 항목을 추가합니다")
                     .padding(.horizontal, 20)
                     .padding(.bottom, 16)
                 }
@@ -103,6 +105,8 @@ struct AddExpenseView: View {
                     Button("취소", action: cancelExpense)
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundColor(.secondary)
+                        .accessibilityLabel("취소")
+                        .accessibilityHint("지출 추가를 취소하고 이전 화면으로 돌아갑니다")
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
@@ -124,6 +128,8 @@ struct AddExpenseView: View {
                                 .fill((isEditing ? Color.red : Color.blue).opacity(0.1))
                         )
                     }
+                    .accessibilityLabel(isEditing ? "편집 모드 닫기" : "편집 모드 열기")
+                    .accessibilityHint(isEditing ? "편집 모드를 종료합니다" : "지출 항목을 편집할 수 있는 모드로 전환합니다")
                 }
                 ToolbarItemGroup(placement: .bottomBar) {
                     Button("저장", action: validateAndSaveExpenses)
@@ -142,6 +148,8 @@ struct AddExpenseView: View {
                                 )
                         )
                         .shadow(color: Color.green.opacity(0.3), radius: 8, x: 0, y: 4)
+                        .accessibilityLabel("지출 저장")
+                        .accessibilityHint("입력한 지출 내역을 저장합니다")
                 }
             }
             .alert(alertTitle, isPresented: $showingAlert) {

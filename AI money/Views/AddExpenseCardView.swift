@@ -29,10 +29,12 @@ struct AddExpenseCardView: View {
                         Circle()
                             .fill(Color.blue.opacity(0.15))
                     )
+                    .accessibilityLabel("날짜")
                 Spacer()
                 Text(AddExpenseView.formatDate(selectedDate))
                     .font(.system(size: 16, weight: .medium, design: .rounded))
                     .foregroundColor(.secondary)
+                    .accessibilityLabel("선택된 날짜: \(AddExpenseView.formatDate(selectedDate))")
             }
             
             // Category section with enhanced styling
@@ -45,6 +47,7 @@ struct AddExpenseCardView: View {
                         Circle()
                             .fill(Color.green.opacity(0.15))
                     )
+                    .accessibilityLabel("카테고리")
                 if isEditing {
                     Button(action: onShowCategoryManagement) {
                         Image(systemName: "slider.horizontal.3")
@@ -57,6 +60,8 @@ struct AddExpenseCardView: View {
                             )
                     }
                     .buttonStyle(BorderlessButtonStyle())
+                    .accessibilityLabel("카테고리 관리")
+                    .accessibilityHint("카테고리를 추가하거나 수정할 수 있습니다")
                 }
                 Spacer()
                 Picker("카테고리", selection: $group.category) {
@@ -67,6 +72,8 @@ struct AddExpenseCardView: View {
                 }
                 .pickerStyle(MenuPickerStyle())
                 .tint(.primary)
+                .accessibilityLabel("카테고리 선택")
+                .accessibilityValue(group.category)
             }
             
             // Amount section with improved input styling
@@ -80,6 +87,7 @@ struct AddExpenseCardView: View {
                             Circle()
                                 .fill(Color.orange.opacity(0.15))
                         )
+                        .accessibilityLabel("금액")
                     Spacer()
                     TextField("금액 입력(필수)", text: $group.formattedAmount)
                         .keyboardType(.numberPad)
@@ -100,11 +108,14 @@ struct AddExpenseCardView: View {
                         )
                         .animation(.easeInOut(duration: 0.2), value: group.formattedAmount.isEmpty)
                         .animation(.easeInOut(duration: 0.2), value: group.isValid)
+                        .accessibilityLabel("지출 금액")
+                        .accessibilityValue(group.formattedAmount.isEmpty ? "금액 없음" : "\(group.formattedAmount)원")
                     
                     if !group.formattedAmount.isEmpty {
                         Text("원")
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.secondary)
+                            .accessibilityHidden(true)
                     }
                 }
             }
@@ -119,6 +130,7 @@ struct AddExpenseCardView: View {
                         Circle()
                             .fill(Color.purple.opacity(0.15))
                     )
+                    .accessibilityLabel("메모")
                 Spacer()
                 TextField("메모 (선택)", text: $group.note)
                     .font(.system(size: 16, weight: .medium))
@@ -132,6 +144,8 @@ struct AddExpenseCardView: View {
                             .stroke(group.note.isEmpty ? Color.clear : Color.purple.opacity(0.3), lineWidth: 1.5)
                     )
                     .animation(.easeInOut(duration: 0.2), value: group.note.isEmpty)
+                    .accessibilityLabel("메모")
+                    .accessibilityValue(group.note.isEmpty ? "메모 없음" : group.note)
             }
             
             // Delete button with enhanced styling
@@ -160,6 +174,8 @@ struct AddExpenseCardView: View {
                 }
                 .padding(.top, 8)
                 .buttonStyle(BorderlessButtonStyle())
+                .accessibilityLabel("지출 항목 삭제")
+                .accessibilityHint("\(index + 1)번째 지출 항목을 삭제합니다")
             }
         }
         .padding(20)
