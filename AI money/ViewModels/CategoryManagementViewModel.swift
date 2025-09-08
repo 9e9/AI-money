@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 class CategoryManagementViewModel: ObservableObject {
     @Published var newCategoryName = ""
     @Published var showingAlert = false

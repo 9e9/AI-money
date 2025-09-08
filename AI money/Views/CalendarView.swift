@@ -24,7 +24,7 @@ struct CalendarView<DateView>: View where DateView: View {
                 Button(action: {
                     showingPicker.toggle()
                 }) {
-                    Text("\(formatYear(selectedYear))년 \(String(format: "%02d", selectedMonth))월")
+                    Text("\(selectedYear)년 \(String(format: "%02d", selectedMonth))월")
                         .font(.title2)
                         .foregroundColor(.black)
                 }
@@ -97,12 +97,6 @@ struct CalendarView<DateView>: View where DateView: View {
             selectedMonth += 1
         }
         selectedDate = nil
-    }
-
-    private func formatYear(_ year: Int) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .none
-        return formatter.string(from: NSNumber(value: year)) ?? "\(year)"
     }
 
     private func resetToCurrentDate() {

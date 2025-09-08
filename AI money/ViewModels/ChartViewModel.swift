@@ -13,6 +13,7 @@ struct CategoryTotal: Hashable {
     let total: Double
 }
 
+@MainActor
 class ChartViewModel: ObservableObject {
     @Published var sortOrder: SortOrder = .defaultOrder
     @Published var selectedYear: Int
