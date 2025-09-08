@@ -8,6 +8,13 @@
 import Foundation
 import SwiftUI
 
+struct ExpenseGroup {
+    var category: String = "기타"
+    var amount: String = ""
+    var formattedAmount: String = ""
+    var note: String = ""
+}
+
 class AddExpenseViewModel: ObservableObject {
     @Published var expenseGroups: [ExpenseGroup] = [ExpenseGroup()]
     @Published var allCategories: [String] = []
