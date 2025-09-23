@@ -19,7 +19,7 @@ struct ChartView: View {
 
     init(viewModel: ExpenseCalendarViewModel) {
         _viewModel = ObservedObject(wrappedValue: viewModel)
-        _vm = StateObject(wrappedValue: ChartViewModel(expenseViewModel: viewModel))
+        _vm = StateObject(wrappedValue: ChartViewModel(expenseService: viewModel))
     }
 
     var body: some View {
@@ -52,7 +52,7 @@ struct ChartView: View {
                         .font(.headline)
                     
                     if let selected = selectedCategory,
-                       let categoryData = vm.sortedCategoryTotals.first(where: { $0.category == selected }) {
+                       vm.sortedCategoryTotals.contains(where: { $0.category == selected }) {
                         HStack(spacing: 8) {
                             Circle()
                                 .fill(categoryColor(for: selected))

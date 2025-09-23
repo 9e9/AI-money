@@ -12,14 +12,11 @@ struct AddExpenseView: View {
     @ObservedObject var viewModel: ExpenseCalendarViewModel
     @StateObject private var vm = AddExpenseViewModel()
     @Environment(\.presentationMode) var presentationMode
-    @State private var showingAlert = false
-    @State private var alertMessage = ""
-    @State private var alertTitle = ""
     @State private var deletingIndex: Int? = nil
     @State private var showCategoryManagement = false
     @State private var isEditing = false
     @State private var keyboardHeight: CGFloat = 0
-    @State private var showingSaveAnimation = false
+    @State private var focusedCardIndex: Int? = nil
     
     var selectedDate: Date
 
@@ -48,11 +45,11 @@ struct AddExpenseView: View {
                                         isEditing: isEditing,
                                         allCategories: vm.allCategories,
                                         expenseGroupCount: vm.expenseGroups.count,
-                                        isFocused: vm.focusedCardIndex == index,
+                                        isFocused: focusedCardIndex == index,
                                         onDelete: { idx in handleDelete(at: idx) },
                                         onDuplicate: { idx in vm.duplicateGroup(at: idx) },
                                         onFocus: { idx in
-                                            vm.focusedCardIndex = idx
+                                            focusedCardIndex = idx
                                             withAnimation(.easeInOut(duration: 0.5)) {
                                                 scrollProxy.scrollTo(idx, anchor: .center)
                                             }
@@ -60,7 +57,10 @@ struct AddExpenseView: View {
                                         onApplyQuickAmount: { amount, idx in
                                             vm.applyQuickAmount(amount, to: idx)
                                         },
-                                        onShowCategoryManagement: { showCategoryManagement = true }
+                                        onShowCategoryManagement: { showCategoryManagement = true },
+                                        onAmountChange: { newValue, idx in
+                                            vm.updateAmountFormatting(at: idx, newValue: newValue)
+                                        }
                                     )
                                     .id(index)
                                     .padding(.horizontal, 20)
@@ -79,10 +79,10 @@ struct AddExpenseView: View {
             .navigationTitle("지출 추가")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { toolbarContent }
-            .alert(alertTitle, isPresented: $showingAlert) {
+            .alert(vm.alertTitle, isPresented: $vm.showingAlert) {
                 alertButtons
             } message: {
-                Text(alertMessage)
+                Text(vm.alertMessage)
             }
             .sheet(isPresented: $showCategoryManagement, onDismiss: vm.updateCategories) {
                 CategoryManagementView()
@@ -95,7 +95,7 @@ struct AddExpenseView: View {
             }
             .onAppear {
                 vm.updateCategories()
-                vm.focusedCardIndex = 0
+                focusedCardIndex = 0
             }
         }
     }
@@ -108,7 +108,7 @@ struct AddExpenseView: View {
                         .font(.system(size: 24, weight: .bold))
                         .foregroundColor(.primary)
                     
-                    Text(formatSelectedDate())
+                    Text(vm.formatSelectedDate(selectedDate))
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.secondary)
                 }
@@ -141,7 +141,7 @@ struct AddExpenseView: View {
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.secondary)
                 
-                Text("\(formatAmount(vm.totalAmount))원")
+                Text("\(vm.formatAmount(vm.totalAmount))원")
                     .font(.system(size: 20, weight: .bold, design: .rounded))
                     .foregroundColor(.primary)
             }
@@ -173,6 +173,7 @@ struct AddExpenseView: View {
                 Button(action: {
                     withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                         vm.addGroup()
+                        focusedCardIndex = vm.expenseGroups.count - 1
                     }
                 }) {
                     Image(systemName: "plus")
@@ -187,9 +188,9 @@ struct AddExpenseView: View {
                 
                 Spacer()
                 
-                Button(action: validateAndSaveExpenses) {
+                Button(action: handleSave) {
                     HStack(spacing: 8) {
-                        if showingSaveAnimation {
+                        if vm.showingSaveAnimation {
                             ProgressView()
                                 .progressViewStyle(CircularProgressViewStyle(tint: .white))
                                 .scaleEffect(0.8)
@@ -206,7 +207,7 @@ struct AddExpenseView: View {
                             .fill(vm.hasValidExpenses ? Color.black : Color(.systemGray4))
                     )
                 }
-                .disabled(!vm.hasValidExpenses || showingSaveAnimation)
+                .disabled(!vm.hasValidExpenses || vm.showingSaveAnimation)
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 20)
@@ -215,7 +216,7 @@ struct AddExpenseView: View {
     
     private var saveOverlay: some View {
         Group {
-            if showingSaveAnimation {
+            if vm.showingSaveAnimation {
                 ZStack {
                     Color.black.opacity(0.3)
                         .ignoresSafeArea()
@@ -249,13 +250,7 @@ struct AddExpenseView: View {
     private var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .navigationBarLeading) {
             Button("취소") {
-                if vm.hasUnsavedChanges {
-                    alertTitle = "나가기"
-                    alertMessage = "저장하지 않고 나가시겠습니까?"
-                    showingAlert = true
-                } else {
-                    presentationMode.wrappedValue.dismiss()
-                }
+                handleCancel()
             }
             .font(.system(size: 16, weight: .medium))
         }
@@ -280,7 +275,7 @@ struct AddExpenseView: View {
             Button("취소", role: .cancel) {
                 deletingIndex = nil
             }
-        } else if alertTitle == "나가기" {
+        } else if vm.alertTitle == "나가기" {
             Button("나가기", role: .destructive) {
                 presentationMode.wrappedValue.dismiss()
             }
@@ -290,14 +285,33 @@ struct AddExpenseView: View {
         }
     }
     
+    private func handleCancel() {
+        if vm.shouldShowExitAlert() {
+            vm.prepareExitAlert()
+        } else {
+            presentationMode.wrappedValue.dismiss()
+        }
+    }
+    
+    private func handleSave() {
+        vm.validateAndPrepareForSave(selectedDate: selectedDate) { expenses, error in
+            if let expenses = expenses {
+                for expense in expenses {
+                    viewModel.addExpense(expense)
+                }
+                vm.completeSaveAnimation()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    presentationMode.wrappedValue.dismiss()
+                }
+            }
+        }
+    }
+    
     private func handleDelete(at index: Int) {
         deletingIndex = index
-        alertTitle = "삭제"
-        alertMessage = "지출 \(index + 1)번을 삭제하시겠습니까?"
-        showingAlert = true
-        
-        // 디버깅
-        print("Delete alert - Title: \(alertTitle), Message: \(alertMessage)")
+        vm.alertTitle = "삭제"
+        vm.alertMessage = "지출 \(index + 1)번을 삭제하시겠습니까?"
+        vm.showingAlert = true
     }
     
     private func confirmDelete() {
@@ -306,30 +320,6 @@ struct AddExpenseView: View {
                 vm.removeGroup(at: index)
             }
             deletingIndex = nil
-        }
-    }
-
-    private func validateAndSaveExpenses() {
-        let (isValid, errorMsg) = vm.validate()
-        if !isValid {
-            alertTitle = "확인"
-            alertMessage = errorMsg ?? ""
-            showingAlert = true
-            return
-        }
-        
-        showingSaveAnimation = true
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            let newExpenses = vm.makeExpenses(selectedDate: selectedDate)
-            for expense in newExpenses {
-                viewModel.addExpense(expense)
-            }
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                showingSaveAnimation = false
-                presentationMode.wrappedValue.dismiss()
-            }
         }
     }
     
@@ -344,35 +334,14 @@ struct AddExpenseView: View {
         )
         .eraseToAnyPublisher()
     }
-    
-    private func formatSelectedDate() -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "yyyy년 MM월 dd일 EEEE"
-        return formatter.string(from: selectedDate)
-    }
-    
-    private func formatAmount(_ amount: Double) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.maximumFractionDigits = 0
-        return formatter.string(from: NSNumber(value: amount)) ?? "0"
-    }
 }
 
 extension AddExpenseView {
     static func formatDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "yyyy년 MM월 dd일"
-        return formatter.string(from: date)
+        return FormatHelper.formatSelectedDate(date)
     }
 
     static func formatWithComma(_ numberString: String) -> String {
-        guard let number = Double(numberString) else { return numberString }
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.maximumFractionDigits = 0
-        return formatter.string(from: NSNumber(value: number)) ?? numberString
+        return FormatHelper.formatWithComma(numberString)
     }
 }

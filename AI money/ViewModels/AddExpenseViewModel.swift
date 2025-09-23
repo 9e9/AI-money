@@ -20,7 +20,10 @@ class AddExpenseViewModel: ObservableObject {
     @Published var allCategories: [String] = []
     @Published var totalAmount: Double = 0
     @Published var hasUnsavedChanges: Bool = false
-    @Published var focusedCardIndex: Int? = nil
+    @Published var showingAlert: Bool = false
+    @Published var alertTitle: String = ""
+    @Published var alertMessage: String = ""
+    @Published var showingSaveAnimation: Bool = false
     
     private let quickAmountSuggestions = ["5000", "10000", "20000", "30000", "50000", "100000"]
     
@@ -54,11 +57,9 @@ class AddExpenseViewModel: ObservableObject {
             if group.amount.isEmpty {
                 return (false, "지출 \(index + 1)번의 금액을 입력해주세요.")
             }
-            guard let amount = Double(group.amount), amount > 0 else {
+            
+            if !FormatHelper.isValidAmount(group.amount) {
                 return (false, "지출 \(index + 1)번의 금액이 올바르지 않습니다.")
-            }
-            if amount > 10_000_000 {
-                return (false, "지출 \(index + 1)번의 금액이 너무 큽니다.")
             }
         }
         return (true, nil)
@@ -66,7 +67,7 @@ class AddExpenseViewModel: ObservableObject {
 
     func makeExpenses(selectedDate: Date) -> [Expense] {
         expenseGroups.compactMap { group in
-            guard let amount = Double(group.amount), amount > 0 else { return nil }
+            guard let amount = FormatHelper.parseAmountString(group.amount), amount > 0 else { return nil }
             return Expense(date: selectedDate, category: group.category, amount: amount, note: group.note)
         }
     }
@@ -82,7 +83,6 @@ class AddExpenseViewModel: ObservableObject {
         var newGroup = ExpenseGroup()
         newGroup.category = allCategories.first ?? "기타"
         expenseGroups.append(newGroup)
-        focusedCardIndex = expenseGroups.count - 1
         hasUnsavedChanges = true
         updateTotalAmount()
     }
@@ -95,14 +95,13 @@ class AddExpenseViewModel: ObservableObject {
         newGroup.note = originalGroup.note
         
         expenseGroups.insert(newGroup, at: index + 1)
-        focusedCardIndex = index + 1
         hasUnsavedChanges = true
     }
     
     func applyQuickAmount(_ amount: String, to index: Int) {
         guard index < expenseGroups.count else { return }
         expenseGroups[index].amount = amount
-        expenseGroups[index].formattedAmount = formatWithComma(amount)
+        expenseGroups[index].formattedAmount = FormatHelper.formatWithComma(amount)
         updateTotalAmount()
         hasUnsavedChanges = true
     }
@@ -111,15 +110,65 @@ class AddExpenseViewModel: ObservableObject {
         return quickAmountSuggestions
     }
     
-    private func updateTotalAmount() {
-        totalAmount = expenseGroups.compactMap { Double($0.amount) }.reduce(0, +)
+    func validateAndPrepareForSave(selectedDate: Date, completion: @escaping ([Expense]?, String?) -> Void) {
+        let (isValid, errorMsg) = validate()
+        if !isValid {
+            alertTitle = "확인"
+            alertMessage = errorMsg ?? ""
+            showingAlert = true
+            completion(nil, errorMsg)
+            return
+        }
+        
+        showingSaveAnimation = true
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            let newExpenses = self.makeExpenses(selectedDate: selectedDate)
+            completion(newExpenses, nil)
+        }
     }
     
-    private func formatWithComma(_ numberString: String) -> String {
-        guard let number = Double(numberString) else { return numberString }
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.maximumFractionDigits = 0
-        return formatter.string(from: NSNumber(value: number)) ?? numberString
+    func completeSaveAnimation() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.showingSaveAnimation = false
+        }
+    }
+    
+    func shouldShowExitAlert() -> Bool {
+        return hasUnsavedChanges
+    }
+    
+    func prepareExitAlert() {
+        alertTitle = "나가기"
+        alertMessage = "저장하지 않고 나가시겠습니까?"
+        showingAlert = true
+    }
+    
+    func formatSelectedDate(_ date: Date) -> String {
+        return FormatHelper.formatSelectedDate(date)
+    }
+    
+    func formatAmount(_ amount: Double) -> String {
+        return FormatHelper.formatAmountWithoutCurrency(amount)
+    }
+    
+    func updateAmountFormatting(at index: Int, newValue: String) {
+        guard index < expenseGroups.count else { return }
+        
+        let filteredValue = newValue.replacingOccurrences(of: ",", with: "")
+        if let number = Int(filteredValue), number >= 0 {
+            expenseGroups[index].formattedAmount = FormatHelper.formatWithComma(String(number))
+            expenseGroups[index].amount = String(number)
+            hasUnsavedChanges = true
+        } else if newValue.isEmpty {
+            expenseGroups[index].formattedAmount = ""
+            expenseGroups[index].amount = ""
+            hasUnsavedChanges = true
+        }
+        updateTotalAmount()
+    }
+    
+    private func updateTotalAmount() {
+        totalAmount = expenseGroups.compactMap { FormatHelper.parseAmountString($0.amount) }.reduce(0, +)
     }
 }

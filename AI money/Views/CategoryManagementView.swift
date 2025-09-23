@@ -9,16 +9,26 @@ import SwiftUI
 
 struct CategoryManagementView: View {
     @Environment(\.presentationMode) var presentationMode
-    @StateObject private var viewModel = CategoryManagementViewModel()
+    
+    private let expenseService: ExpenseServiceProtocol
+    @StateObject private var viewModel: CategoryManagementViewModel
     @State private var showTextField = false
+    @State private var isEditingMode = false
+    @State private var showingAlert = false
     @State private var deletingCategories: Set<String> = []
     @State private var trashPressed: String? = nil
     @FocusState private var isTextFieldFocused: Bool
 
+    init(expenseService: ExpenseServiceProtocol? = nil) {
+        let service = expenseService ?? ExpenseCalendarViewModel.shared
+        self.expenseService = service
+        self._viewModel = StateObject(wrappedValue: CategoryManagementViewModel(expenseService: service))
+    }
+
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                if viewModel.isEditingMode {
+                if isEditingMode {
                     HStack {
                         Button(action: {
                             withAnimation(.easeInOut(duration: 0.3)) {
@@ -36,7 +46,10 @@ struct CategoryManagementView: View {
                         Spacer()
                         
                         if !viewModel.selectedCategories.isEmpty {
-                            Button(action: { viewModel.askDeleteSelectedCategories() }) {
+                            Button(action: {
+                                let _ = viewModel.prepareDeleteSelectedCategories()
+                                showingAlert = true
+                            }) {
                                 HStack {
                                     Text("삭제")
                                         .font(.headline)
@@ -73,7 +86,7 @@ struct CategoryManagementView: View {
                             ForEach(Array(viewModel.customCategories.enumerated()), id: \.element) { index, category in
                                 CategoryRowView(
                                     category: category,
-                                    isEditingMode: viewModel.isEditingMode,
+                                    isEditingMode: isEditingMode,
                                     isSelected: viewModel.selectedCategories.contains(category),
                                     isDeleting: deletingCategories.contains(category),
                                     trashPressed: trashPressed,
@@ -91,7 +104,8 @@ struct CategoryManagementView: View {
                                                 trashPressed = nil
                                             }
                                         }
-                                        viewModel.askDeleteCategory(category)
+                                        let _ = viewModel.prepareDeleteCategory(category)
+                                        showingAlert = true
                                     }
                                 )
                                 .opacity(deletingCategories.contains(category) ? 0 : 1)
@@ -195,7 +209,10 @@ struct CategoryManagementView: View {
             .navigationTitle("카테고리 관리")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: { presentationMode.wrappedValue.dismiss() }) {
+                    Button(action: {
+                        viewModel.resetState()
+                        presentationMode.wrappedValue.dismiss()
+                    }) {
                         Text("취소")
                             .font(.headline)
                             .foregroundColor(.blue)
@@ -204,43 +221,27 @@ struct CategoryManagementView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
                         withAnimation(.easeInOut(duration: 0.3)) {
-                            viewModel.isEditingMode.toggle()
-                            if viewModel.isEditingMode {
+                            isEditingMode.toggle()
+                            if isEditingMode {
                                 showTextField = false
                                 isTextFieldFocused = false
                                 viewModel.newCategoryName = ""
                             }
                         }
                     }) {
-                        Text(viewModel.isEditingMode ? "완료" : "편집")
+                        Text(isEditingMode ? "완료" : "편집")
                             .font(.headline)
-                            .foregroundColor(viewModel.isEditingMode ? .red : .blue)
+                            .foregroundColor(isEditingMode ? .red : .blue)
                     }
                 }
             }
-            .alert(isPresented: $viewModel.showingAlert) {
+            .alert(isPresented: $showingAlert) {
                 if (viewModel.alertMessage.contains("삭제하시겠습니까")) {
                     return Alert(
                         title: Text("삭제 확인"),
                         message: Text(viewModel.alertMessage),
                         primaryButton: .destructive(Text("삭제")) {
-                            if !viewModel.selectedCategories.isEmpty {
-                                withAnimation(.easeInOut(duration: 0.4)) {
-                                    deletingCategories = viewModel.selectedCategories
-                                }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                                    viewModel.handleAlertDelete()
-                                    deletingCategories = []
-                                }
-                            } else if let target = viewModel.categoryToDelete {
-                                withAnimation(.easeInOut(duration: 0.4)) {
-                                    deletingCategories = [target]
-                                }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                                    viewModel.handleAlertDelete()
-                                    deletingCategories = []
-                                }
-                            }
+                            handleConfirmedDelete()
                         },
                         secondaryButton: .cancel(Text("취소"))
                     )
@@ -256,19 +257,40 @@ struct CategoryManagementView: View {
     }
 
     private func addCategoryWithEffect() {
-        let trimmedName = viewModel.newCategoryName.trimmingCharacters(in: .whitespaces)
-        guard !trimmedName.isEmpty else { return }
+        let result = viewModel.validateAndAddCategory()
         
-        withAnimation(.easeInOut(duration: 0.4)) {
-            viewModel.addCategory()
-        }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            withAnimation(.easeInOut(duration: 0.3)) {
-                showTextField = false
-                isTextFieldFocused = false
+        switch result {
+        case .success:
+            withAnimation(.easeInOut(duration: 0.4)) {
             }
-            viewModel.newCategoryName = ""
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    showTextField = false
+                    isTextFieldFocused = false
+                }
+            }
+        case .failure(_):
+            showingAlert = true
+        }
+    }
+    
+    private func handleConfirmedDelete() {
+        if !viewModel.selectedCategories.isEmpty {
+            withAnimation(.easeInOut(duration: 0.4)) {
+                deletingCategories = viewModel.selectedCategories
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                viewModel.handleConfirmedDelete()
+                deletingCategories = []
+            }
+        } else if let target = viewModel.categoryToDelete {
+            withAnimation(.easeInOut(duration: 0.4)) {
+                deletingCategories = [target]
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                viewModel.handleConfirmedDelete()
+                deletingCategories = []
+            }
         }
     }
 }

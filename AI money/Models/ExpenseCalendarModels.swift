@@ -7,7 +7,6 @@
 
 import Foundation
 
-// MARK: - Calendar Configuration
 struct CalendarConfiguration {
     static let weekdaySymbols = ["일", "월", "화", "수", "목", "금", "토"]
     static let calendarGridRows = 6
@@ -15,7 +14,6 @@ struct CalendarConfiguration {
     static let totalCalendarDays = calendarGridRows * daysPerWeek
 }
 
-// MARK: - Calendar Day Model
 struct CalendarDay {
     let date: Date
     let isInCurrentMonth: Bool
@@ -35,7 +33,6 @@ struct CalendarDay {
     }
 }
 
-// MARK: - Daily Expense Summary
 struct DailyExpenseSummary {
     let date: Date
     let expenses: [Expense]
@@ -61,7 +58,6 @@ struct DailyExpenseSummary {
     }
 }
 
-// MARK: - Expense Card Data
 struct ExpenseCardData {
     let expense: Expense
     let formattedAmount: String
@@ -77,7 +73,6 @@ struct ExpenseCardData {
     }
 }
 
-// MARK: - Calendar State
 enum CalendarState {
     case noDateSelected
     case dateSelectedWithExpenses(DailyExpenseSummary)
@@ -104,7 +99,6 @@ enum CalendarState {
     }
 }
 
-// MARK: - Animation Configuration
 struct CalendarAnimationConfiguration {
     static let monthTransitionDuration: Double = 0.3
     static let selectionAnimationDuration: Double = 0.2

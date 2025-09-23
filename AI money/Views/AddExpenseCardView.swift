@@ -20,6 +20,7 @@ struct AddExpenseCardView: View {
     let onFocus: (Int) -> Void
     let onApplyQuickAmount: (String, Int) -> Void
     let onShowCategoryManagement: () -> Void
+    let onAmountChange: (String, Int) -> Void
     
     @FocusState private var isAmountFieldFocused: Bool
     @State private var showQuickAmounts = false
@@ -156,7 +157,7 @@ struct AddExpenseCardView: View {
                     .multilineTextAlignment(.leading)
                     .focused($isAmountFieldFocused)
                     .onChange(of: group.formattedAmount) { oldValue, newValue in
-                        handleAmountChange(newValue)
+                        onAmountChange(newValue, index)
                     }
                 
                 Spacer()
@@ -188,7 +189,7 @@ struct AddExpenseCardView: View {
                     onApplyQuickAmount(amount, index)
                     isAmountFieldFocused = false
                 }) {
-                    Text("\(formatWithComma(amount))원")
+                    Text("\(FormatHelper.formatWithComma(amount))원")
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.primary)
                         .padding(.horizontal, 12)
@@ -254,24 +255,5 @@ struct AddExpenseCardView: View {
                 x: 0,
                 y: 2
             )
-    }
-    
-    private func handleAmountChange(_ newValue: String) {
-        let filteredValue = newValue.replacingOccurrences(of: ",", with: "")
-        if let number = Int(filteredValue), number >= 0 {
-            group.formattedAmount = formatWithComma(String(number))
-            group.amount = String(number)
-        } else if newValue.isEmpty {
-            group.formattedAmount = ""
-            group.amount = ""
-        }
-    }
-    
-    private func formatWithComma(_ numberString: String) -> String {
-        guard let number = Double(numberString) else { return numberString }
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.maximumFractionDigits = 0
-        return formatter.string(from: NSNumber(value: number)) ?? numberString
     }
 }

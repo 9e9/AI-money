@@ -10,7 +10,7 @@ import SwiftData
 import SwiftUI
 
 @MainActor
-class ExpenseCalendarViewModel: ObservableObject {
+class ExpenseCalendarViewModel: ObservableObject, ExpenseCalendarServiceProtocol {
     static let shared = ExpenseCalendarViewModel()
 
     @Published private(set) var expenses: [Expense] = []

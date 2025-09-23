@@ -10,16 +10,18 @@ import Foundation
 @MainActor
 class CategoryManagementViewModel: ObservableObject {
     @Published var newCategoryName = ""
-    @Published var showingAlert = false
     @Published var alertMessage = ""
     @Published var categoryToDelete: String?
     @Published var selectedCategories: Set<String> = []
-    @Published var isEditingMode = false
 
-    var expenseViewModel: ExpenseCalendarViewModel = ExpenseCalendarViewModel.shared
+    private let expenseService: ExpenseServiceProtocol
+
+    init(expenseService: ExpenseServiceProtocol) {
+        self.expenseService = expenseService
+    }
 
     var customCategories: [String] {
-        expenseViewModel.customCategories
+        expenseService.customCategories
     }
 
     var selectionButtonTitle: String {
@@ -48,36 +50,40 @@ class CategoryManagementViewModel: ObservableObject {
         }
     }
 
-    func addCategory() {
+    func validateAndAddCategory() -> ValidationResult {
         let trimmedName = newCategoryName.trimmingCharacters(in: .whitespaces)
-        guard !trimmedName.isEmpty else { return }
+        guard !trimmedName.isEmpty else {
+            return .failure("카테고리 이름을 입력해주세요.")
+        }
+        
         let normalizedNewCategory = trimmedName.replacingOccurrences(of: " ", with: "").lowercased()
         let normalizedCategories = customCategories.map { $0.replacingOccurrences(of: " ", with: "").lowercased() }
         
         if normalizedCategories.contains(normalizedNewCategory) {
-            showingAlert = true
             alertMessage = "'\(trimmedName)' 카테고리는 이미 존재합니다."
-            return
+            return .failure(alertMessage)
         }
-        expenseViewModel.addCustomCategory(trimmedName)
+        
+        expenseService.addCustomCategory(trimmedName)
         newCategoryName = ""
+        return .success
     }
 
-    func askDeleteCategory(_ category: String) {
+    func prepareDeleteCategory(_ category: String) -> String {
         categoryToDelete = category
-        showingAlert = true
         alertMessage = "'\(category)' 카테고리를 삭제하시겠습니까? 관련된 지출 내역도 삭제됩니다."
+        return alertMessage
     }
 
-    func askDeleteSelectedCategories() {
-        showingAlert = true
+    func prepareDeleteSelectedCategories() -> String {
         alertMessage = "선택한 카테고리를 삭제하시겠습니까? 관련된 지출 내역도 삭제됩니다."
+        return alertMessage
     }
 
     func deleteCategory(named category: String) {
-        expenseViewModel.removeCustomCategory(category)
+        expenseService.removeCustomCategory(category)
         selectedCategories.remove(category)
-        expenseViewModel.removeExpenses(for: category)
+        expenseService.removeExpenses(for: category)
     }
 
     func deleteSelectedCategories() {
@@ -85,7 +91,7 @@ class CategoryManagementViewModel: ObservableObject {
         selectedCategories.removeAll()
     }
 
-    func handleAlertDelete() {
+    func handleConfirmedDelete() {
         if let category = categoryToDelete {
             deleteCategory(named: category)
             categoryToDelete = nil
@@ -93,4 +99,16 @@ class CategoryManagementViewModel: ObservableObject {
             deleteSelectedCategories()
         }
     }
+    
+    func resetState() {
+        newCategoryName = ""
+        selectedCategories.removeAll()
+        categoryToDelete = nil
+        alertMessage = ""
+    }
+}
+
+enum ValidationResult {
+    case success
+    case failure(String)
 }

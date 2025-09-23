@@ -28,7 +28,7 @@ class ChartViewModel: ObservableObject {
         var id: String { self.rawValue }
     }
 
-    private var expenseViewModel: ExpenseCalendarViewModel
+    private let expenseService: ExpenseServiceProtocol
 
     private static let plainNumberFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
@@ -36,8 +36,8 @@ class ChartViewModel: ObservableObject {
         return formatter
     }()
 
-    init(expenseViewModel: ExpenseCalendarViewModel) {
-        self.expenseViewModel = expenseViewModel
+    init(expenseService: ExpenseServiceProtocol) {
+        self.expenseService = expenseService
         let now = Date()
         let calendar = Calendar.current
         _selectedYear = Published(initialValue: calendar.component(.year, from: now))
@@ -46,12 +46,12 @@ class ChartViewModel: ObservableObject {
 
     var allCategories: [String] {
         let predefinedCategories = ["식비", "교통", "쇼핑", "여가", "기타"]
-        return predefinedCategories + expenseViewModel.customCategories
+        return predefinedCategories + expenseService.customCategories
     }
 
     var filteredExpenses: [Expense] {
         let calendar = Calendar.current
-        return expenseViewModel.expenses.filter { expense in
+        return expenseService.expenses.filter { expense in
             let expenseDate = calendar.dateComponents([.year, .month], from: expense.date)
             return expenseDate.year == selectedYear && expenseDate.month == selectedMonth
         }
