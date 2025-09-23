@@ -42,6 +42,12 @@ struct FormatHelper {
         return formatter
     }()
     
+    private static let chatTimeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter
+    }()
+    
     private static let amountFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
@@ -85,6 +91,10 @@ struct FormatHelper {
     
     static func formatMonthString(_ date: Date) -> String {
         return monthStringFormatter.string(from: date)
+    }
+    
+    static func formatChatTime(_ date: Date) -> String {
+        return chatTimeFormatter.string(from: date)
     }
     
     static func formatAmount(_ amount: Double) -> String {
@@ -185,6 +195,10 @@ extension Date {
     
     var formattedMonthString: String {
         return FormatHelper.formatMonthString(self)
+    }
+    
+    var formattedChatTime: String {
+        return FormatHelper.formatChatTime(self)
     }
 }
 
