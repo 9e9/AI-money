@@ -68,7 +68,7 @@ struct CategoryManagementView: View {
                     .padding(.top, 8)
                 }
                 
-                if viewModel.customCategories.isEmpty {
+                if viewModel.customCategories.isEmpty && !showTextField {
                     Spacer()
                     VStack(spacing: 16) {
                         Image(systemName: "folder.badge.plus")
@@ -78,6 +78,10 @@ struct CategoryManagementView: View {
                         Text("카테고리가 없습니다")
                             .font(.title2)
                             .foregroundColor(.secondary)
+                        
+                        Text("새 카테고리를 추가해보세요")
+                            .font(.body)
+                            .foregroundColor(.secondary.opacity(0.8))
                     }
                     Spacer()
                 } else {
@@ -134,8 +138,9 @@ struct CategoryManagementView: View {
                             .background(
                                 RoundedRectangle(cornerRadius: 12)
                                     .fill(Color(.systemGray6))
-                                    .stroke(Color(.systemGray4), lineWidth: 1)
+                                    .stroke(isTextFieldFocused ? Color.blue : Color(.systemGray4), lineWidth: isTextFieldFocused ? 2 : 1)
                             )
+                            .animation(.easeInOut(duration: 0.2), value: isTextFieldFocused)
                             
                             Button(action: addCategoryWithEffect) {
                                 Text("추가")
@@ -158,9 +163,14 @@ struct CategoryManagementView: View {
                                 }
                                 viewModel.newCategoryName = ""
                             }) {
-                                Image(systemName: "xmark.circle.fill")
-                                    .font(.system(size: 24))
-                                    .foregroundColor(.gray)
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 16, weight: .medium))
+                                    .foregroundColor(.secondary)
+                                    .frame(width: 44, height: 44)
+                                    .background(
+                                        Circle()
+                                            .fill(Color(.systemGray5))
+                                    )
                             }
                         }
                         .padding(.horizontal, 16)
@@ -213,7 +223,7 @@ struct CategoryManagementView: View {
                         viewModel.resetState()
                         presentationMode.wrappedValue.dismiss()
                     }) {
-                        Text("취소")
+                        Text("완료")
                             .font(.headline)
                             .foregroundColor(.blue)
                     }
@@ -261,14 +271,13 @@ struct CategoryManagementView: View {
         
         switch result {
         case .success:
-            withAnimation(.easeInOut(duration: 0.4)) {
+            withAnimation(.easeInOut(duration: 0.2)) {
             }
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    showTextField = false
-                    isTextFieldFocused = false
-                }
+                isTextFieldFocused = true
             }
+            
         case .failure(_):
             showingAlert = true
         }
