@@ -136,7 +136,7 @@ struct FormatHelper {
         guard let value = parseAmountString(amount), value > 0 else {
             return false
         }
-        return value <= 10_000_000 // 최대 천만원
+        return value <= 1_000_000_000_000
     }
     
     static func formatCategoryWithAmount(category: String, amount: Double) -> String {

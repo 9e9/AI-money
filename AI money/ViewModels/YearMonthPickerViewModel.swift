@@ -55,11 +55,7 @@ class YearMonthPickerViewModel: ObservableObject {
     }
     
     func formatAmount(_ amount: Double) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.maximumFractionDigits = 0
-        let formattedString = formatter.string(from: NSNumber(value: amount)) ?? "0"
-        return formattedString + "원"
+        return FormatHelper.formatAmount(amount)
     }
     
     func resetStats() {

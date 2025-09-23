@@ -89,7 +89,7 @@ struct YearMonthPickerView: View {
                     
                     Picker("연도", selection: $selectedYear) {
                         ForEach(PickerConfiguration.availableYears, id: \.self) { year in
-                            Text("\(year)")
+                            Text(FormatHelper.formatPlainNumber(year))
                                 .font(.system(size: 18, weight: .medium, design: .rounded))
                                 .tag(year)
                         }
@@ -115,7 +115,7 @@ struct YearMonthPickerView: View {
                     
                     Picker("월", selection: $selectedMonth) {
                         ForEach(PickerConfiguration.months, id: \.self) { month in
-                            Text("\(month)")
+                            Text(FormatHelper.formatPlainNumber(month))
                                 .font(.system(size: 18, weight: .medium, design: .rounded))
                                 .tag(month)
                         }
