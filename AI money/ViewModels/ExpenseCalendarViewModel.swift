@@ -21,6 +21,7 @@ class ExpenseCalendarViewModel: ObservableObject, ExpenseCalendarServiceProtocol
 
     private var modelContext: ModelContext?
     private let calendar = Calendar.current
+    private let holidayService = KoreanHolidayService.shared  // 새로 추가
 
     var currentMonthExpenses: [Expense] {
         expenses.filter { expense in
@@ -59,10 +60,12 @@ class ExpenseCalendarViewModel: ObservableObject, ExpenseCalendarServiceProtocol
             calendar.isDate($0.date, inSameDayAs: date)
         }
         
+        let holiday = holidayService.isHoliday(date: date)  // 공휴일 확인
+        
         if dailyExpenses.isEmpty {
-            calendarState = .dateSelectedWithoutExpenses(date)
+            calendarState = .dateSelectedWithoutExpenses(date, holiday)
         } else {
-            let summary = DailyExpenseSummary(date: date, expenses: dailyExpenses)
+            let summary = DailyExpenseSummary(date: date, expenses: dailyExpenses, holiday: holiday)
             calendarState = .dateSelectedWithExpenses(summary)
         }
     }
@@ -164,6 +167,18 @@ class ExpenseCalendarViewModel: ObservableObject, ExpenseCalendarServiceProtocol
         formatter.maximumFractionDigits = 0
         return (formatter.string(from: NSNumber(value: amount)) ?? "0") + "원"
     }
+    
+    // 공휴일 관련 새로운 메서드들
+    func getHolidaysForCurrentMonth() -> [KoreanHoliday] {
+        return holidayService.getHolidays(for: selectedYear).filter { holiday in
+            let holidayComponents = calendar.dateComponents([.month], from: holiday.date)
+            return holidayComponents.month == selectedMonth
+        }
+    }
+    
+    func isHoliday(date: Date) -> Bool {
+        return holidayService.isHoliday(date: date) != nil
+    }
 
     private func loadExpenses() {
         guard let context = modelContext else { return }
@@ -207,38 +222,47 @@ class ExpenseCalendarViewModel: ObservableObject, ExpenseCalendarServiceProtocol
         
         var result: [CalendarDay] = []
         
+        // 이전 달 날짜들
         for i in stride(from: weekdayOfFirst - 2, through: 0, by: -1) {
             let date = calendar.date(from: DateComponents(year: prevMonthDate.year, month: prevMonthDate.month, day: daysInPrevMonth - i))!
+            let holiday = holidayService.isHoliday(date: date)  // 공휴일 확인
             let day = CalendarDay(
                 date: date,
                 isInCurrentMonth: false,
                 dayNumber: calendar.component(.day, from: date),
-                totalExpense: totalExpense(for: date)
+                totalExpense: totalExpense(for: date),
+                holiday: holiday
             )
             result.append(day)
         }
         
+        // 현재 달 날짜들
         for day in 1...daysInMonth {
             let date = calendar.date(from: DateComponents(year: selectedYear, month: selectedMonth, day: day))!
+            let holiday = holidayService.isHoliday(date: date)  // 공휴일 확인
             let calendarDay = CalendarDay(
                 date: date,
                 isInCurrentMonth: true,
                 dayNumber: day,
-                totalExpense: totalExpense(for: date)
+                totalExpense: totalExpense(for: date),
+                holiday: holiday
             )
             result.append(calendarDay)
         }
         
+        // 다음 달 날짜들
         let nextMonthDate = calendar.date(byAdding: .month, value: 1, to: firstOfMonth)!
         let remainingDays = CalendarConfiguration.totalCalendarDays - result.count
         
         for day in 1...remainingDays {
             let date = calendar.date(from: DateComponents(year: nextMonthDate.year, month: nextMonthDate.month, day: day))!
+            let holiday = holidayService.isHoliday(date: date)  // 공휴일 확인
             let calendarDay = CalendarDay(
                 date: date,
                 isInCurrentMonth: false,
                 dayNumber: day,
-                totalExpense: totalExpense(for: date)
+                totalExpense: totalExpense(for: date),
+                holiday: holiday
             )
             result.append(calendarDay)
         }

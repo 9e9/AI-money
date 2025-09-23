@@ -19,9 +19,31 @@ struct CalendarDay {
     let isInCurrentMonth: Bool
     let dayNumber: Int
     let totalExpense: Double
+    let holiday: KoreanHoliday?  // 새로 추가
     
     var hasExpense: Bool {
         totalExpense > 0
+    }
+    
+    var isHoliday: Bool {  // 새로 추가
+        holiday != nil
+    }
+    
+    var isNationalHoliday: Bool {  // 국경일인지 확인
+        holiday?.type == .national || holiday?.type == .traditional
+    }
+    
+    var holidayColor: HolidayDisplayColor {  // 공휴일 표시 색상
+        guard let holiday = holiday else { return .none }
+        
+        switch holiday.type {
+        case .national, .traditional:
+            return .red
+        case .memorial:
+            return .orange
+        case .substitute:
+            return .blue
+        }
     }
     
     var formattedExpense: String {
@@ -33,13 +55,34 @@ struct CalendarDay {
     }
 }
 
+enum HolidayDisplayColor {
+    case none
+    case red      // 국경일, 전통명절
+    case orange   // 기념일
+    case blue     // 대체공휴일
+    
+    var color: String {
+        switch self {
+        case .none: return "primary"
+        case .red: return "red"
+        case .orange: return "orange"
+        case .blue: return "blue"
+        }
+    }
+}
+
 struct DailyExpenseSummary {
     let date: Date
     let expenses: [Expense]
     let totalAmount: Double
+    let holiday: KoreanHoliday?  // 새로 추가
     
     var isEmpty: Bool {
         expenses.isEmpty
+    }
+    
+    var isHoliday: Bool {  // 새로 추가
+        holiday != nil
     }
     
     var categoryBreakdown: [String: Double] {
@@ -51,10 +94,11 @@ struct DailyExpenseSummary {
         categoryBreakdown.max(by: { $0.value < $1.value })?.key
     }
     
-    init(date: Date, expenses: [Expense]) {
+    init(date: Date, expenses: [Expense], holiday: KoreanHoliday? = nil) {
         self.date = date
         self.expenses = expenses
         self.totalAmount = expenses.reduce(0) { $0 + $1.amount }
+        self.holiday = holiday
     }
 }
 
@@ -76,7 +120,7 @@ struct ExpenseCardData {
 enum CalendarState {
     case noDateSelected
     case dateSelectedWithExpenses(DailyExpenseSummary)
-    case dateSelectedWithoutExpenses(Date)
+    case dateSelectedWithoutExpenses(Date, KoreanHoliday?)  // 공휴일 정보 추가
     
     var selectedDate: Date? {
         switch self {
@@ -84,8 +128,19 @@ enum CalendarState {
             return nil
         case .dateSelectedWithExpenses(let summary):
             return summary.date
-        case .dateSelectedWithoutExpenses(let date):
+        case .dateSelectedWithoutExpenses(let date, _):
             return date
+        }
+    }
+    
+    var selectedHoliday: KoreanHoliday? {  // 새로 추가
+        switch self {
+        case .noDateSelected:
+            return nil
+        case .dateSelectedWithExpenses(let summary):
+            return summary.holiday
+        case .dateSelectedWithoutExpenses(_, let holiday):
+            return holiday
         }
     }
     
