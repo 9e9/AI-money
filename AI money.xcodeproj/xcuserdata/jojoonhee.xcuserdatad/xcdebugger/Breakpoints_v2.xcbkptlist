@@ -55,17 +55,17 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "20C5C3A2-A6B9-49BE-93E8-50CE1C175ADB"
-            shouldBeEnabled = "No"
+            uuid = "0F0B85DB-35F3-4385-9605-67C778593F0A"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "AI money/Models/YearMonthPickerModels.swift"
+            filePath = "AI money/ViewModels/ChatBotViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "37"
-            endingLineNumber = "37"
-            landmarkName = "ExpenseCategoryInfo"
-            landmarkType = "14">
+            startingLineNumber = "1"
+            endingLineNumber = "1"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

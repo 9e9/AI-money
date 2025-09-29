@@ -1,1 +1,29 @@
-{"taskType":"textClassifier","createdDate":"2025-05-31T23:21:54Z","modifiedDate":"2025-05-31T23:21:54Z","projectName":"ExpenseClassifier","authorName":"조준희","license":"","versionErrorTitle":"Project file cannot be opened.","location":"","description":"","activityEntities":["projectCreated",[{"id":"845F4FE9-F844-4A9C-87A0-7A7350B9352F","title":"Project Created","subtitle":"ExpenseClassifier","createdDate":"2025-05-31T23:21:54Z","event":"projectCreated"}]],"version":"1.1","versionErrorSubtitle":"You need a newer version of Create ML to open this file. Download the latest version.","title":"Text Classification","settingsEntity":{"snapshotOnExtendTraining":true,"snapshotOnResumeTraining":false},"id":"50C41472-281C-4BDD-A671-70133FF00809"}
+{
+  "activityEntities" : [
+    "projectCreated",
+    [
+      {
+        "createdDate" : "2025-05-31T23:21:54Z",
+        "event" : "projectCreated",
+        "id" : "845F4FE9-F844-4A9C-87A0-7A7350B9352F",
+        "subtitle" : "ExpenseClassifier",
+        "title" : "Project Created"
+      }
+    ]
+  ],
+  "authorName" : "조준희",
+  "createdDate" : "2025-05-31T23:21:54Z",
+  "description" : "",
+  "id" : "50C41472-281C-4BDD-A671-70133FF00809",
+  "license" : "",
+  "location" : "",
+  "modifiedDate" : "2025-05-31T23:21:54Z",
+  "projectName" : "ExpenseClassifier",
+  "settingsEntity" : {
+    "snapshotOnExtendTraining" : true,
+    "snapshotOnResumeTraining" : false
+  },
+  "taskType" : "textClassifier",
+  "title" : "Text Classification",
+  "version" : "1.1"
+}

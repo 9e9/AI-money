@@ -1,1 +1,1436 @@
-{"evaluationState":"uninitialized","createdDate":"2025-05-31T23:21:54Z","modifiedDate":"2025-05-31T23:51:16Z","validationEntity":{"dataResult":{"createdDate":"2025-05-31T23:22:09Z"},"analysedDataType":"auto"},"evaluationContainerEntity":{"id":"2de0ef3b-5773-4949-a80a-6c6809590672","validationEvaluationEntity":{"dataResult":{"createdDate":"2025-05-31T23:22:09Z"},"evaluationResult":{"textClassifier":{"confusionMatrix":[{"actual":"avg_expense","expected":"avg_expense","count":1},{"actual":"category_expense","expected":"category_expense","count":1},{"actual":"compare","expected":"total_expense","count":1},{"actual":"count","expected":"category_expense","count":1},{"actual":"date_expense","expected":"category_expense","count":1},{"actual":"date_expense","expected":"date_expense","count":2},{"actual":"top_category","expected":"category_expense","count":1},{"actual":"total_expense","expected":"category_expense","count":1}],"accuracy":0.4444444444444444,"statsByLabel":{"count":{"count":1,"precisionRecall":{"success":{"recall":0,"precision":0}}},"avg_expense":{"count":1,"precisionRecall":{"success":{"recall":1,"precision":1}}},"category_expense":{"count":1,"precisionRecall":{"success":{"precision":0.2,"recall":1}}},"top_category":{"count":1,"precisionRecall":{"success":{"recall":0,"precision":0}}},"compare":{"count":1,"precisionRecall":{"success":{"precision":0,"recall":0}}},"date_expense":{"count":3,"precisionRecall":{"success":{"precision":1,"recall":0.6666666666666666}}},"total_expense":{"count":1,"precisionRecall":{"success":{"recall":0,"precision":0}}}}}},"analysedDataType":"auto","id":"6b8f78cf-5e9c-4ce8-ad79-1c629607f111","createdDate":"2025-05-31T23:21:54Z"},"trainingEvaluationEntity":{"dataResult":{"dataURL":"file:\/\/\/Users\/jojoonhee\/Desktop\/AI%20money\/AI%20money\/Resources\/data.csv","createdDate":"2025-05-31T23:22:09Z","dataSourceID":"EF9C53CF-7C0A-4B7B-91DA-831939AFA167","itemsCount":92,"dataAnalysis":{"classifierAnalysis":{"labelStats":{"date_expense":18,"left_budget":5,"category_expense":29,"avg_expense":2,"min_category":2,"top_category":4,"total_expense":15,"count":7,"compare":10}},"summary":{"canUseValidation":1,"classCount":9,"sampleCount":92},"issues":[{"description":"9 classes found, including category_expense, date_expense, total_expense","severity":"debug"},{"description":"92 texts found, automatically creating validation set","severity":"good"},{"description":"Smallest class is \"avg_expense\" with 2 texts","severity":"debug"},{"description":"Largest class is \"category_expense\" with 29 text","severity":"debug"}],"objectDetectorAnalysis":{"details":{}}},"classesCount":9},"evaluationResult":{"textClassifier":{"statsByLabel":{"avg_expense":{"precisionRecall":{"success":{"precision":1,"recall":1}},"count":1},"date_expense":{"precisionRecall":{"success":{"precision":1,"recall":1}},"count":15},"category_expense":{"precisionRecall":{"success":{"recall":1,"precision":1}},"count":28},"total_expense":{"precisionRecall":{"success":{"precision":1,"recall":1}},"count":14},"compare":{"precisionRecall":{"success":{"precision":1,"recall":1}},"count":9},"left_budget":{"precisionRecall":{"success":{"precision":1,"recall":1}},"count":5},"count":{"precisionRecall":{"success":{"precision":1,"recall":1}},"count":6},"min_category":{"precisionRecall":{"success":{"recall":1,"precision":1}},"count":2},"top_category":{"precisionRecall":{"success":{"recall":1,"precision":1}},"count":3}},"accuracy":1,"confusionMatrix":[{"actual":"avg_expense","expected":"avg_expense","count":1},{"actual":"category_expense","expected":"category_expense","count":28},{"actual":"compare","expected":"compare","count":9},{"actual":"count","expected":"count","count":6},{"actual":"date_expense","expected":"date_expense","count":15},{"actual":"left_budget","expected":"left_budget","count":5},{"actual":"min_category","expected":"min_category","count":2},{"actual":"top_category","expected":"top_category","count":3},{"actual":"total_expense","expected":"total_expense","count":14}]}},"dataSourceID":"EF9C53CF-7C0A-4B7B-91DA-831939AFA167","analysedDataType":"none","id":"c2b62ee0-2840-4a8e-a50a-e0aa76a51309","createdDate":"2025-05-31T23:21:54Z"},"createdDate":"2025-05-31T23:51:16Z","modifiedDate":"2025-05-31T23:51:16Z","previewType":"textClassifier","evaluationEntities":[{"dataResult":{},"createdDate":"2025-05-31T23:51:16Z","analysedDataType":"none","id":"c59fc86f-8209-412e-8715-e35be97707cd"}],"testingEvaluationEntity":{"dataResult":{"createdDate":"2025-05-31T23:22:09Z"},"analysedDataType":"none","id":"703fc782-3431-404f-b5e5-65cc86389ccc","createdDate":"2025-05-31T23:21:54Z"}},"title":"ExpenseClassifier 1","preferredFilename":"ExpenseClassifier 1","contentDataResult":{"createdDate":"2025-05-31T23:22:09Z"},"snapshotRole":{"withoutSnapshots":0},"modelEntity":{"preferredFilename":"","title":"","id":"A66842A2-E46E-45F7-A9BC-9ED36323A30B","createdDate":"2025-05-31T23:21:54Z","experimentID":"B165501D-25F8-4BD3-A52F-52E8232BF48F","modifiedDate":"2025-05-31T23:21:54Z","version":"1.0","modelURL":"Models\/ExpenseClassifier%201.mlmodel"},"version":"1.0","settingEntity":{"harVideoAugmentations":0,"algorithmType":"maxEnt","iterationCount":10,"textClassifierArabicLanguage":"automatic","taskType":"textClassifier","textClassifierCyrillicLanguage":"automatic","styleTransferAlgorithmType":"image","handActionClassifierAugmentations":[],"textClassifierCJKLanguage":"automatic","textClassifierIndicLanguage":"automatic","textClassifierThaiLanguage":"automatic","textClassifierScript":"latin","textClassifierLatin":"automatic","augmentations":[],"seedType":"default","handPoseClassifierAugmentations":[],"featureNames":[]},"trainingEntity":{"checkpointMetrics":{},"featureExtractionCheckpointMayBeAvailable":false,"validationResults":{"textClassifier":{"accuracy":0.4444444444444444,"confusionMatrix":[{"expected":"avg_expense","count":1,"actual":"avg_expense"},{"expected":"category_expense","count":1,"actual":"category_expense"},{"expected":"total_expense","count":1,"actual":"compare"},{"expected":"category_expense","count":1,"actual":"count"},{"expected":"category_expense","count":1,"actual":"date_expense"},{"expected":"date_expense","count":2,"actual":"date_expense"},{"expected":"category_expense","count":1,"actual":"top_category"},{"expected":"category_expense","count":1,"actual":"total_expense"}],"statsByLabel":{"top_category":{"count":1,"precisionRecall":{"success":{"precision":0,"recall":0}}},"total_expense":{"count":1,"precisionRecall":{"success":{"recall":0,"precision":0}}},"compare":{"count":1,"precisionRecall":{"success":{"precision":0,"recall":0}}},"date_expense":{"count":3,"precisionRecall":{"success":{"recall":0.6666666666666666,"precision":1}}},"category_expense":{"count":1,"precisionRecall":{"success":{"precision":0.2,"recall":1}}},"count":{"count":1,"precisionRecall":{"success":{"recall":0,"precision":0}}},"avg_expense":{"count":1,"precisionRecall":{"success":{"recall":1,"precision":1}}}}}},"trainingAccuracy":1,"validationAccuracy":0.4444444444444444,"analysedDataType":"datasource","dataSourceID":"EF9C53CF-7C0A-4B7B-91DA-831939AFA167","trainingResults":{"textClassifier":{"confusionMatrix":[{"count":1,"actual":"avg_expense","expected":"avg_expense"},{"count":28,"actual":"category_expense","expected":"category_expense"},{"count":9,"actual":"compare","expected":"compare"},{"count":6,"actual":"count","expected":"count"},{"count":15,"actual":"date_expense","expected":"date_expense"},{"count":5,"actual":"left_budget","expected":"left_budget"},{"count":2,"actual":"min_category","expected":"min_category"},{"count":3,"actual":"top_category","expected":"top_category"},{"count":14,"actual":"total_expense","expected":"total_expense"}],"statsByLabel":{"compare":{"precisionRecall":{"success":{"recall":1,"precision":1}},"count":9},"min_category":{"precisionRecall":{"success":{"recall":1,"precision":1}},"count":2},"count":{"precisionRecall":{"success":{"recall":1,"precision":1}},"count":6},"top_category":{"precisionRecall":{"success":{"recall":1,"precision":1}},"count":3},"category_expense":{"precisionRecall":{"success":{"precision":1,"recall":1}},"count":28},"total_expense":{"precisionRecall":{"success":{"recall":1,"precision":1}},"count":14},"left_budget":{"precisionRecall":{"success":{"precision":1,"recall":1}},"count":5},"date_expense":{"precisionRecall":{"success":{"precision":1,"recall":1}},"count":15},"avg_expense":{"precisionRecall":{"success":{"precision":1,"recall":1}},"count":1}},"accuracy":1}},"snapshottableCheckpoints":{},"startTime":"2025-05-31T23:51:10Z","finishTime":"2025-05-31T23:51:11Z","progress":[{"percentComplete":0,"tableDone":false,"isLast":false,"tableIndex":1,"count":1,"currentRowIndex":0,"tcTrainingColumnHeader":{"remainingIterationCount":10,"hasTraining":true,"trainingAccuracy":0.33734938502311707,"hasValidation":false,"elapsedTime":0,"validationAccuracy":0}},{"percentComplete":0,"tableDone":true,"isLast":false,"tableIndex":1,"count":2,"currentRowIndex":0,"tcTrainingColumnHeader":{"remainingIterationCount":9,"trainingAccuracy":1,"hasValidation":false,"elapsedTime":0,"validationAccuracy":0,"hasTraining":true}},{"percentComplete":0,"tableDone":false,"count":3,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":4,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":5,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":6,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":7,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":8,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":9,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":10,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":11,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":12,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":13,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":14,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":15,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":16,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":17,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":18,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":19,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":20,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":21,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":22,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":23,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":24,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":25,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":26,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":27,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":28,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":29,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":30,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":31,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":32,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":33,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":34,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":35,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":36,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":37,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":38,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":39,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":40,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":41,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":42,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":43,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":44,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":45,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":46,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":47,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":48,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":49,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":50,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":51,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":52,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":53,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":54,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":55,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":56,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":57,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":58,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":59,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":60,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":61,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":62,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":63,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":64,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":65,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":66,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":67,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":68,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":69,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":70,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":71,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":72,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":73,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":74,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":75,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":76,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":77,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":78,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":79,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":80,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":81,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":false,"count":82,"currentRowIndex":0,"isLast":false,"tableIndex":0},{"percentComplete":0,"tableDone":true,"count":83,"currentRowIndex":0,"isLast":false,"tableIndex":0}],"dataResult":{"itemsCount":92,"dataAnalysis":{"issues":[{"description":"9 classes found, including category_expense, date_expense, total_expense","severity":"debug"},{"description":"92 texts found, automatically creating validation set","severity":"good"},{"description":"Smallest class is \"avg_expense\" with 2 texts","severity":"debug"},{"description":"Largest class is \"category_expense\" with 29 text","severity":"debug"}],"summary":{"canUseValidation":1,"sampleCount":92,"classCount":9},"classifierAnalysis":{"labelStats":{"top_category":4,"left_budget":5,"compare":10,"date_expense":18,"total_expense":15,"count":7,"min_category":2,"category_expense":29,"avg_expense":2}},"objectDetectorAnalysis":{"details":{}}},"createdDate":"2025-05-31T23:22:09Z","dataURL":"file:\/\/\/Users\/jojoonhee\/Desktop\/AI%20money\/AI%20money\/Resources\/data.csv","dataSourceID":"EF9C53CF-7C0A-4B7B-91DA-831939AFA167","classesCount":9}},"id":"B165501D-25F8-4BD3-A52F-52E8232BF48F","evaluationEntity":{"dataResult":{},"analysedDataType":"none","id":"1c7f90bd-3a75-4d87-8d4a-7b818ec38dc0"},"activityEntities":["trainingFinished",[{"subtitle":"Model converged at 2 iterations","title":"Training Completed","createdDate":"2025-05-31T23:51:11Z","event":"trainingFinished","id":"4BA7DDD4-E50B-4FFC-9E40-F2C8578B8283"}],"trainingStarted",[{"subtitle":"10 iterations","title":"Training Started","createdDate":"2025-05-31T23:51:10Z","event":"trainingStarted","id":"43A69CCC-6975-4C39-A751-ACF106A224B6"}],"trainingDataAdded",[{"subtitle":"data.csv","title":"Training Data Added","createdDate":"2025-05-31T23:49:42Z","event":"trainingDataAdded","id":"CAF4BBBE-49FF-4E1A-BD30-92EE5F423DA8"}],"experimentCreated",[{"subtitle":"ExpenseClassifier 1","title":"Model Source Created","createdDate":"2025-05-31T23:21:54Z","event":"experimentCreated","id":"76B1266B-20FC-4848-84B1-3BA53F2333C6"}]],"state":"trained"}
+{
+  "activityEntities" : [
+    "trainingDataAdded",
+    [
+      {
+        "createdDate" : "2025-05-31T23:49:42Z",
+        "event" : "trainingDataAdded",
+        "id" : "CAF4BBBE-49FF-4E1A-BD30-92EE5F423DA8",
+        "subtitle" : "data.csv",
+        "title" : "Training Data Added"
+      }
+    ],
+    "experimentCreated",
+    [
+      {
+        "createdDate" : "2025-05-31T23:21:54Z",
+        "event" : "experimentCreated",
+        "id" : "76B1266B-20FC-4848-84B1-3BA53F2333C6",
+        "subtitle" : "ExpenseClassifier 1",
+        "title" : "Model Source Created"
+      }
+    ],
+    "trainingStarted",
+    [
+      {
+        "createdDate" : "2025-05-31T23:51:10Z",
+        "event" : "trainingStarted",
+        "id" : "43A69CCC-6975-4C39-A751-ACF106A224B6",
+        "subtitle" : "10 iterations",
+        "title" : "Training Started"
+      }
+    ],
+    "trainingFinished",
+    [
+      {
+        "createdDate" : "2025-05-31T23:51:11Z",
+        "event" : "trainingFinished",
+        "id" : "4BA7DDD4-E50B-4FFC-9E40-F2C8578B8283",
+        "subtitle" : "Model converged at 2 iterations",
+        "title" : "Training Completed"
+      }
+    ]
+  ],
+  "contentDataResult" : {
+    "createdDate" : "2025-05-31T23:22:09Z"
+  },
+  "createdDate" : "2025-05-31T23:21:54Z",
+  "evaluationContainerEntity" : {
+    "createdDate" : "2025-05-31T23:51:16Z",
+    "evaluationEntities" : [
+      {
+        "analysedDataType" : "none",
+        "createdDate" : "2025-05-31T23:51:16Z",
+        "dataResult" : {
+
+        },
+        "id" : "c59fc86f-8209-412e-8715-e35be97707cd"
+      }
+    ],
+    "id" : "2de0ef3b-5773-4949-a80a-6c6809590672",
+    "modifiedDate" : "2025-05-31T23:51:16Z",
+    "previewType" : "textClassifier",
+    "testingEvaluationEntity" : {
+      "analysedDataType" : "none",
+      "createdDate" : "2025-05-31T23:21:54Z",
+      "dataResult" : {
+        "createdDate" : "2025-05-31T23:22:09Z"
+      },
+      "id" : "703fc782-3431-404f-b5e5-65cc86389ccc"
+    },
+    "trainingEvaluationEntity" : {
+      "analysedDataType" : "none",
+      "createdDate" : "2025-05-31T23:21:54Z",
+      "dataResult" : {
+        "classesCount" : 9,
+        "createdDate" : "2025-05-31T23:22:09Z",
+        "dataAnalysis" : {
+          "classifierAnalysis" : {
+            "labelStats" : {
+              "avg_expense" : 2,
+              "category_expense" : 29,
+              "compare" : 10,
+              "count" : 7,
+              "date_expense" : 18,
+              "left_budget" : 5,
+              "min_category" : 2,
+              "top_category" : 4,
+              "total_expense" : 15
+            }
+          },
+          "issues" : [
+            {
+              "description" : "9 classes found, including category_expense, date_expense, total_expense",
+              "severity" : "debug"
+            },
+            {
+              "description" : "92 texts found, automatically creating validation set",
+              "severity" : "good"
+            },
+            {
+              "description" : "Smallest class is \"avg_expense\" with 2 texts",
+              "severity" : "debug"
+            },
+            {
+              "description" : "Largest class is \"category_expense\" with 29 text",
+              "severity" : "debug"
+            }
+          ],
+          "objectDetectorAnalysis" : {
+            "details" : {
+
+            }
+          },
+          "summary" : {
+            "canUseValidation" : 1,
+            "classCount" : 9,
+            "sampleCount" : 92
+          }
+        },
+        "dataSourceID" : "EF9C53CF-7C0A-4B7B-91DA-831939AFA167",
+        "dataURL" : "file:///Users/jojoonhee/Desktop/AI%20money/AI%20money/Resources/data.csv",
+        "itemsCount" : 92
+      },
+      "dataSourceID" : "EF9C53CF-7C0A-4B7B-91DA-831939AFA167",
+      "evaluationResult" : {
+        "textClassifier" : {
+          "accuracy" : 1,
+          "confusionMatrix" : [
+            {
+              "actual" : "avg_expense",
+              "count" : 1,
+              "expected" : "avg_expense"
+            },
+            {
+              "actual" : "category_expense",
+              "count" : 28,
+              "expected" : "category_expense"
+            },
+            {
+              "actual" : "compare",
+              "count" : 9,
+              "expected" : "compare"
+            },
+            {
+              "actual" : "count",
+              "count" : 6,
+              "expected" : "count"
+            },
+            {
+              "actual" : "date_expense",
+              "count" : 15,
+              "expected" : "date_expense"
+            },
+            {
+              "actual" : "left_budget",
+              "count" : 5,
+              "expected" : "left_budget"
+            },
+            {
+              "actual" : "min_category",
+              "count" : 2,
+              "expected" : "min_category"
+            },
+            {
+              "actual" : "top_category",
+              "count" : 3,
+              "expected" : "top_category"
+            },
+            {
+              "actual" : "total_expense",
+              "count" : 14,
+              "expected" : "total_expense"
+            }
+          ],
+          "statsByLabel" : {
+            "avg_expense" : {
+              "count" : 1,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "category_expense" : {
+              "count" : 28,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "compare" : {
+              "count" : 9,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "count" : {
+              "count" : 6,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "date_expense" : {
+              "count" : 15,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "left_budget" : {
+              "count" : 5,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "min_category" : {
+              "count" : 2,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "top_category" : {
+              "count" : 3,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "total_expense" : {
+              "count" : 14,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            }
+          }
+        }
+      },
+      "id" : "c2b62ee0-2840-4a8e-a50a-e0aa76a51309"
+    },
+    "validationEvaluationEntity" : {
+      "analysedDataType" : "auto",
+      "createdDate" : "2025-05-31T23:21:54Z",
+      "dataResult" : {
+        "createdDate" : "2025-05-31T23:22:09Z"
+      },
+      "evaluationResult" : {
+        "textClassifier" : {
+          "accuracy" : 0.4444444444444444,
+          "confusionMatrix" : [
+            {
+              "actual" : "avg_expense",
+              "count" : 1,
+              "expected" : "avg_expense"
+            },
+            {
+              "actual" : "category_expense",
+              "count" : 1,
+              "expected" : "category_expense"
+            },
+            {
+              "actual" : "compare",
+              "count" : 1,
+              "expected" : "total_expense"
+            },
+            {
+              "actual" : "count",
+              "count" : 1,
+              "expected" : "category_expense"
+            },
+            {
+              "actual" : "date_expense",
+              "count" : 1,
+              "expected" : "category_expense"
+            },
+            {
+              "actual" : "date_expense",
+              "count" : 2,
+              "expected" : "date_expense"
+            },
+            {
+              "actual" : "top_category",
+              "count" : 1,
+              "expected" : "category_expense"
+            },
+            {
+              "actual" : "total_expense",
+              "count" : 1,
+              "expected" : "category_expense"
+            }
+          ],
+          "statsByLabel" : {
+            "avg_expense" : {
+              "count" : 1,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "category_expense" : {
+              "count" : 1,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 0.2,
+                  "recall" : 1
+                }
+              }
+            },
+            "compare" : {
+              "count" : 1,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 0,
+                  "recall" : 0
+                }
+              }
+            },
+            "count" : {
+              "count" : 1,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 0,
+                  "recall" : 0
+                }
+              }
+            },
+            "date_expense" : {
+              "count" : 3,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 0.6666666666666666
+                }
+              }
+            },
+            "top_category" : {
+              "count" : 1,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 0,
+                  "recall" : 0
+                }
+              }
+            },
+            "total_expense" : {
+              "count" : 1,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 0,
+                  "recall" : 0
+                }
+              }
+            }
+          }
+        }
+      },
+      "id" : "6b8f78cf-5e9c-4ce8-ad79-1c629607f111"
+    }
+  },
+  "evaluationEntity" : {
+    "analysedDataType" : "none",
+    "dataResult" : {
+
+    },
+    "id" : "1c7f90bd-3a75-4d87-8d4a-7b818ec38dc0"
+  },
+  "evaluationState" : "uninitialized",
+  "id" : "B165501D-25F8-4BD3-A52F-52E8232BF48F",
+  "modelEntity" : {
+    "createdDate" : "2025-05-31T23:21:54Z",
+    "experimentID" : "B165501D-25F8-4BD3-A52F-52E8232BF48F",
+    "id" : "A66842A2-E46E-45F7-A9BC-9ED36323A30B",
+    "modelURL" : "Models/ExpenseClassifier%201.mlmodel",
+    "modifiedDate" : "2025-05-31T23:21:54Z",
+    "title" : "",
+    "version" : "1.0"
+  },
+  "modifiedDate" : "2025-05-31T23:51:16Z",
+  "preferredFilename" : "ExpenseClassifier 1",
+  "settingEntity" : {
+    "algorithmType" : "maxEnt",
+    "augmentations" : [
+
+    ],
+    "featureNames" : [
+
+    ],
+    "handActionClassifierAugmentations" : [
+
+    ],
+    "handPoseClassifierAugmentations" : [
+
+    ],
+    "harVideoAugmentations" : 0,
+    "iterationCount" : 10,
+    "seedType" : "default",
+    "styleTransferAlgorithmType" : "image",
+    "taskType" : "textClassifier",
+    "textClassifierArabicLanguage" : "automatic",
+    "textClassifierCJKLanguage" : "automatic",
+    "textClassifierCyrillicLanguage" : "automatic",
+    "textClassifierIndicLanguage" : "automatic",
+    "textClassifierLatin" : "automatic",
+    "textClassifierScript" : "latin",
+    "textClassifierThaiLanguage" : "automatic"
+  },
+  "snapshotRole" : {
+    "withoutSnapshots" : 0
+  },
+  "state" : "trained",
+  "title" : "ExpenseClassifier 1",
+  "trainingEntity" : {
+    "analysedDataType" : "datasource",
+    "checkpointMetrics" : {
+
+    },
+    "dataResult" : {
+      "classesCount" : 9,
+      "createdDate" : "2025-05-31T23:22:09Z",
+      "dataAnalysis" : {
+        "classifierAnalysis" : {
+          "labelStats" : {
+            "avg_expense" : 2,
+            "category_expense" : 29,
+            "compare" : 10,
+            "count" : 7,
+            "date_expense" : 18,
+            "left_budget" : 5,
+            "min_category" : 2,
+            "top_category" : 4,
+            "total_expense" : 15
+          }
+        },
+        "issues" : [
+          {
+            "description" : "9 classes found, including category_expense, date_expense, total_expense",
+            "severity" : "debug"
+          },
+          {
+            "description" : "92 texts found, automatically creating validation set",
+            "severity" : "good"
+          },
+          {
+            "description" : "Smallest class is \"avg_expense\" with 2 texts",
+            "severity" : "debug"
+          },
+          {
+            "description" : "Largest class is \"category_expense\" with 29 text",
+            "severity" : "debug"
+          }
+        ],
+        "objectDetectorAnalysis" : {
+          "details" : {
+
+          }
+        },
+        "summary" : {
+          "canUseValidation" : 1,
+          "classCount" : 9,
+          "sampleCount" : 92
+        }
+      },
+      "dataSourceID" : "EF9C53CF-7C0A-4B7B-91DA-831939AFA167",
+      "dataURL" : "file:///Users/jojoonhee/Desktop/AI%20money/AI%20money/Resources/data.csv",
+      "itemsCount" : 92
+    },
+    "dataSourceID" : "EF9C53CF-7C0A-4B7B-91DA-831939AFA167",
+    "featureExtractionCheckpointMayBeAvailable" : false,
+    "finishTime" : "2025-05-31T23:51:11Z",
+    "progress" : [
+      {
+        "count" : 1,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 10,
+          "trainingAccuracy" : 0.33734938502311707,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 2,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : true,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 9,
+          "trainingAccuracy" : 1,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 3,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 4,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 5,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 6,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 7,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 8,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 9,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 10,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 11,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 12,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 13,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 14,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 15,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 16,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 17,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 18,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 19,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 20,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 21,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 22,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 23,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 24,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 25,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 26,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 27,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 28,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 29,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 30,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 31,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 32,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 33,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 34,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 35,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 36,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 37,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 38,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 39,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 40,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 41,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 42,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 43,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 44,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 45,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 46,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 47,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 48,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 49,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 50,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 51,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 52,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 53,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 54,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 55,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 56,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 57,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 58,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 59,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 60,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 61,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 62,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 63,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 64,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 65,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 66,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 67,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 68,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 69,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 70,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 71,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 72,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 73,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 74,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 75,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 76,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 77,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 78,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 79,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 80,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 81,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 82,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 83,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : true,
+        "tableIndex" : 0
+      }
+    ],
+    "snapshottableCheckpoints" : {
+
+    },
+    "startTime" : "2025-05-31T23:51:10Z",
+    "trainingAccuracy" : 1,
+    "trainingResults" : {
+      "textClassifier" : {
+        "accuracy" : 1,
+        "confusionMatrix" : [
+          {
+            "actual" : "avg_expense",
+            "count" : 1,
+            "expected" : "avg_expense"
+          },
+          {
+            "actual" : "category_expense",
+            "count" : 28,
+            "expected" : "category_expense"
+          },
+          {
+            "actual" : "compare",
+            "count" : 9,
+            "expected" : "compare"
+          },
+          {
+            "actual" : "count",
+            "count" : 6,
+            "expected" : "count"
+          },
+          {
+            "actual" : "date_expense",
+            "count" : 15,
+            "expected" : "date_expense"
+          },
+          {
+            "actual" : "left_budget",
+            "count" : 5,
+            "expected" : "left_budget"
+          },
+          {
+            "actual" : "min_category",
+            "count" : 2,
+            "expected" : "min_category"
+          },
+          {
+            "actual" : "top_category",
+            "count" : 3,
+            "expected" : "top_category"
+          },
+          {
+            "actual" : "total_expense",
+            "count" : 14,
+            "expected" : "total_expense"
+          }
+        ],
+        "statsByLabel" : {
+          "avg_expense" : {
+            "count" : 1,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "category_expense" : {
+            "count" : 28,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "compare" : {
+            "count" : 9,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "count" : {
+            "count" : 6,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "date_expense" : {
+            "count" : 15,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "left_budget" : {
+            "count" : 5,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "min_category" : {
+            "count" : 2,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "top_category" : {
+            "count" : 3,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "total_expense" : {
+            "count" : 14,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "validationAccuracy" : 0.4444444444444444,
+    "validationResults" : {
+      "textClassifier" : {
+        "accuracy" : 0.4444444444444444,
+        "confusionMatrix" : [
+          {
+            "actual" : "avg_expense",
+            "count" : 1,
+            "expected" : "avg_expense"
+          },
+          {
+            "actual" : "category_expense",
+            "count" : 1,
+            "expected" : "category_expense"
+          },
+          {
+            "actual" : "compare",
+            "count" : 1,
+            "expected" : "total_expense"
+          },
+          {
+            "actual" : "count",
+            "count" : 1,
+            "expected" : "category_expense"
+          },
+          {
+            "actual" : "date_expense",
+            "count" : 1,
+            "expected" : "category_expense"
+          },
+          {
+            "actual" : "date_expense",
+            "count" : 2,
+            "expected" : "date_expense"
+          },
+          {
+            "actual" : "top_category",
+            "count" : 1,
+            "expected" : "category_expense"
+          },
+          {
+            "actual" : "total_expense",
+            "count" : 1,
+            "expected" : "category_expense"
+          }
+        ],
+        "statsByLabel" : {
+          "avg_expense" : {
+            "count" : 1,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "category_expense" : {
+            "count" : 1,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 0.2,
+                "recall" : 1
+              }
+            }
+          },
+          "compare" : {
+            "count" : 1,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 0,
+                "recall" : 0
+              }
+            }
+          },
+          "count" : {
+            "count" : 1,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 0,
+                "recall" : 0
+              }
+            }
+          },
+          "date_expense" : {
+            "count" : 3,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 0.6666666666666666
+              }
+            }
+          },
+          "top_category" : {
+            "count" : 1,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 0,
+                "recall" : 0
+              }
+            }
+          },
+          "total_expense" : {
+            "count" : 1,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 0,
+                "recall" : 0
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "validationEntity" : {
+    "analysedDataType" : "auto",
+    "dataResult" : {
+      "createdDate" : "2025-05-31T23:22:09Z"
+    }
+  },
+  "version" : "1.0"
+}
