@@ -42,9 +42,9 @@ struct ExpenseCalendarView: View {
                                     // 화면 로드 시 초기 스크롤 위치 설정
                                     scrollOffset = geometry.frame(in: .global).minY
                                 }
-                                .onChange(of: geometry.frame(in: .global).minY) { value in
+                                .onChange(of: geometry.frame(in: .global).minY) { oldValue, newValue in
                                     // 스크롤 위치가 변경될 때마다 업데이트
-                                    scrollOffset = value
+                                    scrollOffset = newValue
                                 }
                         }
                     )
@@ -157,10 +157,19 @@ struct ExpenseCalendarView: View {
             // 상단 타이틀과 액션 버튼들
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    // 메인 제목
-                    Text("지출 내역")
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(.primary)
+                    // 메인 제목과 정보 버튼을 같은 줄에 배치
+                    HStack(spacing: 8) {
+                        Text("지출 내역")
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundColor(.primary)
+                        
+                        // 정보 버튼을 제목 바로 옆에 배치
+                        Button(action: { showInformationView = true }) {
+                            Image(systemName: "info.circle")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(.secondary)
+                        }
+                    }
                     
                     // 현재 선택된 년월 표시 및 피커 버튼
                     Button(action: { showingPicker.toggle() }) {
@@ -180,25 +189,13 @@ struct ExpenseCalendarView: View {
                 
                 Spacer() // 좌측 정보와 우측 버튼 사이 공간
                 
-                // 우측 액션 버튼들
-                HStack(spacing: 12) {
-                    // 정보 버튼 (앱 사용법, 도움말 등)
-                    Button(action: { showInformationView = true }) {
-                        Image(systemName: "info.circle")
-                            .font(.system(size: 18, weight: .medium))
-                            .foregroundColor(.primary)
-                            .frame(width: 40, height: 40) // 버튼 크기 고정
-                            .background(Circle().fill(Color(.systemGray6))) // 원형 배경
-                    }
-                    
-                    // 지출 추가 버튼
-                    Button(action: { showingAddExpense = true }) {
-                        Image(systemName: "plus")
-                            .font(.system(size: 18, weight: .semibold))
-                            .foregroundColor(.primary)
-                            .frame(width: 40, height: 40) // 버튼 크기 고정
-                            .background(Circle().fill(Color(.systemGray6))) // 원형 배경
-                    }
+                // 우측에는 지출 추가 버튼만 배치
+                Button(action: { showingAddExpense = true }) {
+                    Image(systemName: "plus")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(.primary)
+                        .frame(width: 40, height: 40) // 버튼 크기 고정
+                        .background(Circle().fill(Color(.systemGray6))) // 원형 배경
                 }
             }
             

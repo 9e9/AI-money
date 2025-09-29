@@ -42,8 +42,8 @@ struct ChartView: View { // 지출 차트를 표시하는 뷰 구조체
                                     .onAppear { // 뷰가 나타날 때
                                         scrollOffset = geometry.frame(in: .global).minY // 초기 스크롤 오프셋 설정
                                     }
-                                    .onChange(of: geometry.frame(in: .global).minY) { value in // 프레임 변화 감지
-                                        scrollOffset = value // 스크롤 오프셋 업데이트
+                                    .onChange(of: geometry.frame(in: .global).minY) { oldValue, newValue in // 프레임 변화 감지
+                                        scrollOffset = newValue // 스크롤 오프셋 업데이트
                                     }
                             }
                         )
