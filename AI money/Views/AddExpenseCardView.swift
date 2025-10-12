@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 /// 지출 추가/편집을 위한 카드 형태의 뷰
 /// 각 지출 항목을 입력하는 개별 카드를 표현하며, 카테고리, 금액, 메모 등을 입력할 수 있음
@@ -199,6 +200,14 @@ struct AddExpenseCardView: View {
                     .keyboardType(.numberPad) // 숫자 키패드만 표시하여 숫자 입력에 최적화
                     .multilineTextAlignment(.leading) // 텍스트를 왼쪽 정렬
                     .focused($isAmountFieldFocused) // 포커스 상태를 바인딩하여 키보드 표시/숨김 제어
+                    .onReceive(Just(group.formattedAmount)) { newValue in
+                        // 실시간으로 입력값을 숫자만 필터링
+                        let filtered = newValue.filter { "0123456789,".contains($0) }
+                        if filtered != newValue {
+                            // 숫자와 콤마가 아닌 문자가 포함되어 있으면 필터링된 값으로 교체
+                            onAmountChange(filtered, index)
+                        }
+                    }
                     .onChange(of: group.formattedAmount) { oldValue, newValue in // 사용자가 금액을 입력하거나 변경할 때마다 실행
                         // 부모 뷰에 금액 변경을 알리기 위해 콜백 함수 호출 (새로운 금액 값과 카드 인덱스 전달)
                         onAmountChange(newValue, index)
