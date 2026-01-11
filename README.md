@@ -14,9 +14,9 @@ AI Money는 **CoreML 기반 텍스트 분류 모델**과 **자연어 처리 AI �
 - **카테고리별 분류**: 식비, 교통, 쇼핑, 여가 등 9가지 기본 카테고리 + 커스텀 카테고리 지원
 - **한국 공휴일 자동 표시**: 캘린더에 국경일, 전통명절, 기념일 자동 표시
 <img width="200" alt="Simulator Screenshot - iPhone 16 Pro Max 26 - 2026-01-12 at 00 20 09" src="https://github.com/user-attachments/assets/88c714cb-4304-441c-bcc9-224d13790e22" />
-<img width="200" alt="Simulator Screenshot - iPhone 16 Pro Max 26 - 2026-01-12 at 00 27 47" src="https://github.com/user-attachments/assets/b7b1aeca-e43a-4387-8bbd-4fe72cd7fb2c" />
 <img width="200" alt="Simulator Screenshot - iPhone 16 Pro Max 26 - 2026-01-12 at 00 27 52" src="https://github.com/user-attachments/assets/ceabe96b-8611-44b0-a2cc-12ad7c6e9595" />
-
+<img width="200" alt="Simulator Screenshot - iPhone 16 Pro Max 26 - 2026-01-12 at 00 46 31" src="https://github.com/user-attachments/assets/79525aa0-ffe4-4598-b2ec-ec8bf5b91760" />
+<img width="200" alt="Simulator Screenshot - iPhone 16 Pro Max 26 - 2026-01-12 at 00 27 47" src="https://github.com/user-attachments/assets/b7b1aeca-e43a-4387-8bbd-4fe72cd7fb2c" />
 
 ### 🤖 AI 기능
 - **CoreML 텍스트 분류 모델**: 지출 내역을 자동으로 카테고리별로 분류
@@ -32,8 +32,11 @@ AI Money는 **CoreML 기반 텍스트 분류 모델**과 **자연어 처리 AI �
 - **카테고리별 차트**: Charts 프레임워크를 활용한 시각적 분석
 - **월별/기간별 통계**: 선택한 기간의 지출 패턴 분석
 - **상세 내역 보기**: 애니메이션이 적용된 확장/축소 기능
-<img width="200" alt="Simulator Screenshot - iPhone 16 Pro Max 26 - 2026-01-12 at 00 20 13" src="https://github.com/user-attachments/assets/49673339-c89f-4959-a365-f919f5a7bee1" />
-<img width="200" alt="Simulator Screenshot - iPhone 16 Pro Max 26 - 2026-01-12 at 00 41 48" src="https://github.com/user-attachments/assets/e3f36397-51c9-47f1-9e64-27d1de22f062" />
+<img width="200" alt="Simulator Screenshot - iPhone 16 Pro Max 26 - 2026-01-12 at 00 45 45" src="https://github.com/user-attachments/assets/07f3bbbc-3503-4d85-b2d5-68187aff0f5c" />
+<img width="200" alt="Simulator Screenshot - iPhone 16 Pro Max 26 - 2026-01-12 at 00 45 50" src="https://github.com/user-attachments/assets/38356e34-ae39-4f15-a6aa-afaf174f8411" />
+<img width="200" alt="Simulator Screenshot - iPhone 16 Pro Max 26 - 2026-01-12 at 00 45 14" src="https://github.com/user-attachments/assets/5ff93735-b7e3-4733-acc2-a9dcfb78636a" />
+
+
 
 
 ## 🛠 기술 스택
