@@ -31,12 +31,6 @@ struct InformationView: View {
                 Text("개발: 조준희")
                     .font(.subheadline)
             }
-
-            VStack {
-                Text("🏫")
-                Text("상지대학교\n컴퓨터공학과\n학번: 202048049")
-                    .font(.subheadline)
-            }
             
             Spacer()
         }
