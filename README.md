@@ -8,10 +8,12 @@ AI Money는 **CoreML 기반 텍스트 분류 모델**과 **자연어 처리 AI �
 
 ## ✨ 주요 기능
 
-<img width="1320" height="2868" alt="Simulator Screenshot - iPhone 16 Pro Max 26 - 2026-01-12 at 00 20 09" src="https://github.com/user-attachments/assets/88c714cb-4304-441c-bcc9-224d13790e22" />
-<img width="1320" height="2868" alt="Simulator Screenshot - iPhone 16 Pro Max 26 - 2026-01-12 at 00 20 13" src="https://github.com/user-attachments/assets/49673339-c89f-4959-a365-f919f5a7bee1" /><img width="1320" height="2868" alt="Simulator Screenshot - iPhone 16 Pro Max 26 - 2026-01-12 at 00 20 17" src="https://github.com/user-attachments/assets/c19eed95-4b07-4f5c-8340-b4b0157d84a7" /><img width="1320" height="2868" alt="Simulator Screenshot - iPhone 16 Pro Max 26 - 2026-01-12 at 00 27 47" src="https://github.com/user-attachments/assets/b7b1aeca-e43a-4387-8bbd-4fe72cd7fb2c" />
-<img width="1320" height="2868" alt="Simulator Screenshot - iPhone 16 Pro Max 26 - 2026-01-12 at 00 27 52" src="https://github.com/user-attachments/assets/ceabe96b-8611-44b0-a2cc-12ad7c6e9595" />
-<img width="1320" height="2868" alt="Simulator Screenshot - iPhone 16 Pro Max 26 - 2026-01-12 at 00 28 15" src="https://github.com/user-attachments/assets/7840462b-5daa-433e-bc4a-c415e025998b" />
+<img width="300" alt="Simulator Screenshot - iPhone 16 Pro Max 26 - 2026-01-12 at 00 20 09" src="https://github.com/user-attachments/assets/88c714cb-4304-441c-bcc9-224d13790e22" />
+<img width="300" alt="Simulator Screenshot - iPhone 16 Pro Max 26 - 2026-01-12 at 00 20 13" src="https://github.com/user-attachments/assets/49673339-c89f-4959-a365-f919f5a7bee1" />
+<img width="300" alt="Simulator Screenshot - iPhone 16 Pro Max 26 - 2026-01-12 at 00 20 17" src="https://github.com/user-attachments/assets/c19eed95-4b07-4f5c-8340-b4b0157d84a7" />
+<img width="300" alt="Simulator Screenshot - iPhone 16 Pro Max 26 - 2026-01-12 at 00 27 47" src="https://github.com/user-attachments/assets/b7b1aeca-e43a-4387-8bbd-4fe72cd7fb2c" />
+<img width="300" alt="Simulator Screenshot - iPhone 16 Pro Max 26 - 2026-01-12 at 00 27 52" src="https://github.com/user-attachments/assets/ceabe96b-8611-44b0-a2cc-12ad7c6e9595" />
+<img width="300" alt="Simulator Screenshot - iPhone 16 Pro Max 26 - 2026-01-12 at 00 28 15" src="https://github.com/user-attachments/assets/7840462b-5daa-433e-bc4a-c415e025998b" />
 
 
 
